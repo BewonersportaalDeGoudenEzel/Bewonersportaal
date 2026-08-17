@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<title>Vraag aan de bewonerscommissie — De Gouden Ezel</title>
+<meta name="description" content="Stel een vraag, opmerking of suggestie aan de bewonerscommissie.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --oranje: #b3540f;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+    font-size: 1rem;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #ffffff;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    margin-bottom: 14px;
+  }
+  header h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.7rem;
+    line-height: 1.25;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 60px 16px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .knop-rij { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+  .knop {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 16px 24px;
+    border-radius: 10px;
+    color: #fff;
+    background: var(--groen-donker);
+    min-height: 44px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+  }
+  .knop:hover, .knop:focus { background: #16311f; }
+  .knop:disabled { background: #9aa79f; cursor: not-allowed; }
+  a.knop:focus, button.knop:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+
+  .intro-tekst { margin: 0 0 4px 0; }
+
+  .meld-formulier {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .veld-groep { display: flex; flex-direction: column; gap: 8px; }
+  .veld-groep > label { font-weight: 600; }
+  .veld-groep input[type="text"],
+  .veld-groep input[type="tel"],
+  .veld-groep input[type="email"],
+  .veld-groep textarea {
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 2px solid var(--rand);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--tekst);
+    width: 100%;
+  }
+  .veld-groep input:focus, .veld-groep textarea:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 1px;
+    border-color: var(--groen-donker);
+  }
+  .veld-groep textarea { min-height: 130px; resize: vertical; }
+
+  .form-status {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .form-status.bezig { background: #f1f2ef; color: #444; }
+  .form-status.gelukt { background: #eef3ef; color: var(--groen-donker); }
+  .form-status.fout { background: #fdeee0; color: var(--oranje); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Ga direct naar de inhoud</a>
+
+<header>
+  <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="140" height="140">
+  <h1>Vraag aan de bewonerscommissie</h1>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" id="link-terug" href="index.html">← Terug naar het bewonersportaal</a>
+
+  <div class="kaart">
+    <p class="intro-tekst">Heeft u een vraag, opmerking of suggestie? Laat het ons weten via onderstaand formulier, wij reageren zo snel mogelijk.</p>
+
+    <form class="meld-formulier" id="form-vraag" novalidate>
+      <div class="veld-groep">
+        <label for="vraag-voornaam">Voornaam *</label>
+        <input type="text" id="vraag-voornaam" name="voornaam" required autocomplete="given-name">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-achternaam">Achternaam *</label>
+        <input type="text" id="vraag-achternaam" name="achternaam" required autocomplete="family-name">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-telefoon">Telefoonnummer</label>
+        <input type="tel" id="vraag-telefoon" name="telefoon" autocomplete="tel">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-email">Email *</label>
+        <input type="email" id="vraag-email" name="email" required autocomplete="email">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-straatnaam">Straatnaam</label>
+        <input type="text" id="vraag-straatnaam" name="straatnaam" autocomplete="address-line1">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-huisnummer">Huisnummer *</label>
+        <input type="text" id="vraag-huisnummer" name="huisnummer" required>
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-postcode">Postcode</label>
+        <input type="text" id="vraag-postcode" name="postcode" autocomplete="postal-code">
+      </div>
+      <div class="veld-groep">
+        <label for="vraag-woonplaats">Woonplaats</label>
+        <input type="text" id="vraag-woonplaats" name="woonplaats" autocomplete="address-level2">
+      </div>
+
+      <div class="veld-groep">
+        <label for="vraag-tekst">Uw vraag, opmerking of suggestie *</label>
+        <textarea id="vraag-tekst" name="vraagTekst" required></textarea>
+      </div>
+
+      <div class="knop-rij">
+        <button type="submit" class="knop">Versturen</button>
+      </div>
+      <p class="form-status" data-status="vraag" hidden></p>
+    </form>
+  </div>
+</main>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+</script>
+
+<script>
+  // Zelfde Apps Script-koppeling als reparatieverzoek.html — hetzelfde
+  // script verwerkt beide soorten formulieren (te herkennen aan
+  // verzoekType: "vraag" hieronder).
+  var VRAAG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+</script>
+
+<script>
+  // Persoonlijke link: vult de contactvelden automatisch in op basis
+  // van de linkparameters uit de QR-code/persoonlijke link.
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var terugLink = document.getElementById("link-terug");
+    if (terugLink) {
+      terugLink.href = terugLink.getAttribute("href").split("?")[0] + window.location.search;
+    }
+    var zet = function (veld, param) {
+      var el = document.getElementById("vraag-" + veld);
+      var waarde = params.get(param);
+      if (el && waarde) el.value = waarde;
+    };
+    zet("voornaam", "voornaam");
+    zet("achternaam", "achternaam");
+    zet("telefoon", "telefoon");
+    zet("email", "email");
+    zet("straatnaam", "straatnaam");
+    zet("huisnummer", "huisnummer");
+    zet("postcode", "postcode");
+    zet("woonplaats", "plaats");
+  })();
+</script>
+
+<script>
+  (function () {
+    var form = document.getElementById("form-vraag");
+    var status = document.querySelector('[data-status="vraag"]');
+    if (!form) return;
+
+    function toonStatus(tekst, soort) {
+      if (!status) return;
+      status.hidden = false;
+      status.textContent = tekst;
+      status.className = "form-status " + soort;
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      if (!VRAAG_SCRIPT_URL) {
+        toonStatus("Het formulier is nog niet volledig ingesteld. Neem contact op met de bewonerscommissie.", "fout");
+        return;
+      }
+
+      var data = {
+        verzoekType: "vraag",
+        voornaam: document.getElementById("vraag-voornaam").value,
+        achternaam: document.getElementById("vraag-achternaam").value,
+        telefoon: document.getElementById("vraag-telefoon").value,
+        email: document.getElementById("vraag-email").value,
+        straatnaam: document.getElementById("vraag-straatnaam").value,
+        huisnummer: document.getElementById("vraag-huisnummer").value,
+        postcode: document.getElementById("vraag-postcode").value,
+        plaats: document.getElementById("vraag-woonplaats").value,
+        vraagTekst: document.getElementById("vraag-tekst").value
+      };
+
+      var knop = form.querySelector('button[type="submit"]');
+      if (knop) knop.disabled = true;
+      toonStatus("Bezig met versturen...", "bezig");
+
+      fetch(VRAAG_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data)
+      }).then(function () {
+        toonStatus("Bedankt! Uw vraag is verstuurd naar de bewonerscommissie.", "gelukt");
+        form.reset();
+        if (knop) knop.disabled = false;
+      }).catch(function () {
+        toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+        if (knop) knop.disabled = false;
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

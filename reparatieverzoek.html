@@ -126,6 +126,10 @@
     border: 2px solid var(--groen-donker);
   }
   .knop.secundair:hover, .knop.secundair:focus { background: #eef3ef; }
+  .knop:disabled {
+    background: #9aa79f;
+    cursor: not-allowed;
+  }
 
   a.knop:focus, button.knop:focus {
     outline: 3px solid #ffbf47;
@@ -173,26 +177,101 @@
     font-size: 1.5rem;
   }
 
-  .formulier-insluiting {
-    border: 1px solid var(--rand);
-    border-radius: 10px;
-    overflow: hidden;
-    min-height: 480px;
+  /* ─── Formulier ─── */
+  .meld-formulier {
+    border-top: 1px solid var(--rand);
+    padding-top: 18px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
   }
-  .formulier-insluiting iframe {
-    display: block;
+  .veld-groep {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .veld-groep > label,
+  .veld-groep legend {
+    font-weight: 600;
+    padding: 0;
+  }
+  .veld-hulp {
+    font-weight: 400;
+    color: #555;
+    font-size: 0.9rem;
+  }
+  .veld-groep input[type="text"],
+  .veld-groep input[type="tel"],
+  .veld-groep input[type="email"],
+  .veld-groep select,
+  .veld-groep textarea {
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 2px solid var(--rand);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--tekst);
     width: 100%;
-    height: 480px;
+  }
+  .veld-groep input:focus,
+  .veld-groep select:focus,
+  .veld-groep textarea:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 1px;
+    border-color: var(--groen-donker);
+  }
+  .veld-groep textarea {
+    min-height: 110px;
+    resize: vertical;
+  }
+  fieldset.veld-groep {
     border: none;
+    margin: 0;
+    padding: 0;
+  }
+  .keuze-lijst {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .keuze-lijst label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .keuze-lijst input[type="radio"],
+  .keuze-lijst input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .keuze-lijst .inline-tekst {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    border: 2px solid var(--rand);
+    border-radius: 6px;
+    margin-left: 6px;
+    flex: 1;
+    min-width: 120px;
+  }
+  .akkoord-tekst {
+    margin: 0 0 4px 0;
   }
 
-  .foto-sectie {
-    border-top: 1px solid var(--rand);
-    padding-top: 14px;
-    margin-top: 4px;
+  .foto-veld {
+    border: 2px dashed var(--rand);
+    border-radius: 10px;
+    padding: 16px;
   }
-  .foto-sectie p {
-    margin: 0 0 10px 0;
+  .foto-veld.heeft-foto {
+    border-style: solid;
+    border-color: var(--groen);
   }
   .foto-voorbeeld-wrap {
     margin-top: 14px;
@@ -209,6 +288,30 @@
     font-size: 0.95rem;
     color: #555;
   }
+  .foto-status {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #555;
+  }
+
+  .form-status {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .form-status.bezig {
+    background: #f1f2ef;
+    color: #444;
+  }
+  .form-status.gelukt {
+    background: #eef3ef;
+    color: var(--groen-donker);
+  }
+  .form-status.fout {
+    background: #fdeee0;
+    color: var(--oranje);
+  }
 
   .in-voorbereiding {
     background: #fbf6ec;
@@ -218,51 +321,6 @@
   }
   .in-voorbereiding p { margin: 0 0 10px 0; }
   .in-voorbereiding p:last-child { margin-bottom: 0; }
-
-  .formulier-vergrendeld {
-    background: #f1f2ef;
-    border: 2px dashed var(--rand);
-    border-radius: 10px;
-    padding: 18px 20px;
-    color: #555;
-  }
-  .formulier-vergrendeld p { margin: 0; }
-
-  .meldingen-overzicht {
-    background: #f1f2ef;
-    border: 1px solid var(--rand);
-    border-radius: 10px;
-    padding: 18px 20px;
-  }
-  .meldingen-overzicht h3 {
-    margin: 0 0 6px 0;
-    font-size: 1.2rem;
-  }
-  .meldingen-overzicht > p {
-    margin: 0 0 14px 0;
-    color: #333;
-  }
-  .melding-item {
-    border-top: 1px solid var(--rand);
-    padding: 14px 0;
-  }
-  .melding-item:first-of-type { border-top: none; padding-top: 0; }
-  .melding-item .datum {
-    font-size: 0.9rem;
-    color: #666;
-    letter-spacing: 0.02em;
-  }
-  .melding-item h4 {
-    margin: 4px 0 6px 0;
-    font-size: 1.1rem;
-  }
-  .melding-item p {
-    margin: 0 0 10px 0;
-  }
-  .melding-item .knop {
-    padding: 10px 18px;
-    font-size: 1rem;
-  }
 
   @media (prefers-reduced-motion: reduce) {
     * { scroll-behavior: auto !important; }
@@ -292,33 +350,124 @@
     <div id="sectie-eigen-woning" hidden>
       <p>Iets kapot in uw eigen woning? Meld het hieronder. Wij zorgen dat het bij de verhuurder terechtkomt.</p>
 
-      <div class="foto-sectie">
-        <p><strong>Stap 1 van 2.</strong> Heeft u een foto van de storing? Maak 'm hieronder en verstuur 'm — dat gebeurt automatisch zodra u op "Maak een foto" drukt en daarna op "Verstuur foto". Zo komen de foto en het formulier vlak na elkaar binnen. Geen foto nodig? Klik dan op "Verder zonder foto".</p>
-        <div class="knop-rij">
-          <button type="button" class="knop" id="knop-foto">📷 Maak een foto</button>
-          <button type="button" class="knop" id="knop-verstuur-foto" hidden>✉️ Verstuur foto</button>
-          <button type="button" class="knop secundair" id="knop-geen-foto">Verder zonder foto</button>
+      <form class="meld-formulier" id="form-eigen" novalidate>
+        <div class="veld-groep">
+          <label for="eigen-voornaam">Voornaam *</label>
+          <input type="text" id="eigen-voornaam" name="voornaam" required autocomplete="given-name">
         </div>
-        <input type="file" accept="image/*" capture="environment" id="input-foto" hidden>
-        <div class="foto-voorbeeld-wrap" id="foto-voorbeeld-wrap" hidden>
-          <img id="foto-voorbeeld" alt="Gemaakte foto van de storing">
-          <p>Dit is uw foto. Klopt hij? Druk dan op "Verstuur foto" hierboven.</p>
+        <div class="veld-groep">
+          <label for="eigen-achternaam">Achternaam *</label>
+          <input type="text" id="eigen-achternaam" name="achternaam" required autocomplete="family-name">
         </div>
-      </div>
+        <div class="veld-groep">
+          <label for="eigen-telefoon">Telefoonnummer *</label>
+          <input type="tel" id="eigen-telefoon" name="telefoon" required autocomplete="tel">
+        </div>
+        <div class="veld-groep">
+          <label for="eigen-email">Email *</label>
+          <input type="email" id="eigen-email" name="email" required autocomplete="email">
+        </div>
+        <div class="veld-groep">
+          <label for="eigen-straatnaam">Straatnaam *</label>
+          <input type="text" id="eigen-straatnaam" name="straatnaam" required autocomplete="address-line1">
+        </div>
+        <div class="veld-groep">
+          <label for="eigen-huisnummer">Huisnummer *</label>
+          <input type="text" id="eigen-huisnummer" name="huisnummer" required>
+        </div>
 
-      <div class="formulier-vergrendeld" id="formulier-vergrendeld">
-        <p>🔒 <strong>Stap 2 van 2.</strong> Het formulier verschijnt hier zodra u hierboven een foto heeft verstuurd, of heeft aangegeven dat u geen foto heeft.</p>
-      </div>
+        <fieldset class="veld-groep">
+          <legend>Verdieping *</legend>
+          <div class="keuze-lijst" data-verdieping="eigen">
+            <label><input type="radio" name="verdieping-eigen" value="Beganegrond" required> Beganegrond</label>
+            <label><input type="radio" name="verdieping-eigen" value="1"> 1</label>
+            <label><input type="radio" name="verdieping-eigen" value="2"> 2</label>
+            <label><input type="radio" name="verdieping-eigen" value="3"> 3</label>
+            <label><input type="radio" name="verdieping-eigen" value="4"> 4</label>
+            <label><input type="radio" name="verdieping-eigen" value="5"> 5</label>
+            <label><input type="radio" name="verdieping-eigen" value="6"> 6</label>
+            <label><input type="radio" name="verdieping-eigen" value="7"> 7</label>
+            <label><input type="radio" name="verdieping-eigen" value="8"> 8</label>
+            <label><input type="radio" name="verdieping-eigen" value="9"> 9</label>
+            <label><input type="radio" name="verdieping-eigen" value="10"> 10</label>
+          </div>
+        </fieldset>
 
-      <div id="formulier-ontgrendeld" hidden>
-        <p><strong>Stap 2 van 2.</strong> Vul hieronder het formulier in.</p>
-        <div class="formulier-insluiting">
-          <iframe id="frame-reparatie-eigen" title="Reparatieverzoek eigen woning — formulier" src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUNDhVWk05RkM2QzhLT1FETklHSVFFSUdLQi4u&embed=true" loading="lazy"></iframe>
+        <div class="veld-groep">
+          <label for="eigen-postcode">Postcode *</label>
+          <input type="text" id="eigen-postcode" name="postcode" required autocomplete="postal-code">
         </div>
+        <div class="veld-groep">
+          <label for="eigen-woonplaats">Woonplaats *</label>
+          <input type="text" id="eigen-woonplaats" name="woonplaats" required autocomplete="address-level2">
+        </div>
+
+        <fieldset class="veld-groep">
+          <legend>Waar is het probleem *</legend>
+          <div class="keuze-lijst" data-waar="eigen">
+            <label><input type="checkbox" value="Eigen woning - Badkamer"> Badkamer</label>
+            <label><input type="checkbox" value="Eigen woning - Slaapkamer"> Slaapkamer</label>
+            <label><input type="checkbox" value="Eigen woning - Woonkamer"> Woonkamer</label>
+            <label><input type="checkbox" value="Eigen woning - Bijkeuken"> Bijkeuken</label>
+            <label><input type="checkbox" value="Eigen woning - Meterkast"> Meterkast</label>
+            <label><input type="checkbox" value="Eigen woning - Gang"> Gang</label>
+            <label><input type="checkbox" value="Eigen woning - Balkon"> Balkon</label>
+            <label><input type="checkbox" value="Andere" data-andere-vak="eigen"> Andere: <input type="text" class="inline-tekst" data-andere-tekst="eigen" placeholder="Waar?"></label>
+          </div>
+        </fieldset>
+
+        <div class="veld-groep">
+          <label for="eigen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
+          <select id="eigen-type-storing" name="typeStoring" required>
+            <option value="">Kies een categorie</option>
+            <option>Ongedierte</option>
+            <option>Riool / afvoer</option>
+            <option>Elektra</option>
+            <option>Sanitair / kraan</option>
+            <option>Verwarming</option>
+            <option>Deur / slot</option>
+            <option>Overig</option>
+          </select>
+        </div>
+
+        <div class="veld-groep">
+          <label for="eigen-omschrijving">Wat is het probleem? *</label>
+          <textarea id="eigen-omschrijving" name="watIsHetProbleem" required></textarea>
+        </div>
+
+        <div class="veld-groep foto-veld" data-foto-veld="eigen">
+          <label>Foto van de storing * <span class="veld-hulp">(verplicht)</span></label>
+          <div class="knop-rij">
+            <button type="button" class="knop secundair" data-foto-knop="eigen">📷 Maak of kies een foto</button>
+          </div>
+          <input type="file" accept="image/*" capture="environment" data-foto-input="eigen" hidden>
+          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="eigen" hidden>
+            <img data-foto-voorbeeld="eigen" alt="Gemaakte foto van de storing">
+            <p>Dit is uw foto.</p>
+          </div>
+          <p class="foto-status" data-foto-status="eigen">Nog geen foto toegevoegd.</p>
+        </div>
+
+        <div class="veld-groep">
+          <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
+          <div class="keuze-lijst" data-privacy="eigen">
+            <label><input type="checkbox" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen mag de gegevens verwerken</label>
+            <label><input type="checkbox" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage.</label>
+          </div>
+        </div>
+
+        <div class="veld-groep">
+          <label class="keuze-lijst" style="flex-direction: row;">
+            <input type="checkbox" data-gelezen="eigen" required>
+            <span>Ja, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten. Ik heb <a href="https://wetten.overheid.nl/BWBR0014931" target="_blank" rel="noopener">'Besluit kleine herstellingen'</a> gelezen *</span>
+          </label>
+        </div>
+
         <div class="knop-rij">
-          <a class="knop secundair" id="link-reparatie-eigen" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUNDhVWk05RkM2QzhLT1FETklHSVFFSUdLQi4u" target="_blank" rel="noopener">Liever in een apart tabblad openen</a>
+          <button type="submit" class="knop">Melding versturen</button>
         </div>
-      </div>
+        <p class="form-status" data-status="eigen" hidden></p>
+      </form>
     </div>
   </div>
 
@@ -330,47 +479,122 @@
     <div id="sectie-algemene-ruimte" hidden>
       <p>Iets kapot of stuk in een gemeenschappelijke ruimte (zoals de hal, lift of recreatiezaal)? Meld het hieronder.</p>
 
-      <div class="meldingen-overzicht" id="meldingen-overzicht">
-        <h3>Onlangs al gemeld</h3>
-        <p>Staat uw probleem hieronder al tussen de recente meldingen? Meld het dan niet opnieuw — klik in plaats
-          daarvan op "Ik heb dit ook", zodat de bewonerscommissie weet hoeveel bewoners er last van hebben.</p>
-
-        <div class="melding-item" data-ruimte="Voorbeeld: Hal ingang" data-datum="12 augustus 2026">
-          <div class="datum">12 AUGUSTUS 2026</div>
-          <h4>Voorbeeld: Hal ingang</h4>
-          <p>Dit is een voorbeeldmelding — vervang of verwijder 'm via commissie-hulpmiddel.html zodra er een
-            echte melding is.</p>
+      <form class="meld-formulier" id="form-algemeen" novalidate>
+        <div class="veld-groep">
+          <label for="algemeen-voornaam">Voornaam *</label>
+          <input type="text" id="algemeen-voornaam" name="voornaam" required autocomplete="given-name">
         </div>
-        <!-- Nieuwe meldingen hier bovenaan toevoegen (nieuwste eerst) via commissie-hulpmiddel.html -->
-      </div>
+        <div class="veld-groep">
+          <label for="algemeen-achternaam">Achternaam *</label>
+          <input type="text" id="algemeen-achternaam" name="achternaam" required autocomplete="family-name">
+        </div>
+        <div class="veld-groep">
+          <label for="algemeen-telefoon">Telefoonnummer *</label>
+          <input type="tel" id="algemeen-telefoon" name="telefoon" required autocomplete="tel">
+        </div>
+        <div class="veld-groep">
+          <label for="algemeen-email">Email *</label>
+          <input type="email" id="algemeen-email" name="email" required autocomplete="email">
+        </div>
+        <div class="veld-groep">
+          <label for="algemeen-straatnaam">Straatnaam *</label>
+          <input type="text" id="algemeen-straatnaam" name="straatnaam" required autocomplete="address-line1">
+        </div>
+        <div class="veld-groep">
+          <label for="algemeen-huisnummer">Huisnummer *</label>
+          <input type="text" id="algemeen-huisnummer" name="huisnummer" required>
+        </div>
 
-      <div class="foto-sectie">
-        <p><strong>Stap 1 van 2.</strong> Heeft u een foto van de storing? Maak 'm hieronder en verstuur 'm — dat gebeurt automatisch zodra u op "Maak een foto" drukt en daarna op "Verstuur foto". Zo komen de foto en het formulier vlak na elkaar binnen. Geen foto nodig? Klik dan op "Verder zonder foto".</p>
+        <fieldset class="veld-groep">
+          <legend>Verdieping *</legend>
+          <div class="keuze-lijst" data-verdieping="algemeen">
+            <label><input type="radio" name="verdieping-algemeen" value="Beganegrond" required> Beganegrond</label>
+            <label><input type="radio" name="verdieping-algemeen" value="1"> 1</label>
+            <label><input type="radio" name="verdieping-algemeen" value="2"> 2</label>
+            <label><input type="radio" name="verdieping-algemeen" value="3"> 3</label>
+            <label><input type="radio" name="verdieping-algemeen" value="4"> 4</label>
+            <label><input type="radio" name="verdieping-algemeen" value="5"> 5</label>
+            <label><input type="radio" name="verdieping-algemeen" value="6"> 6</label>
+            <label><input type="radio" name="verdieping-algemeen" value="7"> 7</label>
+            <label><input type="radio" name="verdieping-algemeen" value="8"> 8</label>
+            <label><input type="radio" name="verdieping-algemeen" value="9"> 9</label>
+            <label><input type="radio" name="verdieping-algemeen" value="10"> 10</label>
+          </div>
+        </fieldset>
+
+        <div class="veld-groep">
+          <label for="algemeen-postcode">Postcode *</label>
+          <input type="text" id="algemeen-postcode" name="postcode" required autocomplete="postal-code">
+        </div>
+        <div class="veld-groep">
+          <label for="algemeen-woonplaats">Woonplaats *</label>
+          <input type="text" id="algemeen-woonplaats" name="woonplaats" required autocomplete="address-level2">
+        </div>
+
+        <fieldset class="veld-groep">
+          <legend>Waar is het probleem *</legend>
+          <div class="keuze-lijst" data-waar="algemeen">
+            <label><input type="checkbox" value="Algemene ruimte lift"> Lift</label>
+            <label><input type="checkbox" value="Algemene ruimte hal ingang"> Hal ingang</label>
+            <label><input type="checkbox" value="Algemene ruimte gang"> Gang</label>
+            <label><input type="checkbox" value="Algemene ruimte trappenhuis"> Trappenhuis</label>
+            <label><input type="checkbox" value="Algemene ruimte buiten op eigen terrein"> Buiten op eigen terrein</label>
+            <label><input type="checkbox" value="Andere" data-andere-vak="algemeen"> Andere: <input type="text" class="inline-tekst" data-andere-tekst="algemeen" placeholder="Waar?"></label>
+          </div>
+        </fieldset>
+
+        <div class="veld-groep">
+          <label for="algemeen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
+          <select id="algemeen-type-storing" name="typeStoring" required>
+            <option value="">Kies een categorie</option>
+            <option>Ongedierte</option>
+            <option>Riool / afvoer</option>
+            <option>Elektra</option>
+            <option>Verlichting</option>
+            <option>Lift</option>
+            <option>Deur / slot</option>
+            <option>Overig</option>
+          </select>
+        </div>
+
+        <div class="veld-groep">
+          <label for="algemeen-omschrijving">Wat is het probleem? *</label>
+          <textarea id="algemeen-omschrijving" name="watIsHetProbleem" required></textarea>
+        </div>
+
+        <div class="veld-groep foto-veld" data-foto-veld="algemeen">
+          <label>Foto van de storing * <span class="veld-hulp">(verplicht)</span></label>
+          <div class="knop-rij">
+            <button type="button" class="knop secundair" data-foto-knop="algemeen">📷 Maak of kies een foto</button>
+          </div>
+          <input type="file" accept="image/*" capture="environment" data-foto-input="algemeen" hidden>
+          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="algemeen" hidden>
+            <img data-foto-voorbeeld="algemeen" alt="Gemaakte foto van de storing">
+            <p>Dit is uw foto.</p>
+          </div>
+          <p class="foto-status" data-foto-status="algemeen">Nog geen foto toegevoegd.</p>
+        </div>
+
+        <div class="veld-groep">
+          <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
+          <div class="keuze-lijst" data-privacy="algemeen">
+            <label><input type="checkbox" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen mag de gegevens verwerken</label>
+            <label><input type="checkbox" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage.</label>
+          </div>
+        </div>
+
+        <div class="veld-groep">
+          <label class="keuze-lijst" style="flex-direction: row;">
+            <input type="checkbox" data-gelezen="algemeen" required>
+            <span>Ja, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten. Ik heb <a href="https://wetten.overheid.nl/BWBR0014931" target="_blank" rel="noopener">'Besluit kleine herstellingen'</a> gelezen *</span>
+          </label>
+        </div>
+
         <div class="knop-rij">
-          <button type="button" class="knop" id="knop-foto-algemeen">📷 Maak een foto</button>
-          <button type="button" class="knop" id="knop-verstuur-foto-algemeen" hidden>✉️ Verstuur foto</button>
-          <button type="button" class="knop secundair" id="knop-geen-foto-algemeen">Verder zonder foto</button>
+          <button type="submit" class="knop">Melding versturen</button>
         </div>
-        <input type="file" accept="image/*" capture="environment" id="input-foto-algemeen" hidden>
-        <div class="foto-voorbeeld-wrap" id="foto-voorbeeld-wrap-algemeen" hidden>
-          <img id="foto-voorbeeld-algemeen" alt="Gemaakte foto van de storing">
-          <p>Dit is uw foto. Klopt hij? Druk dan op "Verstuur foto" hierboven.</p>
-        </div>
-      </div>
-
-      <div class="formulier-vergrendeld" id="formulier-vergrendeld-algemeen">
-        <p>🔒 <strong>Stap 2 van 2.</strong> Het formulier verschijnt hier zodra u hierboven een foto heeft verstuurd, of heeft aangegeven dat u geen foto heeft.</p>
-      </div>
-
-      <div id="formulier-ontgrendeld-algemeen" hidden>
-        <p><strong>Stap 2 van 2.</strong> Vul hieronder het formulier in.</p>
-        <div class="formulier-insluiting">
-          <iframe id="frame-reparatie-algemeen" title="Reparatieverzoek algemene ruimte — formulier" src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUQk41UkZZR0hEMDVSU0VEOTNWNUhMNVBPMS4u&embed=true" loading="lazy"></iframe>
-        </div>
-        <div class="knop-rij">
-          <a class="knop secundair" id="link-reparatie-algemeen" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUQk41UkZZR0hEMDVSU0VEOTNWNUhMNVBPMS4u" target="_blank" rel="noopener">Liever in een apart tabblad openen</a>
-        </div>
-      </div>
+        <p class="form-status" data-status="algemeen" hidden></p>
+      </form>
     </div>
   </div>
 
@@ -385,66 +609,25 @@
 </script>
 
 <script>
-  // TESTFASE: mails gaan nu naar matsruck@gmail.com i.p.v. storingen@hoen.nl,
-  // zodat de bewonerscommissie kan testen zonder de echte beheerder lastig te
-  // vallen. Verander dit terug naar "storingen@hoen.nl" zodra de testfase
-  // voorbij is — dit ene punt regelt zowel de foto-tekst als de "Ik heb dit
-  // ook"-knoppen bij de meldingenlijst hieronder.
-  var CONTACT_EMAIL_TESTFASE = "matsruck@gmail.com";
-</script>
-
-<script>
   // ─────────────────────────────────────────────────────────────────
-  // MELDINGEN ALGEMENE RUIMTE — "Onlangs al gemeld"
+  // INSTELLINGEN
   //
-  // Elke .melding-item (zie #meldingen-overzicht hierboven) krijgt hier
-  // automatisch een "Ik heb dit ook"-knop met een mailto-link erbij, met
-  // het e-mailadres uit CONTACT_EMAIL_TESTFASE hierboven. Zo hoeft Mats
-  // bij het toevoegen van een nieuwe melding (via commissie-hulpmiddel.html)
-  // alleen de zichtbare tekst te typen — de mailto-link met het juiste
-  // adres en onderwerp wordt hier automatisch samengesteld, en verandert
-  // vanzelf mee zodra CONTACT_EMAIL_TESTFASE hierboven wijzigt.
+  // REPARATIE_SCRIPT_URL: de "Web app"-koppeling van het Google Apps
+  // Script dat meldingen verwerkt (rij toevoegen aan de spreadsheet +
+  // e-mail versturen). Zet deze pas na het inrichten van dat script —
+  // zie instructies.md voor de stappen. Zolang dit op null staat, laat
+  // het formulier een duidelijke melding zien i.p.v. stil te falen.
   //
-  // Dit is bewust GEEN kopie van het echte reparatieformulier: een klik op
-  // "Ik heb dit ook" stuurt alleen een korte, losse e-mail (geen nieuw
-  // Power Automate-werkorder naar de verhuurder) — zo kan de
-  // bewonerscommissie later tellen hoeveel bewoners hetzelfde probleem
-  // hadden, zonder dat er steeds een dubbele officiële melding binnenkomt.
+  // TESTFASE: mails gaan nu naar matsruck@gmail.com en
+  // polanenflat@outlook.com i.p.v. storingen@hoen.nl — dat staat in
+  // het Apps Script zelf geregeld (Code.gs), niet hier.
   // ─────────────────────────────────────────────────────────────────
-  (function () {
-    var items = document.querySelectorAll(".melding-item");
-    items.forEach(function (item) {
-      var ruimte = item.getAttribute("data-ruimte") || "";
-      var datum = item.getAttribute("data-datum") || "";
-
-      var onderwerp = "Ik heb dit ook: " + ruimte + (datum ? " (" + datum + ")" : "");
-      var tekst =
-        "Ik wilde laten weten dat ik deze eerder gemelde storing ook herken:\n\n" +
-        "Ruimte: " + ruimte + "\n" +
-        "Datum eerdere melding: " + datum + "\n\n" +
-        "(Optioneel: laat hieronder uw naam en adres achter als u dat wilt.)";
-
-      var link = document.createElement("a");
-      link.className = "knop secundair";
-      link.href =
-        "mailto:" + CONTACT_EMAIL_TESTFASE +
-        "?subject=" + encodeURIComponent(onderwerp) +
-        "&body=" + encodeURIComponent(tekst);
-      link.textContent = "Ik heb dit ook";
-
-      item.appendChild(link);
-    });
-  })();
+  var REPARATIE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
 </script>
 
 <script>
   // ─────────────────────────────────────────────────────────────────
   // KEUZE: EIGEN WONING OF ALGEMENE RUIMTE
-  //
-  // Bewust twee losse Microsoft Forms/flows (zie instructies.md) —
-  // deze pagina toont alleen het bijbehorende blok zodra een bewoner
-  // een keuze heeft gemaakt, zodat ze niet allebei tegelijk te zien
-  // zijn en de bewoner niet per ongeluk het verkeerde formulier invult.
   // ─────────────────────────────────────────────────────────────────
   (function () {
     var knopEigen = document.getElementById("keuze-eigen-woning");
@@ -474,182 +657,232 @@
 
 <script>
   // ─────────────────────────────────────────────────────────────────
-  // PERSOONLIJKE LINKS
-  //
-  // Deze pagina wordt bereikt via de knop "Reparatieverzoek starten"
-  // op de hoofdpagina, die de linkparameters (?voornaam=...&huisnummer=...)
-  // gewoon doorgeeft. Hieronder worden die gegevens weer uitgelezen en
-  // gebruikt om zowel het eigen-woning- als het algemene-ruimte-formulier
-  // vooraf in te vullen: Voornaam, Achternaam, Telefoonnummer, E-mailadres,
-  // Straatnaam, Huisnummer, Postcode en Plaats. Bewust NIET vooraf
-  // ingevuld: de keuze "om welke ruimte gaat het", de omschrijving van de
-  // klacht, de privacy-akkoordvakjes en de "gelezen"-bevestiging — die
-  // moet elke bewoner zelf, bewust, per melding invullen.
-  //
-  // Ontbreekt een gegeven bij een bewoner (bijv. geen telefoonnummer
-  // bekend), dan vult vulSjabloonIn() daar altijd een lege waarde in
-  // — nooit tekst als "onbekend" — dus dat vakje blijft gewoon leeg.
+  // PERSOONLIJKE LINKS — vult de contactvelden van beide formulieren
+  // automatisch in op basis van de linkparameters uit de QR-code/
+  // persoonlijke link (?voornaam=...&huisnummer=...). Bewust NIET
+  // vooraf ingevuld: verdieping, waar-is-het-probleem, type storing,
+  // omschrijving, foto, en de akkoordvakjes — dat vult elke bewoner
+  // zelf, bewust, per melding in.
   // ─────────────────────────────────────────────────────────────────
-
-  var REPARATIE_EIGEN_WONING_TEMPLATE = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUNDhVWk05RkM2QzhLT1FETklHSVFFSUdLQi4u&rf9d9b91c41a9477e80783f20e66a5944={VOORNAAM}&r117e4c00d05b44e4af9b50df046ca66b={ACHTERNAAM}&rc3bc4b25d52943f8b682d7b4cbad7fcd={TELEFOON}&r8226526d607d4b10a1f19a672b672524={EMAIL}&r9b7580e85b8240049cc437e7ff1664c3={STRAATNAAM}&re6069e85e89345f7a10c368bd257cdfc={HUISNUMMER}&rf2b2ea1f22de40d987c25124f2a43cee={POSTCODE}&r4cf7f542214d40ba803a66931f6fcba2={PLAATS}";
-  var REPARATIE_ALGEMENE_RUIMTE_TEMPLATE = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUQk41UkZZR0hEMDVSU0VEOTNWNUhMNVBPMS4u&rf9d9b91c41a9477e80783f20e66a5944={VOORNAAM}&r117e4c00d05b44e4af9b50df046ca66b={ACHTERNAAM}&rc3bc4b25d52943f8b682d7b4cbad7fcd={TELEFOON}&r8226526d607d4b10a1f19a672b672524={EMAIL}&r9b7580e85b8240049cc437e7ff1664c3={STRAATNAAM}&re6069e85e89345f7a10c368bd257cdfc={HUISNUMMER}&rf2b2ea1f22de40d987c25124f2a43cee={POSTCODE}&r4cf7f542214d40ba803a66931f6fcba2={PLAATS}";
-
-  function vulSjabloonIn(template, gegevens) {
-    return template
-      .replace("{VOORNAAM}", encodeURIComponent(gegevens.voornaam || ""))
-      .replace("{ACHTERNAAM}", encodeURIComponent(gegevens.achternaam || ""))
-      .replace("{TELEFOON}", encodeURIComponent(gegevens.telefoon || ""))
-      .replace("{EMAIL}", encodeURIComponent(gegevens.email || ""))
-      .replace("{STRAATNAAM}", encodeURIComponent(gegevens.straatnaam || ""))
-      .replace("{HUISNUMMER}", encodeURIComponent(gegevens.huisnummer || ""))
-      .replace("{POSTCODE}", encodeURIComponent(gegevens.postcode || ""))
-      .replace("{PLAATS}", encodeURIComponent(gegevens.plaats || ""));
-  }
-
-  function vulPersoonlijkeLinkIn(elementId, template, gegevens) {
-    var el = document.getElementById(elementId);
-    if (!el || !template) return;
-    el.setAttribute("href", vulSjabloonIn(template, gegevens));
-  }
-
-  function vulIframeIn(elementId, template, gegevens) {
-    var el = document.getElementById(elementId);
-    if (!el || !template) return;
-    var url = vulSjabloonIn(template, gegevens);
-    el.src = url + (url.indexOf("?") > -1 ? "&" : "?") + "embed=true";
-  }
-
   (function () {
     var params = new URLSearchParams(window.location.search);
     var gegevens = {
-      voornaam: params.get("voornaam"),
-      achternaam: params.get("achternaam"),
-      telefoon: params.get("telefoon"),
-      email: params.get("email"),
-      straatnaam: params.get("straatnaam"),
-      huisnummer: params.get("huisnummer"),
-      postcode: params.get("postcode"),
-      plaats: params.get("plaats")
+      voornaam: params.get("voornaam") || "",
+      achternaam: params.get("achternaam") || "",
+      telefoon: params.get("telefoon") || "",
+      email: params.get("email") || "",
+      straatnaam: params.get("straatnaam") || "",
+      huisnummer: params.get("huisnummer") || "",
+      postcode: params.get("postcode") || "",
+      plaats: params.get("plaats") || ""
     };
-    var isPersoonlijk = gegevens.voornaam || gegevens.achternaam || gegevens.telefoon ||
-      gegevens.email || gegevens.straatnaam || gegevens.huisnummer || gegevens.postcode || gegevens.plaats;
 
-    // "terug"-link geeft dezelfde linkparameters mee terug naar de hoofdpagina
     var terugLink = document.getElementById("link-terug");
     if (terugLink) {
       terugLink.href = terugLink.getAttribute("href").split("?")[0] + window.location.search;
     }
 
-    if (isPersoonlijk) {
-      vulPersoonlijkeLinkIn("link-reparatie-eigen", REPARATIE_EIGEN_WONING_TEMPLATE, gegevens);
-      vulIframeIn("frame-reparatie-eigen", REPARATIE_EIGEN_WONING_TEMPLATE, gegevens);
-      vulPersoonlijkeLinkIn("link-reparatie-algemeen", REPARATIE_ALGEMENE_RUIMTE_TEMPLATE, gegevens);
-      vulIframeIn("frame-reparatie-algemeen", REPARATIE_ALGEMENE_RUIMTE_TEMPLATE, gegevens);
-    }
+    ["eigen", "algemeen"].forEach(function (prefix) {
+      var zet = function (veld, waarde) {
+        var el = document.getElementById(prefix + "-" + veld);
+        if (el && waarde) el.value = waarde;
+      };
+      zet("voornaam", gegevens.voornaam);
+      zet("achternaam", gegevens.achternaam);
+      zet("telefoon", gegevens.telefoon);
+      zet("email", gegevens.email);
+      zet("straatnaam", gegevens.straatnaam);
+      zet("huisnummer", gegevens.huisnummer);
+      zet("postcode", gegevens.postcode);
+      zet("woonplaats", gegevens.plaats);
+    });
   })();
 </script>
 
 <script>
   // ─────────────────────────────────────────────────────────────────
-  // FOTO VAN DE STORING (alleen bij eigen woning — zie instructies.md)
-  //
-  // Microsoft Forms ondersteunt geen bestand-upload voor bewoners die
-  // zonder account reageren, dus dit loopt bewust los van het
-  // formulier — en dus ook los van de e-mail die Power Automate al
-  // stuurt. Het gaat in twee duidelijke stappen, met een knop per stap:
-  //   1) "Maak een foto" opent de camera van de telefoon
-  //      (capture="environment"); de gemaakte foto verschijnt meteen
-  //      als voorbeeld op de pagina.
-  //   2) "Verstuur foto" gebruikt daarna het "delen"-menu van de
-  //      telefoon zelf (Web Share API) zodat de bewoner de foto met
-  //      één tik als bijlage kan meesturen met een e-mail (of
-  //      WhatsApp e.d.) — dit wordt dan een aparte, opvolgende e-mail
-  //      naast de automatische e-mail met de formuliergegevens.
-  // Werkt delen niet — bijvoorbeeld op een computer zonder
-  // camera/deel-functie — dan wordt de foto gewoon gedownload, met
-  // uitleg om 'm handmatig bij te voegen.
+  // FOTO — verplicht onderdeel van het formulier (geen aparte stap
+  // meer). De foto wordt in de browser verkleind (max. 1600px, JPEG)
+  // voordat 'm wordt meegestuurd, zodat het versturen ook op een
+  // trage mobiele verbinding goed werkt.
   // ─────────────────────────────────────────────────────────────────
-  (function () {
-    // Dezelfde foto-eerst-dan-formulier-logica wordt hieronder voor beide
-    // secties opgezet (eigen woning én algemene ruimte) — vandaar deze ene
-    // herbruikbare functie met de element-id's als parameter.
-    function initFotoFlow(idSuffix) {
-      var suf = idSuffix ? "-" + idSuffix : "";
-      var knopFoto = document.getElementById("knop-foto" + suf);
-      var knopVerstuur = document.getElementById("knop-verstuur-foto" + suf);
-      var knopGeenFoto = document.getElementById("knop-geen-foto" + suf);
-      var input = document.getElementById("input-foto" + suf);
-      var voorbeeldWrap = document.getElementById("foto-voorbeeld-wrap" + suf);
-      var voorbeeld = document.getElementById("foto-voorbeeld" + suf);
-      var formulierVergrendeld = document.getElementById("formulier-vergrendeld" + suf);
-      var formulierOntgrendeld = document.getElementById("formulier-ontgrendeld" + suf);
-      if (!knopFoto || !knopVerstuur || !input || !voorbeeldWrap || !voorbeeld) return;
+  var fotoData = { eigen: null, algemeen: null };
 
-      var huidigBestand = null;
-
-      function ontgrendelFormulier() {
-        if (formulierVergrendeld) formulierVergrendeld.hidden = true;
-        if (formulierOntgrendeld) {
-          formulierOntgrendeld.hidden = false;
-          formulierOntgrendeld.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  function verkleinFoto(bestand, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var MAX = 1600;
+        var w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w >= h) { h = Math.round(h * (MAX / w)); w = MAX; }
+          else { w = Math.round(w * (MAX / h)); h = MAX; }
         }
-      }
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { callback(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { callback(null); };
+    reader.readAsDataURL(bestand);
+  }
 
-      knopFoto.addEventListener("click", function () {
-        input.click();
-      });
+  (function () {
+    ["eigen", "algemeen"].forEach(function (prefix) {
+      var knop = document.querySelector('[data-foto-knop="' + prefix + '"]');
+      var input = document.querySelector('[data-foto-input="' + prefix + '"]');
+      var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
+      var voorbeeld = document.querySelector('[data-foto-voorbeeld="' + prefix + '"]');
+      var status = document.querySelector('[data-foto-status="' + prefix + '"]');
+      var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
+      if (!knop || !input) return;
+
+      knop.addEventListener("click", function () { input.click(); });
 
       input.addEventListener("change", function () {
         var bestand = input.files && input.files[0];
         if (!bestand) return;
-        huidigBestand = bestand;
 
-        voorbeeld.src = URL.createObjectURL(bestand);
-        voorbeeldWrap.hidden = false;
-        knopVerstuur.hidden = false;
-        knopVerstuur.focus();
-      });
+        if (status) status.textContent = "Foto wordt verwerkt...";
 
-      knopVerstuur.addEventListener("click", function () {
-        if (!huidigBestand) return;
-
-        var onderwerp = "Foto bij reparatieverzoek";
-        var tekst = "Foto bij mijn reparatieverzoek — s.v.p. bijvoegen bij de melding en versturen naar " + CONTACT_EMAIL_TESTFASE + ".";
-
-        if (navigator.canShare && navigator.canShare({ files: [huidigBestand] })) {
-          navigator.share({ files: [huidigBestand], title: onderwerp, text: tekst }).catch(function () {
-            // bewoner annuleerde het deelvenster — geen verdere actie nodig
-          });
-          ontgrendelFormulier();
-          return;
-        }
-
-        // Geen ondersteuning voor delen met bijlage (bijv. op een computer):
-        // foto downloaden, zodat de bewoner 'm zelf kan bijvoegen aan een e-mail.
-        try {
-          var url = URL.createObjectURL(huidigBestand);
-          var a = document.createElement("a");
-          a.href = url;
-          a.download = "foto-storing.jpg";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.alert("De foto is gedownload. Voeg 'm handmatig toe als bijlage aan een e-mail naar " + CONTACT_EMAIL_TESTFASE + ".");
-        } catch (e) {}
-
-        ontgrendelFormulier();
-      });
-
-      if (knopGeenFoto) {
-        knopGeenFoto.addEventListener("click", function () {
-          ontgrendelFormulier();
+        verkleinFoto(bestand, function (dataUrl) {
+          if (!dataUrl) {
+            if (status) status.textContent = "Dit lukte niet — probeer een andere foto.";
+            return;
+          }
+          fotoData[prefix] = dataUrl;
+          if (voorbeeld) voorbeeld.src = dataUrl;
+          if (voorbeeldWrap) voorbeeldWrap.hidden = false;
+          if (status) status.textContent = "Foto toegevoegd ✓";
+          if (veld) veld.classList.add("heeft-foto");
         });
+      });
+    });
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // VERSTUREN — bouwt één gegevensobject en stuurt dat naar het
+  // Google Apps Script (REPARATIE_SCRIPT_URL hierboven), dat de rij
+  // aan de spreadsheet toevoegt en de e-mail(s) verstuurt, inclusief
+  // de foto als bijlage.
+  // ─────────────────────────────────────────────────────────────────
+  function verzamelAangevinkt(container) {
+    if (!container) return [];
+    var waarden = [];
+    container.querySelectorAll('input[type="checkbox"]:checked').forEach(function (vak) {
+      if (vak.hasAttribute("data-andere-vak")) {
+        var tekstVeld = container.querySelector('[data-andere-tekst="' + vak.getAttribute("data-andere-vak") + '"]');
+        waarden.push(tekstVeld && tekstVeld.value ? tekstVeld.value : "Andere");
+      } else {
+        waarden.push(vak.value);
       }
+    });
+    return waarden;
+  }
+
+  function initMeldFormulier(prefix, soort) {
+    var form = document.getElementById("form-" + prefix);
+    var status = document.querySelector('[data-status="' + prefix + '"]');
+    if (!form) return;
+
+    function toonStatus(tekst, soortStatus) {
+      if (!status) return;
+      status.hidden = false;
+      status.textContent = tekst;
+      status.className = "form-status " + soortStatus;
     }
 
-    initFotoFlow(null);          // eigen woning (geen achtervoegsel, bestaande id's)
-    initFotoFlow("algemeen");    // algemene ruimte
-  })();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var waarContainer = document.querySelector('[data-waar="' + prefix + '"]');
+      var privacyContainer = document.querySelector('[data-privacy="' + prefix + '"]');
+      var verdiepingVak = document.querySelector('input[name="verdieping-' + prefix + '"]:checked');
+      var gelezenVak = document.querySelector('[data-gelezen="' + prefix + '"]');
+
+      var waarGekozen = verzamelAangevinkt(waarContainer);
+      var privacyGekozen = verzamelAangevinkt(privacyContainer);
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      if (waarGekozen.length === 0) {
+        toonStatus("Kies bij “Waar is het probleem” minstens één optie.", "fout");
+        return;
+      }
+      if (privacyGekozen.length === 0) {
+        toonStatus("Vink bij het privacy-akkoord minstens één optie aan.", "fout");
+        return;
+      }
+      if (!gelezenVak || !gelezenVak.checked) {
+        toonStatus("Vink aan dat u ‘Besluit kleine herstellingen’ heeft gelezen.", "fout");
+        return;
+      }
+      if (!fotoData[prefix]) {
+        toonStatus("Voeg een foto van de storing toe voordat u verstuurt.", "fout");
+        return;
+      }
+      if (!REPARATIE_SCRIPT_URL) {
+        toonStatus("Het formulier is nog niet volledig ingesteld (ontbrekende koppeling). Neem contact op met de bewonerscommissie.", "fout");
+        return;
+      }
+
+      var data = {
+        soort: soort,
+        voornaam: document.getElementById(prefix + "-voornaam").value,
+        achternaam: document.getElementById(prefix + "-achternaam").value,
+        telefoon: document.getElementById(prefix + "-telefoon").value,
+        email: document.getElementById(prefix + "-email").value,
+        straatnaam: document.getElementById(prefix + "-straatnaam").value,
+        huisnummer: document.getElementById(prefix + "-huisnummer").value,
+        verdieping: verdiepingVak ? verdiepingVak.value : "",
+        postcode: document.getElementById(prefix + "-postcode").value,
+        plaats: document.getElementById(prefix + "-woonplaats").value,
+        waarProbleem: waarGekozen.join("; "),
+        typeStoring: document.getElementById(prefix + "-type-storing").value,
+        watIsHetProbleem: document.getElementById(prefix + "-omschrijving").value,
+        privacyKeuze: privacyGekozen.join("; "),
+        fotoBase64: fotoData[prefix],
+        fotoType: "image/jpeg"
+      };
+
+      var knopVersturen = form.querySelector('button[type="submit"]');
+      if (knopVersturen) knopVersturen.disabled = true;
+      toonStatus("Bezig met versturen...", "bezig");
+
+      fetch(REPARATIE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data)
+      }).then(function () {
+        toonStatus("Bedankt! Uw melding is verstuurd naar de bewonerscommissie.", "gelukt");
+        form.reset();
+        fotoData[prefix] = null;
+        var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
+        var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
+        var fotoStatus = document.querySelector('[data-foto-status="' + prefix + '"]');
+        if (veld) veld.classList.remove("heeft-foto");
+        if (voorbeeldWrap) voorbeeldWrap.hidden = true;
+        if (fotoStatus) fotoStatus.textContent = "Nog geen foto toegevoegd.";
+        if (knopVersturen) knopVersturen.disabled = false;
+      }).catch(function () {
+        toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+        if (knopVersturen) knopVersturen.disabled = false;
+      });
+    });
+  }
+
+  initMeldFormulier("eigen", "Eigen woning");
+  initMeldFormulier("algemeen", "Algemene ruimte");
 </script>
 
 </body>

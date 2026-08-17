@@ -322,8 +322,7 @@
           <h3>Recreatiezaal reserveren</h3>
           <p>Vraag hieronder een datum aan voor de recreatiezaal.</p>
           <div class="knop-rij">
-            <!-- TODO: vervang "#" door de link naar het reserveringsformulier zodra dat klaar is -->
-            <a class="knop" id="link-zaal" href="#">Zaal aanvragen</a>
+            <a class="knop" id="link-zaal" href="zaal.html">Zaal aanvragen</a>
             <a class="knop secundair" href="#agenda">Bezetting bekijken</a>
           </div>
         </div>
@@ -390,7 +389,7 @@
       <h2>Vraag aan de bewonerscommissie</h2>
       <p>Heeft u een vraag, opmerking of suggestie? Laat het ons weten, wij reageren zo snel mogelijk.</p>
       <div class="knop-rij">
-        <a class="knop" id="link-vraag" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUNUQ2OE1PQzFHMkpDVjVaQkhaUVdaWUNGNS4u" target="_blank" rel="noopener">Formulier openen</a>
+        <a class="knop" id="link-vraag" href="vraag.html">Vraag stellen</a>
       </div>
     </div>
 
@@ -511,43 +510,13 @@
   // maakt is de link waarmee iemand 'm opent, bijvoorbeeld:
   //   index.html?voornaam=Piet&achternaam=Bakker&straatnaam=Polanenstraat&huisnummer=12
   //
-  // Hieronder worden die gegevens gelezen uit de link, en gebruikt om
-  // de knop "Zaal aanvragen" automatisch te wijzen naar de vooraf-
-  // ingevulde versie van het Microsoft Form. De reparatieverzoek-knop
-  // wijst naar een aparte pagina (reparatieverzoek.html) — die
-  // gegevens worden daar simpelweg meegegeven door de linkparameters
-  // (?voornaam=...&achternaam=...) door te geven aan die pagina.
-  //
-  // ZAAL_TEMPLATE staat nog op null: zodra het reserveringsformulier
-  // klaar is, doorloop je dezelfde stappen (Forms > "..." > "Vooraf
-  // ingevulde antwoorden inschakelen" > velden invullen > link
-  // ophalen) en zet je 'm hier neer in hetzelfde formaat.
+  // Hieronder worden die gegevens gelezen uit de link. De knoppen
+  // "Reparatieverzoek starten", "Vraag stellen" en "Zaal aanvragen"
+  // wijzen elk naar hun eigen aparte pagina (reparatieverzoek.html,
+  // vraag.html, zaal.html) — die gegevens worden simpelweg meegegeven
+  // door de linkparameters (?voornaam=...&achternaam=...) door te
+  // geven aan die pagina; elke pagina vult zelf de contactvelden in.
   // ─────────────────────────────────────────────────────────────────
-
-  var ZAAL_TEMPLATE = null; // TODO: zodra het reserveringsformulier klaar is, hier hetzelfde soort link neerzetten
-
-  // "Vraag aan de bewonerscommissie" — vult Voornaam, Achternaam, Huisnummer,
-  // Telefoonnummer en E-mailadres automatisch voor. Het vraag/opmerking-veld
-  // zelf blijft bewust leeg, dat typt de bewoner steeds zelf.
-  var VRAAG_TEMPLATE = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAbOVHApUNUQ2OE1PQzFHMkpDVjVaQkhaUVdaWUNGNS4u&r7491ff376338470ab19cada01bc20d70={VOORNAAM}&r36250e4510f34cf4949b24196bca1971={ACHTERNAAM}&r99b601aa6bb8422aa0c57d8dcd7a73ff={HUISNUMMER}&ra4701bade34440f0aaf505115f9bb69b={EMAIL}&r872f66481cc5434d9bc7afad42376687={TELEFOON}";
-
-  function vulSjabloonIn(template, gegevens) {
-    return template
-      .replace("{VOORNAAM}", encodeURIComponent(gegevens.voornaam || ""))
-      .replace("{ACHTERNAAM}", encodeURIComponent(gegevens.achternaam || ""))
-      .replace("{TELEFOON}", encodeURIComponent(gegevens.telefoon || ""))
-      .replace("{EMAIL}", encodeURIComponent(gegevens.email || ""))
-      .replace("{STRAATNAAM}", encodeURIComponent(gegevens.straatnaam || ""))
-      .replace("{HUISNUMMER}", encodeURIComponent(gegevens.huisnummer || ""))
-      .replace("{POSTCODE}", encodeURIComponent(gegevens.postcode || ""))
-      .replace("{PLAATS}", encodeURIComponent(gegevens.plaats || ""));
-  }
-
-  function vulPersoonlijkeLinkIn(elementId, template, gegevens) {
-    var el = document.getElementById(elementId);
-    if (!el || !template) return;
-    el.setAttribute("href", vulSjabloonIn(template, gegevens));
-  }
 
   (function () {
     var params = new URLSearchParams(window.location.search);
@@ -564,18 +533,17 @@
     var isPersoonlijk = gegevens.voornaam || gegevens.achternaam || gegevens.telefoon ||
       gegevens.email || gegevens.straatnaam || gegevens.huisnummer || gegevens.postcode || gegevens.plaats;
 
-    // reparatieverzoek-knop wijst naar de aparte pagina, met dezelfde
-    // linkparameters erachter geplakt (ook als er geen personalisatie is,
-    // dan is window.location.search gewoon leeg)
-    var reparatieLink = document.getElementById("link-reparatie");
-    if (reparatieLink) {
-      reparatieLink.href = reparatieLink.getAttribute("href").split("?")[0] + window.location.search;
-    }
+    // reparatieverzoek-, vraag- en zaal-knop wijzen naar hun eigen aparte
+    // pagina, met dezelfde linkparameters erachter geplakt (ook als er
+    // geen personalisatie is, dan is window.location.search gewoon leeg)
+    ["link-reparatie", "link-vraag", "link-zaal"].forEach(function (id) {
+      var link = document.getElementById(id);
+      if (link) {
+        link.href = link.getAttribute("href").split("?")[0] + window.location.search;
+      }
+    });
 
     if (isPersoonlijk) {
-      vulPersoonlijkeLinkIn("link-zaal", ZAAL_TEMPLATE, gegevens);
-      vulPersoonlijkeLinkIn("link-vraag", VRAAG_TEMPLATE, gegevens);
-
       // onthoud lokaal (alleen op dit toestel) wie deze pagina geopend heeft,
       // zodat toekomstige functies (zoals het "NIEUW"-label bij mededelingen)
       // hierop kunnen voortbouwen
