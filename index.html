@@ -178,6 +178,45 @@
     font-size: 1rem;
   }
 
+  .install-balk {
+    max-width: 760px;
+    margin: 20px auto 0 auto;
+    padding: 16px 20px;
+    background: #eef3ef;
+    border: 1px solid var(--groen);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .install-balk[hidden] { display: none; }
+  .install-balk p {
+    margin: 0;
+    flex: 1 1 260px;
+    color: var(--groen-donker);
+    font-weight: 600;
+  }
+  .install-balk .knop {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  .install-sluit {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--groen-donker);
+    cursor: pointer;
+    padding: 6px 10px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .install-sluit:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+
   section.mededelingen {
     background: var(--kaart);
     border: 1px solid var(--rand);
@@ -295,6 +334,13 @@
   <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="240" height="240">
   <h1>De Gouden Ezel</h1>
 </header>
+
+<div class="install-balk" id="install-balk" hidden>
+  <p id="install-tekst-android" hidden>Installeer deze app op uw telefoon voor snelle toegang vanaf uw beginscherm.</p>
+  <p id="install-tekst-ios" hidden>Installeer deze app: tik onderin Safari op het deelicoon (vierkant met pijl omhoog) en kies "Zet op beginscherm".</p>
+  <button type="button" class="knop" id="knop-installeer" hidden>App installeren</button>
+  <button type="button" class="install-sluit" id="install-sluit" aria-label="Melding sluiten">✕</button>
+</div>
 
 <main id="inhoud">
 
@@ -520,6 +566,71 @@
     } else {
       if (link) link.hidden = true;
       if (nogNiet) nogNiet.hidden = false;
+    }
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // APP INSTALLEREN
+  //
+  // Op Android/Chrome (en desktop Chrome/Edge) kan de browser de app
+  // automatisch aanbieden om te installeren via het "beforeinstallprompt"-
+  // event — daarmee kunnen we een eigen "App installeren"-knop tonen die
+  // de installatie direct start, zonder omweg via het browsermenu.
+  //
+  // Op iPhone (Safari) bestaat deze automatische installatie niet — dat
+  // is een beperking van Apple, geen keuze van deze website. Daar tonen
+  // we in plaats daarvan een korte tekst met de handmatige stap.
+  // ─────────────────────────────────────────────────────────────────
+  (function () {
+    var balk = document.getElementById("install-balk");
+    var knopInstall = document.getElementById("knop-installeer");
+    var tekstAndroid = document.getElementById("install-tekst-android");
+    var tekstIos = document.getElementById("install-tekst-ios");
+    var sluitKnop = document.getElementById("install-sluit");
+    if (!balk) return;
+
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+    if (isStandalone()) return; // al geïnstalleerd: geen melding tonen
+
+    var isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    var deferredPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      balk.hidden = false;
+      if (knopInstall) knopInstall.hidden = false;
+      if (tekstAndroid) tekstAndroid.hidden = false;
+    });
+
+    if (isIos) {
+      balk.hidden = false;
+      if (tekstIos) tekstIos.hidden = false;
+    }
+
+    if (knopInstall) {
+      knopInstall.addEventListener("click", function () {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () {
+          deferredPrompt = null;
+          balk.hidden = true;
+        });
+      });
+    }
+
+    window.addEventListener("appinstalled", function () {
+      balk.hidden = true;
+    });
+
+    if (sluitKnop) {
+      sluitKnop.addEventListener("click", function () {
+        balk.hidden = true;
+      });
     }
   })();
 </script>
