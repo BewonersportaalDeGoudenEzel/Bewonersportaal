@@ -468,16 +468,12 @@
   <section class="mededelingen" id="mededelingen" aria-labelledby="mededelingen-titel">
     <h2 id="mededelingen-titel">📣 Mededelingen van de bewonerscommissie</h2>
 
-    <div class="mededeling">
-      <div class="datum">14 AUGUSTUS 2026</div>
-      <h3>Welkom op het nieuwe bewonersportaal</h3>
-      <p>Vanaf nu kunt u reparatieverzoeken, het huren van de recreatiezaal en vragen aan de commissie allemaal via deze pagina regelen.</p>
-    </div>
-
-    <div class="mededeling">
-      <div class="datum">3 AUGUSTUS 2026</div>
-      <h3>Voorbeeldmededeling</h3>
-      <p>Vervang deze tekst door uw eigen mededeling, bijvoorbeeld over gepland onderhoud of een oproep voor de volgende vergadering.</p>
+    <div id="mededelingen-lijst">
+      <div class="mededeling">
+        <div class="datum">14 AUGUSTUS 2026</div>
+        <h3>Welkom op het nieuwe bewonersportaal</h3>
+        <p>Vanaf nu kunt u reparatieverzoeken, het huren van de recreatiezaal en vragen aan de commissie allemaal via deze pagina regelen.</p>
+      </div>
     </div>
   </section>
 
@@ -567,6 +563,58 @@
       if (link) link.hidden = true;
       if (nogNiet) nogNiet.hidden = false;
     }
+  })();
+</script>
+
+<script>
+  // Mededelingen worden live opgehaald bij hetzelfde Apps Script als de
+  // andere formulieren (?actie=mededelingen) — geplaatst via het
+  // niet-openbare mededeling-plaatsen.html. Lukt het ophalen niet
+  // (bijv. geen internet), dan blijft gewoon de tekst hieronder in de
+  // pagina staan als terugvaloptie.
+  var MEDEDELINGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+
+  (function () {
+    var lijst = document.getElementById("mededelingen-lijst");
+    if (!MEDEDELINGEN_SCRIPT_URL || !lijst) return;
+
+    fetch(MEDEDELINGEN_SCRIPT_URL + "?actie=mededelingen")
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (!json || !json.ok || !Array.isArray(json.mededelingen)) return;
+
+        lijst.innerHTML = "";
+
+        if (json.mededelingen.length === 0) {
+          var leeg = document.createElement("p");
+          leeg.textContent = "Er zijn nog geen mededelingen geplaatst.";
+          lijst.appendChild(leeg);
+          return;
+        }
+
+        json.mededelingen.forEach(function (m) {
+          var blok = document.createElement("div");
+          blok.className = "mededeling";
+
+          var datum = document.createElement("div");
+          datum.className = "datum";
+          datum.textContent = (m.datum || "").toString().toUpperCase();
+
+          var titel = document.createElement("h3");
+          titel.textContent = m.titel || "";
+
+          var tekst = document.createElement("p");
+          tekst.textContent = m.tekst || "";
+
+          blok.appendChild(datum);
+          blok.appendChild(titel);
+          blok.appendChild(tekst);
+          lijst.appendChild(blok);
+        });
+      })
+      .catch(function () {
+        // geen internet of script niet bereikbaar: laat de bestaande tekst gewoon staan
+      });
   })();
 </script>
 

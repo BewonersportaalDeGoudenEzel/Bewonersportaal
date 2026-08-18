@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<meta name="robots" content="noindex, nofollow">
+<title>Mededeling plaatsen — De Gouden Ezel</title>
+<meta name="description" content="Alleen voor de bewonerscommissie: een mededeling plaatsen op het bewonersportaal.">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --oranje: #b3540f;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+    font-size: 1rem;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #ffffff;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    margin-bottom: 14px;
+  }
+  header h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.7rem;
+    line-height: 1.25;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 60px 16px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .let-op {
+    background: #fdeee0;
+    border: 1px solid var(--oranje);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: #7a3a0a;
+    font-size: 0.95rem;
+  }
+
+  .knop-rij { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+  .knop {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 16px 24px;
+    border-radius: 10px;
+    color: #fff;
+    background: var(--groen-donker);
+    min-height: 44px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+  }
+  .knop:hover, .knop:focus { background: #16311f; }
+  .knop:disabled { background: #9aa79f; cursor: not-allowed; }
+  a.knop:focus, button.knop:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+
+  .intro-tekst { margin: 0 0 4px 0; }
+
+  .meld-formulier {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .veld-groep { display: flex; flex-direction: column; gap: 8px; }
+  .veld-groep > label { font-weight: 600; }
+  .veld-groep input[type="text"],
+  .veld-groep input[type="password"],
+  .veld-groep textarea {
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 2px solid var(--rand);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--tekst);
+    width: 100%;
+  }
+  .veld-groep input:focus, .veld-groep textarea:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 1px;
+    border-color: var(--groen-donker);
+  }
+  .veld-groep textarea { min-height: 130px; resize: vertical; }
+
+  .form-status {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .form-status.bezig { background: #f1f2ef; color: #444; }
+  .form-status.gelukt { background: #eef3ef; color: var(--groen-donker); }
+  .form-status.fout { background: #fdeee0; color: var(--oranje); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Ga direct naar de inhoud</a>
+
+<header>
+  <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="140" height="140">
+  <h1>Mededeling plaatsen</h1>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
+
+  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Bewoners zien hier nergens een link naartoe op de website. Vul het wachtwoord in dat de commissie onderling afgesproken heeft — zonder het juiste wachtwoord wordt er niets geplaatst.</p>
+
+  <div class="kaart">
+    <p class="intro-tekst">Wat u hier invult, verschijnt direct op de hoofdpagina bij "Mededelingen" — er hoeft niets naar GitHub geüpload te worden.</p>
+
+    <form class="meld-formulier" id="form-mededeling" novalidate>
+      <div class="veld-groep">
+        <label for="mededeling-wachtwoord">Wachtwoord *</label>
+        <input type="password" id="mededeling-wachtwoord" name="wachtwoord" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="mededeling-titel">Titel *</label>
+        <input type="text" id="mededeling-titel" name="titel" required>
+      </div>
+      <div class="veld-groep">
+        <label for="mededeling-tekst">Tekst *</label>
+        <textarea id="mededeling-tekst" name="tekst" required></textarea>
+      </div>
+
+      <div class="knop-rij">
+        <button type="submit" class="knop">Mededeling plaatsen</button>
+      </div>
+      <p class="form-status" data-status="mededeling" hidden></p>
+    </form>
+  </div>
+</main>
+
+<script>
+  // Zelfde Apps Script-koppeling als de andere formulieren — hetzelfde
+  // script verwerkt ook mededelingen (te herkennen aan
+  // verzoekType: "mededeling" hieronder), maar controleert daarbij
+  // eerst het wachtwoord.
+  var MEDEDELING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+</script>
+
+<script>
+  (function () {
+    var form = document.getElementById("form-mededeling");
+    var status = document.querySelector('[data-status="mededeling"]');
+    if (!form) return;
+
+    function toonStatus(tekst, soort) {
+      if (!status) return;
+      status.hidden = false;
+      status.textContent = tekst;
+      status.className = "form-status " + soort;
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      if (!MEDEDELING_SCRIPT_URL) {
+        toonStatus("Het formulier is nog niet volledig ingesteld.", "fout");
+        return;
+      }
+
+      var data = {
+        verzoekType: "mededeling",
+        wachtwoord: document.getElementById("mededeling-wachtwoord").value,
+        titel: document.getElementById("mededeling-titel").value,
+        tekst: document.getElementById("mededeling-tekst").value
+      };
+
+      var knop = form.querySelector('button[type="submit"]');
+      if (knop) knop.disabled = true;
+      toonStatus("Bezig met plaatsen...", "bezig");
+
+      // Let op: hier gebruiken we BEWUST geen "mode: no-cors" (zoals bij
+      // de andere formulieren), omdat we de echte serverreactie nodig
+      // hebben om te weten of het wachtwoord goed was.
+      fetch(MEDEDELING_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data)
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            toonStatus("Geplaatst! De mededeling staat nu op de hoofdpagina.", "gelukt");
+            form.reset();
+          } else {
+            toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
+          }
+          if (knop) knop.disabled = false;
+        })
+        .catch(function () {
+          toonStatus("Kon geen verbinding maken. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+          if (knop) knop.disabled = false;
+        });
+    });
+  })();
+</script>
+
+</body>
+</html>
