@@ -122,6 +122,7 @@
   }
   .veld-groep { display: flex; flex-direction: column; gap: 8px; }
   .veld-groep > label { font-weight: 600; }
+  .veld-hulp { font-weight: 400; font-size: 0.85rem; color: #555; }
   .veld-groep input[type="text"],
   .veld-groep input[type="tel"],
   .veld-groep input[type="email"],
@@ -195,6 +196,10 @@
         <input type="email" id="zaal-email" name="email" required autocomplete="email">
       </div>
       <div class="veld-groep">
+        <label for="zaal-pincode">Pincode * <span class="veld-hulp">(apart van de commissie ontvangen, niet dezelfde als uw QR-code/link)</span></label>
+        <input type="text" inputmode="numeric" id="zaal-pincode" name="pincode" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
         <label for="zaal-datum">Gewenste datum *</label>
         <input type="date" id="zaal-datum" name="datum" required>
       </div>
@@ -223,7 +228,7 @@
   // Zelfde Apps Script-koppeling als reparatieverzoek.html en vraag.html —
   // hetzelfde script verwerkt alle drie de formulieren (te herkennen aan
   // verzoekType: "zaal" hieronder).
-  var ZAAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+  var ZAAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 </script>
 
 <script>
@@ -280,6 +285,7 @@
         voornaam: document.getElementById("zaal-voornaam").value,
         achternaam: document.getElementById("zaal-achternaam").value,
         huisnummer: document.getElementById("zaal-huisnummer").value,
+        pincode: document.getElementById("zaal-pincode").value,
         telefoon: document.getElementById("zaal-telefoon").value,
         email: document.getElementById("zaal-email").value,
         datum: document.getElementById("zaal-datum").value,
@@ -290,19 +296,27 @@
       if (knop) knop.disabled = true;
       toonStatus("Bezig met versturen...", "bezig");
 
+      // Let op: hier gebruiken we BEWUST geen "mode: no-cors", omdat we de
+      // echte serverreactie nodig hebben om te weten of de pincode goed was.
       fetch(ZAAL_SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(data)
-      }).then(function () {
-        toonStatus("Bedankt! Uw aanvraag is verstuurd naar de bewonerscommissie.", "gelukt");
-        form.reset();
-        if (knop) knop.disabled = false;
-      }).catch(function () {
-        toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
-        if (knop) knop.disabled = false;
-      });
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            toonStatus("Bedankt! Uw aanvraag is verstuurd naar de bewonerscommissie.", "gelukt");
+            form.reset();
+          } else {
+            toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
+          }
+          if (knop) knop.disabled = false;
+        })
+        .catch(function () {
+          toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+          if (knop) knop.disabled = false;
+        });
     });
   })();
 </script>

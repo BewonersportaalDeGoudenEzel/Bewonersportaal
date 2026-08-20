@@ -401,6 +401,10 @@
           <label for="eigen-woonplaats">Woonplaats *</label>
           <input type="text" id="eigen-woonplaats" name="woonplaats" required autocomplete="address-level2">
         </div>
+        <div class="veld-groep">
+          <label for="eigen-pincode">Pincode * <span class="veld-hulp">(apart van de commissie ontvangen, niet dezelfde als uw QR-code/link)</span></label>
+          <input type="text" inputmode="numeric" id="eigen-pincode" name="pincode" required autocomplete="off">
+        </div>
 
         <fieldset class="veld-groep">
           <legend>Waar is het probleem *</legend>
@@ -530,6 +534,10 @@
           <label for="algemeen-woonplaats">Woonplaats *</label>
           <input type="text" id="algemeen-woonplaats" name="woonplaats" required autocomplete="address-level2">
         </div>
+        <div class="veld-groep">
+          <label for="algemeen-pincode">Pincode * <span class="veld-hulp">(apart van de commissie ontvangen, niet dezelfde als uw QR-code/link)</span></label>
+          <input type="text" inputmode="numeric" id="algemeen-pincode" name="pincode" required autocomplete="off">
+        </div>
 
         <fieldset class="veld-groep">
           <legend>Waar is het probleem *</legend>
@@ -619,10 +627,10 @@
   // het formulier een duidelijke melding zien i.p.v. stil te falen.
   //
   // TESTFASE: mails gaan nu naar matsruck@gmail.com en
-  // polanenflat@outlook.com i.p.v. storingen@hoen.nl — dat staat in
+  // polanenflat@gmail.com i.p.v. storingen@hoen.nl — dat staat in
   // het Apps Script zelf geregeld (Code.gs), niet hier.
   // ─────────────────────────────────────────────────────────────────
-  var REPARATIE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+  var REPARATIE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 </script>
 
 <script>
@@ -843,6 +851,7 @@
         email: document.getElementById(prefix + "-email").value,
         straatnaam: document.getElementById(prefix + "-straatnaam").value,
         huisnummer: document.getElementById(prefix + "-huisnummer").value,
+        pincode: document.getElementById(prefix + "-pincode").value,
         verdieping: verdiepingVak ? verdiepingVak.value : "",
         postcode: document.getElementById(prefix + "-postcode").value,
         plaats: document.getElementById(prefix + "-woonplaats").value,
@@ -858,26 +867,34 @@
       if (knopVersturen) knopVersturen.disabled = true;
       toonStatus("Bezig met versturen...", "bezig");
 
+      // Let op: hier gebruiken we BEWUST geen "mode: no-cors", omdat we de
+      // echte serverreactie nodig hebben om te weten of de pincode goed was.
       fetch(REPARATIE_SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(data)
-      }).then(function () {
-        toonStatus("Bedankt! Uw melding is verstuurd naar de bewonerscommissie.", "gelukt");
-        form.reset();
-        fotoData[prefix] = null;
-        var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
-        var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
-        var fotoStatus = document.querySelector('[data-foto-status="' + prefix + '"]');
-        if (veld) veld.classList.remove("heeft-foto");
-        if (voorbeeldWrap) voorbeeldWrap.hidden = true;
-        if (fotoStatus) fotoStatus.textContent = "Nog geen foto toegevoegd.";
-        if (knopVersturen) knopVersturen.disabled = false;
-      }).catch(function () {
-        toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
-        if (knopVersturen) knopVersturen.disabled = false;
-      });
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            toonStatus("Bedankt! Uw melding is verstuurd naar de bewonerscommissie.", "gelukt");
+            form.reset();
+            fotoData[prefix] = null;
+            var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
+            var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
+            var fotoStatus = document.querySelector('[data-foto-status="' + prefix + '"]');
+            if (veld) veld.classList.remove("heeft-foto");
+            if (voorbeeldWrap) voorbeeldWrap.hidden = true;
+            if (fotoStatus) fotoStatus.textContent = "Nog geen foto toegevoegd.";
+          } else {
+            toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
+          }
+          if (knopVersturen) knopVersturen.disabled = false;
+        })
+        .catch(function () {
+          toonStatus("Het versturen is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+          if (knopVersturen) knopVersturen.disabled = false;
+        });
     });
   }
 

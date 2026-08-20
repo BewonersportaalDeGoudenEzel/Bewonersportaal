@@ -178,6 +178,54 @@
     font-size: 1rem;
   }
 
+  .pincode-balk {
+    background: var(--kaart);
+    border: 2px solid var(--groen);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .pincode-balk[hidden] { display: none; }
+  .pincode-balk h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.3rem;
+  }
+  .pincode-balk .veld-groep {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+    max-width: 260px;
+  }
+  .pincode-balk .veld-groep > label {
+    font-weight: 600;
+  }
+  .pincode-balk input[type="text"] {
+    font: inherit;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    padding: 12px 14px;
+    border: 2px solid var(--rand);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--tekst);
+    width: 100%;
+  }
+  .pincode-balk input[type="text"]:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 1px;
+    border-color: var(--groen-donker);
+  }
+  .form-status {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin: 12px 0 0 0;
+  }
+  .form-status.bezig { background: #f1f2ef; color: #444; }
+  .form-status.gelukt { background: #eef3ef; color: var(--groen-donker); }
+  .form-status.fout { background: #fdeee0; color: var(--oranje); }
+
   .install-balk {
     max-width: 760px;
     margin: 20px auto 0 auto;
@@ -343,6 +391,25 @@
 </div>
 
 <main id="inhoud">
+
+  <div class="pincode-balk" id="pincode-balk" hidden>
+    <h2>🔑 Pincode instellen</h2>
+    <p>Welkom! Voordat u de formulieren op deze pagina kunt gebruiken, stelt u eenmalig uw eigen pincode in — dat voorkomt dat een melding per ongeluk onder de verkeerde naam binnenkomt als deze link ooit gedeeld wordt. Kies een pincode van 4 cijfers. Deze is helemaal van uzelf: ook de bewonerscommissie kan hem niet terugvinden of aflezen, dus schrijf 'm ergens veilig voor uzelf op. Bent u 'm later kwijt, neem dan contact op met de bewonerscommissie — die kan de pincode wissen zodat u een nieuwe kunt instellen.</p>
+    <form id="form-pincode-instellen" novalidate>
+      <div class="veld-groep">
+        <label for="pincode-nieuw">Nieuwe pincode (4 cijfers) *</label>
+        <input type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" id="pincode-nieuw" name="pincode-nieuw" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="pincode-nieuw-herhaal">Herhaal pincode *</label>
+        <input type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" id="pincode-nieuw-herhaal" name="pincode-nieuw-herhaal" required autocomplete="off">
+      </div>
+      <div class="knop-rij">
+        <button type="submit" class="knop">Pincode instellen</button>
+      </div>
+      <p class="form-status" data-status="pincode" hidden></p>
+    </form>
+  </div>
 
   <div class="kaarten">
 
@@ -572,7 +639,7 @@
   // niet-openbare mededeling-plaatsen.html. Lukt het ophalen niet
   // (bijv. geen internet), dan blijft gewoon de tekst hieronder in de
   // pagina staan als terugvaloptie.
-  var MEDEDELINGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWj86maeY7uNFuJ5JY-iLt6rAd82Nfw__mCWfqIwLNLDoyahRxxd5u50M0aKp8uDr87A/exec";
+  var MEDEDELINGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
   (function () {
     var lijst = document.getElementById("mededelingen-lijst");
@@ -615,6 +682,91 @@
       .catch(function () {
         // geen internet of script niet bereikbaar: laat de bestaande tekst gewoon staan
       });
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // PINCODE ZELF INSTELLEN
+  //
+  // Elke bewoner stelt bij het eerste bezoek zelf een pincode in (zie
+  // apps-script-reparatieverzoek.gs.txt voor de volledige uitleg waarom).
+  // Die pincode wordt versleuteld (gehasht) opgeslagen — ook de
+  // bewonerscommissie kan 'm dus nooit aflezen. Dit blokje toont het
+  // instelformulier ALLEEN als: de link een huisnummer bevat (dus een
+  // persoonlijke link/QR is), dat huisnummer al bekend is bij de
+  // bewonerscommissie (staat al klaar in het tabblad "Bewoners", nog
+  // zonder pincode), en er nog geen pincode is ingesteld.
+  // ─────────────────────────────────────────────────────────────────
+  var PINCODE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var huisnummer = params.get("huisnummer");
+    var balk = document.getElementById("pincode-balk");
+    var form = document.getElementById("form-pincode-instellen");
+    var status = document.querySelector('[data-status="pincode"]');
+    if (!huisnummer || !balk || !form || !PINCODE_SCRIPT_URL) return;
+
+    function toonStatus(tekst, soort) {
+      if (!status) return;
+      status.hidden = false;
+      status.textContent = tekst;
+      status.className = "form-status " + soort;
+    }
+
+    fetch(PINCODE_SCRIPT_URL + "?actie=pincode-status&huisnummer=" + encodeURIComponent(huisnummer))
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (json && json.ok && json.bekend && !json.ingesteld) {
+          balk.hidden = false;
+        }
+        // onbekend huisnummer of pincode al ingesteld: gewoon verborgen laten
+      })
+      .catch(function () {
+        // geen internet of script niet bereikbaar: verborgen laten, de
+        // bewoner kan de pagina later gewoon opnieuw openen
+      });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nieuw = document.getElementById("pincode-nieuw").value.trim();
+      var herhaal = document.getElementById("pincode-nieuw-herhaal").value.trim();
+
+      if (!/^\d{4}$/.test(nieuw)) {
+        toonStatus("Kies een pincode van precies 4 cijfers.", "fout");
+        return;
+      }
+      if (nieuw !== herhaal) {
+        toonStatus("De twee pincodes komen niet overeen.", "fout");
+        return;
+      }
+
+      var knop = form.querySelector('button[type="submit"]');
+      if (knop) knop.disabled = true;
+      toonStatus("Bezig met opslaan...", "bezig");
+
+      fetch(PINCODE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ verzoekType: "pincode-instellen", huisnummer: huisnummer, pincode: nieuw })
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            toonStatus("Uw pincode is ingesteld. Onthoud 'm goed — u heeft 'm vanaf nu nodig bij elk formulier op deze pagina.", "gelukt");
+            form.reset();
+            form.hidden = true;
+          } else {
+            toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
+          }
+          if (knop) knop.disabled = false;
+        })
+        .catch(function () {
+          toonStatus("Het opslaan is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+          if (knop) knop.disabled = false;
+        });
+    });
   })();
 </script>
 
