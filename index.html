@@ -216,6 +216,39 @@
     outline-offset: 1px;
     border-color: var(--groen-donker);
   }
+  .pincode-balk h3 {
+    margin: 18px 0 4px 0;
+    font-size: 1.1rem;
+  }
+  .veld-hulp-blok {
+    margin: 0 0 14px 0;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  .ingelogd-balk {
+    background: #eef3ef;
+    border: 1px solid var(--groen);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .ingelogd-balk[hidden] { display: none; }
+  .ingelogd-balk p {
+    margin: 0;
+    flex: 1 1 240px;
+    color: var(--groen-donker);
+    font-weight: 600;
+  }
+  .ingelogd-balk .knop {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+
   .form-status {
     padding: 14px 18px;
     border-radius: 10px;
@@ -392,23 +425,91 @@
 
 <main id="inhoud">
 
-  <div class="pincode-balk" id="pincode-balk" hidden>
-    <h2>🔑 Pincode instellen</h2>
-    <p>Welkom! Voordat u de formulieren op deze pagina kunt gebruiken, stelt u eenmalig uw eigen pincode in — dat voorkomt dat een melding per ongeluk onder de verkeerde naam binnenkomt als deze link ooit gedeeld wordt. Kies een pincode van 4 cijfers. Deze is helemaal van uzelf: ook de bewonerscommissie kan hem niet terugvinden of aflezen, dus schrijf 'm ergens veilig voor uzelf op. Bent u 'm later kwijt, neem dan contact op met de bewonerscommissie — die kan de pincode wissen zodat u een nieuwe kunt instellen.</p>
-    <form id="form-pincode-instellen" novalidate>
+  <div class="pincode-balk" id="bewoner-balk" hidden>
+    <h2>🔑 Welkom bij het bewonersportaal</h2>
+    <p id="bewoner-intro">Om een reparatieverzoek, een vraag of een zaalaanvraag te kunnen versturen, meldt u zich eenmalig aan. Daarna worden uw gegevens automatisch ingevuld en hoeft u ze nooit meer in te typen.</p>
+
+    <div class="knop-rij" id="bewoner-keuze">
+      <button type="button" class="knop" id="knop-toon-aanmelden">Ik meld me voor het eerst aan</button>
+      <button type="button" class="knop secundair" id="knop-toon-inloggen">Ik heb al een pincode</button>
+    </div>
+
+    <form id="form-inloggen" novalidate hidden>
+      <h3>Inloggen</h3>
+      <p class="veld-hulp-blok">Vul uw huisnummer in en de pincode die u zelf heeft gekozen bij het aanmelden.</p>
       <div class="veld-groep">
-        <label for="pincode-nieuw">Nieuwe pincode (4 cijfers) *</label>
-        <input type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" id="pincode-nieuw" name="pincode-nieuw" required autocomplete="off">
+        <label for="login-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="login-huisnummer" required autocomplete="off">
       </div>
       <div class="veld-groep">
-        <label for="pincode-nieuw-herhaal">Herhaal pincode *</label>
-        <input type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" id="pincode-nieuw-herhaal" name="pincode-nieuw-herhaal" required autocomplete="off">
+        <label for="login-pincode">Pincode (4 cijfers) *</label>
+        <input type="text" inputmode="numeric" maxlength="4" id="login-pincode" required autocomplete="off">
       </div>
       <div class="knop-rij">
-        <button type="submit" class="knop">Pincode instellen</button>
+        <button type="submit" class="knop">Inloggen</button>
+        <button type="button" class="knop secundair bewoner-terug">Terug</button>
       </div>
-      <p class="form-status" data-status="pincode" hidden></p>
     </form>
+
+    <form id="form-aanmelden" novalidate hidden>
+      <h3>Eenmalig aanmelden</h3>
+      <p class="veld-hulp-blok">Vul uw gegevens in. De <strong>aanmeldcode</strong> staat op het kaartje dat u van de bewonerscommissie heeft gekregen. Kies daarna zelf een pincode van 4 cijfers — die heeft u voortaan nodig bij elk formulier. De bewonerscommissie kan uw pincode niet zien, dus schrijf 'm voor uzelf op.</p>
+      <div class="veld-groep">
+        <label for="aanmeld-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="aanmeld-huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-code">Aanmeldcode van uw kaartje *</label>
+        <input type="text" id="aanmeld-code" required autocomplete="off" maxlength="8">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-voornaam">Voornaam *</label>
+        <input type="text" id="aanmeld-voornaam" required autocomplete="given-name">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-achternaam">Achternaam *</label>
+        <input type="text" id="aanmeld-achternaam" required autocomplete="family-name">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-telefoon">Telefoonnummer</label>
+        <input type="tel" id="aanmeld-telefoon" autocomplete="tel">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-email">E-mailadres</label>
+        <input type="email" id="aanmeld-email" autocomplete="email">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-straatnaam">Straatnaam *</label>
+        <input type="text" id="aanmeld-straatnaam" required autocomplete="street-address">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-postcode">Postcode *</label>
+        <input type="text" id="aanmeld-postcode" required autocomplete="postal-code">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-plaats">Woonplaats *</label>
+        <input type="text" id="aanmeld-plaats" required autocomplete="address-level2">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-pincode">Kies uw pincode (4 cijfers) *</label>
+        <input type="text" inputmode="numeric" maxlength="4" id="aanmeld-pincode" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="aanmeld-pincode-herhaal">Herhaal uw pincode *</label>
+        <input type="text" inputmode="numeric" maxlength="4" id="aanmeld-pincode-herhaal" required autocomplete="off">
+      </div>
+      <div class="knop-rij">
+        <button type="submit" class="knop">Aanmelden</button>
+        <button type="button" class="knop secundair bewoner-terug">Terug</button>
+      </div>
+    </form>
+
+    <p class="form-status" data-status="bewoner" hidden></p>
+  </div>
+
+  <div class="ingelogd-balk" id="ingelogd-balk" hidden>
+    <p id="ingelogd-tekst"></p>
+    <button type="button" class="knop secundair" id="knop-afmelden">Afmelden</button>
   </div>
 
   <div class="kaarten">
@@ -687,26 +788,92 @@
 
 <script>
   // ─────────────────────────────────────────────────────────────────
-  // PINCODE ZELF INSTELLEN
+  // AANMELDEN EN INLOGGEN
   //
-  // Elke bewoner stelt bij het eerste bezoek zelf een pincode in (zie
-  // apps-script-reparatieverzoek.gs.txt voor de volledige uitleg waarom).
-  // Die pincode wordt versleuteld (gehasht) opgeslagen — ook de
-  // bewonerscommissie kan 'm dus nooit aflezen. Dit blokje toont het
-  // instelformulier ALLEEN als: de link een huisnummer bevat (dus een
-  // persoonlijke link/QR is), dat huisnummer al bekend is bij de
-  // bewonerscommissie (staat al klaar in het tabblad "Bewoners", nog
-  // zonder pincode), en er nog geen pincode is ingesteld.
+  // De QR-code in het gebouw is voor iedereen dezelfde. Wat deze pagina
+  // persoonlijk maakt, is de eenmalige aanmelding: de bewoner vult zelf
+  // naam, adres en contactgegevens in, samen met de AANMELDCODE van het
+  // eigen kaartje (die code zorgt dat niemand zich kan aanmelden voor
+  // het huisnummer van een ander), en kiest een eigen pincode.
+  //
+  // Daarna worden de gegevens op dit toestel onthouden (localStorage) en
+  // automatisch meegegeven aan de formulieren. Een partner logt op zijn
+  // of haar eigen telefoon in met hetzelfde huisnummer en dezelfde
+  // pincode — aanmelden hoeft maar één keer per huishouden.
+  //
+  // De pincode wordt versleuteld (gehasht) opgeslagen bij de commissie,
+  // die kan 'm dus nooit aflezen.
   // ─────────────────────────────────────────────────────────────────
-  var PINCODE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+  var BEWONER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  // Standaardwaarden voor het aanmeldformulier — het hele gebouw deelt
+  // hetzelfde adres, dus dit scheelt de bewoner typewerk. Aanpasbaar
+  // gebleven voor het geval er ooit een ander adres bij komt.
+  var STANDAARD_STRAATNAAM = "Polanenstraat";
+  var STANDAARD_POSTCODE = "1962XJ";
+  var STANDAARD_PLAATS = "Heemskerk";
+
+  var OPSLAG_SLEUTEL = "gouden-ezel-bewoner";
+
+  function haalBewonerOp() {
+    try {
+      var ruw = localStorage.getItem(OPSLAG_SLEUTEL);
+      if (!ruw) return null;
+      var b = JSON.parse(ruw);
+      return (b && b.huisnummer && b.pincode) ? b : null;
+    } catch (e) { return null; }
+  }
+
+  function bewaarBewoner(gegevens, pincode) {
+    try {
+      var b = {
+        voornaam: gegevens.voornaam || "",
+        achternaam: gegevens.achternaam || "",
+        straatnaam: gegevens.straatnaam || "",
+        huisnummer: gegevens.huisnummer || "",
+        postcode: gegevens.postcode || "",
+        plaats: gegevens.plaats || "",
+        telefoon: gegevens.telefoon || "",
+        email: gegevens.email || "",
+        pincode: pincode
+      };
+      localStorage.setItem(OPSLAG_SLEUTEL, JSON.stringify(b));
+      return b;
+    } catch (e) { return null; }
+  }
+
+  function bewonerLinkParams(b) {
+    if (!b) return "";
+    var p = new URLSearchParams();
+    ["voornaam", "achternaam", "telefoon", "email", "straatnaam", "huisnummer", "postcode", "plaats", "pincode"].forEach(function (sleutel) {
+      if (b[sleutel]) p.set(sleutel, b[sleutel]);
+    });
+    var tekst = p.toString();
+    return tekst ? "?" + tekst : "";
+  }
+
+  // De knoppen naar de formulieren krijgen de gegevens van de ingelogde
+  // bewoner mee, zodat die pagina's alles vast invullen. Staat er niets
+  // opgeslagen, dan vallen we terug op de linkparameters van de pagina
+  // zelf (zodat oude persoonlijke links blijven werken).
+  function werkFormulierLinksBij(b) {
+    var achtervoegsel = b ? bewonerLinkParams(b) : window.location.search;
+    ["link-reparatie", "link-vraag", "link-zaal"].forEach(function (id) {
+      var link = document.getElementById(id);
+      if (link) link.href = link.getAttribute("href").split("?")[0] + achtervoegsel;
+    });
+  }
 
   (function () {
-    var params = new URLSearchParams(window.location.search);
-    var huisnummer = params.get("huisnummer");
-    var balk = document.getElementById("pincode-balk");
-    var form = document.getElementById("form-pincode-instellen");
-    var status = document.querySelector('[data-status="pincode"]');
-    if (!huisnummer || !balk || !form || !PINCODE_SCRIPT_URL) return;
+    var balk = document.getElementById("bewoner-balk");
+    var ingelogdBalk = document.getElementById("ingelogd-balk");
+    var ingelogdTekst = document.getElementById("ingelogd-tekst");
+    var keuze = document.getElementById("bewoner-keuze");
+    var intro = document.getElementById("bewoner-intro");
+    var formInloggen = document.getElementById("form-inloggen");
+    var formAanmelden = document.getElementById("form-aanmelden");
+    var status = document.querySelector('[data-status="bewoner"]');
+    if (!balk || !formInloggen || !formAanmelden) return;
 
     function toonStatus(tekst, soort) {
       if (!status) return;
@@ -714,58 +881,156 @@
       status.textContent = tekst;
       status.className = "form-status " + soort;
     }
+    function wisStatus() {
+      if (status) status.hidden = true;
+    }
 
-    fetch(PINCODE_SCRIPT_URL + "?actie=pincode-status&huisnummer=" + encodeURIComponent(huisnummer))
-      .then(function (response) { return response.json(); })
-      .then(function (json) {
-        if (json && json.ok && json.bekend && !json.ingesteld) {
-          balk.hidden = false;
-        }
-        // onbekend huisnummer of pincode al ingesteld: gewoon verborgen laten
-      })
-      .catch(function () {
-        // geen internet of script niet bereikbaar: verborgen laten, de
-        // bewoner kan de pagina later gewoon opnieuw openen
+    function toonIngelogd(b) {
+      balk.hidden = true;
+      if (ingelogdBalk && ingelogdTekst) {
+        var naam = ((b.voornaam || "") + " " + (b.achternaam || "")).trim();
+        ingelogdTekst.textContent = "Aangemeld als " + (naam || "bewoner") + " — huisnummer " + b.huisnummer + ". Uw gegevens worden automatisch ingevuld.";
+        ingelogdBalk.hidden = false;
+      }
+      werkFormulierLinksBij(b);
+    }
+
+    function toonKeuze() {
+      wisStatus();
+      formInloggen.hidden = true;
+      formAanmelden.hidden = true;
+      if (keuze) keuze.hidden = false;
+      if (intro) intro.hidden = false;
+    }
+
+    function toonFormulier(welke) {
+      wisStatus();
+      if (keuze) keuze.hidden = true;
+      if (intro) intro.hidden = true;
+      formInloggen.hidden = welke !== "inloggen";
+      formAanmelden.hidden = welke !== "aanmelden";
+    }
+
+    var bewoner = haalBewonerOp();
+    if (bewoner) {
+      toonIngelogd(bewoner);
+    } else {
+      balk.hidden = false;
+      werkFormulierLinksBij(null);
+    }
+
+    var knopAanmelden = document.getElementById("knop-toon-aanmelden");
+    var knopInloggen = document.getElementById("knop-toon-inloggen");
+    if (knopAanmelden) knopAanmelden.addEventListener("click", function () { toonFormulier("aanmelden"); });
+    if (knopInloggen) knopInloggen.addEventListener("click", function () { toonFormulier("inloggen"); });
+    Array.prototype.forEach.call(document.querySelectorAll(".bewoner-terug"), function (knop) {
+      knop.addEventListener("click", toonKeuze);
+    });
+
+    // adresvelden alvast invullen — scheelt typewerk, blijft aanpasbaar
+    var zetStandaard = function (id, waarde) {
+      var el = document.getElementById(id);
+      if (el && !el.value) el.value = waarde;
+    };
+    zetStandaard("aanmeld-straatnaam", STANDAARD_STRAATNAAM);
+    zetStandaard("aanmeld-postcode", STANDAARD_POSTCODE);
+    zetStandaard("aanmeld-plaats", STANDAARD_PLAATS);
+
+    var afmeldKnop = document.getElementById("knop-afmelden");
+    if (afmeldKnop) {
+      afmeldKnop.addEventListener("click", function () {
+        try { localStorage.removeItem(OPSLAG_SLEUTEL); } catch (e) {}
+        if (ingelogdBalk) ingelogdBalk.hidden = true;
+        balk.hidden = false;
+        toonKeuze();
+        werkFormulierLinksBij(null);
       });
+    }
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var nieuw = document.getElementById("pincode-nieuw").value.trim();
-      var herhaal = document.getElementById("pincode-nieuw-herhaal").value.trim();
-
-      if (!/^\d{4}$/.test(nieuw)) {
-        toonStatus("Kies een pincode van precies 4 cijfers.", "fout");
-        return;
-      }
-      if (nieuw !== herhaal) {
-        toonStatus("De twee pincodes komen niet overeen.", "fout");
-        return;
-      }
-
-      var knop = form.querySelector('button[type="submit"]');
+    function verstuur(payload, knop, gelukt) {
       if (knop) knop.disabled = true;
-      toonStatus("Bezig met opslaan...", "bezig");
-
-      fetch(PINCODE_SCRIPT_URL, {
+      toonStatus("Even geduld...", "bezig");
+      fetch(BEWONER_SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ verzoekType: "pincode-instellen", huisnummer: huisnummer, pincode: nieuw })
+        body: JSON.stringify(payload)
       })
-        .then(function (response) { return response.json(); })
+        .then(function (r) { return r.json(); })
         .then(function (json) {
           if (json && json.ok) {
-            toonStatus("Uw pincode is ingesteld. Onthoud 'm goed — u heeft 'm vanaf nu nodig bij elk formulier op deze pagina.", "gelukt");
-            form.reset();
-            form.hidden = true;
+            gelukt(json);
           } else {
             toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
           }
           if (knop) knop.disabled = false;
         })
         .catch(function () {
-          toonStatus("Het opslaan is niet gelukt. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+          toonStatus("Het lukte niet om verbinding te maken. Controleer uw internet en probeer het opnieuw.", "fout");
           if (knop) knop.disabled = false;
         });
+    }
+
+    formInloggen.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var huisnummer = document.getElementById("login-huisnummer").value.trim();
+      var pincode = document.getElementById("login-pincode").value.trim();
+      if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+        toonStatus("Vul uw huisnummer in en een pincode van 4 cijfers.", "fout");
+        return;
+      }
+      verstuur(
+        { verzoekType: "inloggen", huisnummer: huisnummer, pincode: pincode },
+        formInloggen.querySelector('button[type="submit"]'),
+        function (json) {
+          var b = bewaarBewoner(json.gegevens || { huisnummer: huisnummer }, pincode);
+          wisStatus();
+          toonIngelogd(b || { huisnummer: huisnummer });
+        }
+      );
+    });
+
+    formAanmelden.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var waarde = function (id) { return document.getElementById(id).value.trim(); };
+      var pincode = waarde("aanmeld-pincode");
+      var herhaal = waarde("aanmeld-pincode-herhaal");
+
+      if (!waarde("aanmeld-huisnummer") || !waarde("aanmeld-code")) {
+        toonStatus("Vul uw huisnummer en de aanmeldcode van uw kaartje in.", "fout");
+        return;
+      }
+      if (!waarde("aanmeld-voornaam") || !waarde("aanmeld-achternaam")) {
+        toonStatus("Vul uw voor- en achternaam in.", "fout");
+        return;
+      }
+      if (!/^\d{4}$/.test(pincode)) {
+        toonStatus("Kies een pincode van precies 4 cijfers.", "fout");
+        return;
+      }
+      if (pincode !== herhaal) {
+        toonStatus("De twee pincodes komen niet overeen.", "fout");
+        return;
+      }
+
+      var payload = {
+        verzoekType: "aanmelden",
+        huisnummer: waarde("aanmeld-huisnummer"),
+        aanmeldcode: waarde("aanmeld-code"),
+        pincode: pincode,
+        voornaam: waarde("aanmeld-voornaam"),
+        achternaam: waarde("aanmeld-achternaam"),
+        straatnaam: waarde("aanmeld-straatnaam"),
+        postcode: waarde("aanmeld-postcode"),
+        plaats: waarde("aanmeld-plaats"),
+        telefoon: waarde("aanmeld-telefoon"),
+        email: waarde("aanmeld-email")
+      };
+
+      verstuur(payload, formAanmelden.querySelector('button[type="submit"]'), function (json) {
+        var b = bewaarBewoner(json.gegevens || payload, pincode);
+        wisStatus();
+        toonIngelogd(b || payload);
+      });
     });
   })();
 </script>
@@ -831,58 +1096,6 @@
       sluitKnop.addEventListener("click", function () {
         balk.hidden = true;
       });
-    }
-  })();
-</script>
-
-<script>
-  // ─────────────────────────────────────────────────────────────────
-  // PERSOONLIJKE LINKS
-  //
-  // Deze pagina is voor iedereen hetzelfde bestand. Wat 'm persoonlijk
-  // maakt is de link waarmee iemand 'm opent, bijvoorbeeld:
-  //   index.html?voornaam=Piet&achternaam=Bakker&straatnaam=Polanenstraat&huisnummer=12
-  //
-  // Hieronder worden die gegevens gelezen uit de link. De knoppen
-  // "Reparatieverzoek starten", "Vraag stellen" en "Zaal aanvragen"
-  // wijzen elk naar hun eigen aparte pagina (reparatieverzoek.html,
-  // vraag.html, zaal.html) — die gegevens worden simpelweg meegegeven
-  // door de linkparameters (?voornaam=...&achternaam=...) door te
-  // geven aan die pagina; elke pagina vult zelf de contactvelden in.
-  // ─────────────────────────────────────────────────────────────────
-
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var gegevens = {
-      voornaam: params.get("voornaam"),
-      achternaam: params.get("achternaam"),
-      telefoon: params.get("telefoon"),
-      email: params.get("email"),
-      straatnaam: params.get("straatnaam"),
-      huisnummer: params.get("huisnummer"),
-      postcode: params.get("postcode"),
-      plaats: params.get("plaats")
-    };
-    var isPersoonlijk = gegevens.voornaam || gegevens.achternaam || gegevens.telefoon ||
-      gegevens.email || gegevens.straatnaam || gegevens.huisnummer || gegevens.postcode || gegevens.plaats;
-
-    // reparatieverzoek-, vraag- en zaal-knop wijzen naar hun eigen aparte
-    // pagina, met dezelfde linkparameters erachter geplakt (ook als er
-    // geen personalisatie is, dan is window.location.search gewoon leeg)
-    ["link-reparatie", "link-vraag", "link-zaal"].forEach(function (id) {
-      var link = document.getElementById(id);
-      if (link) {
-        link.href = link.getAttribute("href").split("?")[0] + window.location.search;
-      }
-    });
-
-    if (isPersoonlijk) {
-      // onthoud lokaal (alleen op dit toestel) wie deze pagina geopend heeft,
-      // zodat toekomstige functies (zoals het "NIEUW"-label bij mededelingen)
-      // hierop kunnen voortbouwen
-      try {
-        localStorage.setItem("gouden-ezel-bewoner", JSON.stringify(gegevens));
-      } catch (e) {}
     }
   })();
 </script>

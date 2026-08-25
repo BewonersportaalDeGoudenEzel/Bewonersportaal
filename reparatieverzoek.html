@@ -682,7 +682,8 @@
       straatnaam: params.get("straatnaam") || "",
       huisnummer: params.get("huisnummer") || "",
       postcode: params.get("postcode") || "",
-      plaats: params.get("plaats") || ""
+      plaats: params.get("plaats") || "",
+      pincode: params.get("pincode") || ""
     };
 
     var terugLink = document.getElementById("link-terug");
@@ -703,6 +704,7 @@
       zet("huisnummer", gegevens.huisnummer);
       zet("postcode", gegevens.postcode);
       zet("woonplaats", gegevens.plaats);
+      zet("pincode", gegevens.pincode);
     });
   })();
 </script>
