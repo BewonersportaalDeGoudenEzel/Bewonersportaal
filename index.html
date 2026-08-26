@@ -1037,6 +1037,44 @@
       if (status) status.hidden = true;
     }
 
+    // De gegevens staan op twee plekken: in de spreadsheet van de
+    // bewonerscommissie én op de telefoon van de bewoner. Corrigeert de
+    // commissie een straatnaam, telefoonnummer of e-mailadres, dan zou de
+    // telefoon anders de oude versie blijven meesturen bij elke melding.
+    // Daarom halen we bij het openen stilletjes de actuele gegevens op en
+    // werken we de opgeslagen versie bij. De bewoner merkt hier niets van.
+    function ververGegevens(b) {
+      if (!BEWONER_SCRIPT_URL || !b || !b.huisnummer || !b.pincode) return;
+
+      fetch(BEWONER_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ verzoekType: "inloggen", huisnummer: b.huisnummer, pincode: b.pincode })
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+          if (json && json.ok && json.gegevens) {
+            var bijgewerkt = bewaarBewoner(json.gegevens, b.pincode);
+            if (bijgewerkt) {
+              werkFormulierLinksBij(bijgewerkt);
+              if (ingelogdTekst) {
+                var naam = ((bijgewerkt.voornaam || "") + " " + (bijgewerkt.achternaam || "")).trim();
+                ingelogdTekst.textContent = "Aangemeld als " + (naam || "bewoner") +
+                  " — huisnummer " + bijgewerkt.huisnummer + ". Uw gegevens worden automatisch ingevuld.";
+              }
+            }
+          } else if (json && json.ok === false) {
+            // Het script zegt uitdrukkelijk dat deze combinatie niet meer
+            // klopt — bijvoorbeeld omdat de commissie de pincode heeft
+            // gewist. Dan is doorgaan met oude gegevens verkeerd.
+            try { localStorage.removeItem(OPSLAG_SLEUTEL); } catch (e) {}
+          }
+        })
+        .catch(function () {
+          // geen internet: gewoon verder met wat er al stond
+        });
+    }
+
     var inhoud = document.getElementById("portaal-inhoud");
     var afgeschermdUitleg = document.getElementById("afgeschermd-uitleg");
 
@@ -1050,6 +1088,7 @@
       setTimeout(function () {
         if (typeof toonBeginschermTip === "function") toonBeginschermTip();
       }, 0);
+      ververGegevens(b);
       if (ingelogdBalk && ingelogdTekst) {
         var naam = ((b.voornaam || "") + " " + (b.achternaam || "")).trim();
         ingelogdTekst.textContent = "Aangemeld als " + (naam || "bewoner") + " — huisnummer " + b.huisnummer + ". Uw gegevens worden automatisch ingevuld.";
