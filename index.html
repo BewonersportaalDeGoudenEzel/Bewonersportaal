@@ -581,7 +581,7 @@
       </div>
       <div class="veld-groep">
         <label for="aanmeld-postcode">Postcode *</label>
-        <input type="text" id="aanmeld-postcode" required autocomplete="postal-code">
+        <input type="text" id="aanmeld-postcode" required autocomplete="postal-code" placeholder="1962 XJ" inputmode="text">
       </div>
       <div class="veld-groep">
         <label for="aanmeld-plaats">Woonplaats *</label>
@@ -957,11 +957,12 @@
   // ─────────────────────────────────────────────────────────────────
   var BEWONER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
-  // Standaardwaarden voor het aanmeldformulier — het hele gebouw deelt
-  // hetzelfde adres, dus dit scheelt de bewoner typewerk. Aanpasbaar
-  // gebleven voor het geval er ooit een ander adres bij komt.
+  // Standaardwaarden voor het aanmeldformulier — straat en plaats zijn
+  // voor iedereen hetzelfde, dus die vullen we alvast in. De POSTCODE
+  // NIET: die verschilt per blok huisnummers, en een voorgevulde postcode
+  // die niet klopt wordt zelden gecorrigeerd. Dan staat er straks bij
+  // tachtig bewoners hetzelfde onjuiste adres in de administratie.
   var STANDAARD_STRAATNAAM = "Polanenstraat";
-  var STANDAARD_POSTCODE = "1962XJ";
   var STANDAARD_PLAATS = "Heemskerk";
 
   var OPSLAG_SLEUTEL = "gouden-ezel-bewoner";
@@ -1097,7 +1098,6 @@
       if (el && !el.value) el.value = waarde;
     };
     zetStandaard("aanmeld-straatnaam", STANDAARD_STRAATNAAM);
-    zetStandaard("aanmeld-postcode", STANDAARD_POSTCODE);
     zetStandaard("aanmeld-plaats", STANDAARD_PLAATS);
 
     var afmeldKnop = document.getElementById("knop-afmelden");
