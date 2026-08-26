@@ -339,15 +339,56 @@
   .mededeling-fotos {
     margin-top: 14px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+    flex-direction: column;
+    gap: 14px;
   }
   .mededeling-fotos img {
     display: block;
     width: 100%;
-    max-width: 320px;
+    height: auto;
     border-radius: 10px;
     border: 1px solid var(--rand);
+    cursor: zoom-in;
+  }
+  .mededeling-fotos img:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+
+  /* Vergroot weergeven: hele scherm, klik of Esc om te sluiten */
+  .foto-groot {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 200;
+    cursor: zoom-out;
+  }
+  .foto-groot img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+  }
+  .foto-groot .sluit {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .foto-groot .sluit:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
   }
 
   .zaal-blok {
@@ -724,6 +765,40 @@
   // pagina staan als terugvaloptie.
   var MEDEDELINGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
+  // Een foto op ware grootte tonen. Bewoners tikken van nature op een
+  // afbeelding om 'm groter te zien; zonder dit gebeurde er niets.
+  function toonGroot(adres, beschrijving) {
+    var laag = document.createElement("div");
+    laag.className = "foto-groot";
+    laag.setAttribute("role", "dialog");
+    laag.setAttribute("aria-label", beschrijving || "Foto");
+
+    var groot = document.createElement("img");
+    groot.src = adres;
+    groot.alt = beschrijving || "";
+    laag.appendChild(groot);
+
+    var sluitKnop = document.createElement("button");
+    sluitKnop.type = "button";
+    sluitKnop.className = "sluit";
+    sluitKnop.setAttribute("aria-label", "Foto sluiten");
+    sluitKnop.textContent = "\u2715";
+    laag.appendChild(sluitKnop);
+
+    function sluit() {
+      if (laag.parentNode) laag.parentNode.removeChild(laag);
+      document.removeEventListener("keydown", opToets);
+      document.body.style.overflow = "";
+    }
+    function opToets(e) { if (e.key === "Escape") sluit(); }
+
+    laag.addEventListener("click", sluit);
+    document.addEventListener("keydown", opToets);
+    document.body.style.overflow = "hidden";
+    document.body.appendChild(laag);
+    sluitKnop.focus();
+  }
+
   (function () {
     var lijst = document.getElementById("mededelingen-lijst");
     if (!MEDEDELINGEN_SCRIPT_URL || !lijst) return;
@@ -768,6 +843,15 @@
               afbeelding.src = adres;
               afbeelding.loading = "lazy";
               afbeelding.alt = "Foto " + (index + 1) + " bij de mededeling: " + (m.titel || "");
+              afbeelding.tabIndex = 0;
+              afbeelding.title = "Klik om te vergroten";
+              afbeelding.addEventListener("click", function () { toonGroot(adres, afbeelding.alt); });
+              afbeelding.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toonGroot(adres, afbeelding.alt);
+                }
+              });
               strook.appendChild(afbeelding);
             });
             blok.appendChild(strook);
