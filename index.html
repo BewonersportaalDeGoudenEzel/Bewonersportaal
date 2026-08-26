@@ -200,10 +200,11 @@
   .pincode-balk .veld-groep > label {
     font-weight: 600;
   }
-  .pincode-balk input[type="text"] {
+  .pincode-balk input[type="text"],
+  .pincode-balk input[type="tel"],
+  .pincode-balk input[type="email"] {
     font: inherit;
     font-size: 1.2rem;
-    letter-spacing: 0.15em;
     padding: 12px 14px;
     border: 2px solid var(--rand);
     border-radius: 8px;
@@ -211,14 +212,25 @@
     color: var(--tekst);
     width: 100%;
   }
-  .pincode-balk input[type="text"]:focus {
+  .pincode-balk input[type="text"]:focus,
+  .pincode-balk input[type="tel"]:focus,
+  .pincode-balk input[type="email"]:focus {
     outline: 3px solid #ffbf47;
     outline-offset: 1px;
     border-color: var(--groen-donker);
   }
+  /* alleen de code-achtige velden krijgen ruime letterafstand */
+  #login-pincode, #aanmeld-pincode, #aanmeld-pincode-herhaal, #aanmeld-code {
+    letter-spacing: 0.15em;
+  }
   .pincode-balk h3 {
     margin: 18px 0 4px 0;
     font-size: 1.1rem;
+  }
+  .veld-hulp-klein {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: #555;
   }
   .veld-hulp-blok {
     margin: 0 0 14px 0;
@@ -471,11 +483,11 @@
         <input type="text" id="aanmeld-achternaam" required autocomplete="family-name">
       </div>
       <div class="veld-groep">
-        <label for="aanmeld-telefoon">Telefoonnummer</label>
-        <input type="tel" id="aanmeld-telefoon" autocomplete="tel">
+        <label for="aanmeld-telefoon">Telefoonnummer * <span class="veld-hulp-klein">(de verhuurder belt u hierop over een reparatie)</span></label>
+        <input type="tel" id="aanmeld-telefoon" required autocomplete="tel">
       </div>
       <div class="veld-groep">
-        <label for="aanmeld-email">E-mailadres</label>
+        <label for="aanmeld-email">E-mailadres <span class="veld-hulp-klein">(mag leeg als u geen e-mail heeft)</span></label>
         <input type="email" id="aanmeld-email" autocomplete="email">
       </div>
       <div class="veld-groep">
@@ -655,7 +667,7 @@
 </main>
 
 <footer>
-  <p>Bewonerscommissie De Gouden Ezel</p>
+  <p>Bewonerscommissie Polanenflat</p>
 </footer>
 
 <script>
@@ -1001,6 +1013,10 @@
       }
       if (!waarde("aanmeld-voornaam") || !waarde("aanmeld-achternaam")) {
         toonStatus("Vul uw voor- en achternaam in.", "fout");
+        return;
+      }
+      if (!waarde("aanmeld-telefoon")) {
+        toonStatus("Vul uw telefoonnummer in — de verhuurder heeft dat nodig om contact met u op te nemen over een reparatie.", "fout");
         return;
       }
       if (!/^\d{4}$/.test(pincode)) {
