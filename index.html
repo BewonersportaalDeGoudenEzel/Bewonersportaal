@@ -169,6 +169,30 @@
     display: none;
   }
 
+  .agenda-venster {
+    margin: 16px 0 12px 0;
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .agenda-venster[hidden] { display: none; }
+  .agenda-venster iframe {
+    display: block;
+    width: 100%;
+    height: 620px;
+    border: 0;
+  }
+  @media (max-width: 640px) {
+    .agenda-venster iframe { height: 460px; }
+  }
+  .agenda-onder {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+  }
+  .agenda-onder[hidden] { display: none; }
+
   .agenda-plek {
     border: 2px dashed var(--rand);
     border-radius: 10px;
@@ -727,8 +751,13 @@
 
   <section class="mededelingen" id="agenda" aria-labelledby="agenda-titel">
     <h2 id="agenda-titel">Bezetting recreatiezaal</h2>
-    <p>Bekijk hieronder welke data al aangevraagd of gereserveerd zijn. De agenda opent in een nieuw tabblad. <strong>Blauw</strong> = aangevraagd, nog niet goedgekeurd. <strong>Groen</strong> = goedgekeurd door de bewonerscommissie.</p>
-    <a class="knop" id="link-agenda" href="#" target="_blank" rel="noopener" hidden>Agenda openen</a>
+    <p>Hieronder ziet u welke data al aangevraagd of gereserveerd zijn. <strong>Blauw</strong> = aangevraagd, nog niet goedgekeurd. <strong>Groen</strong> = goedgekeurd door de bewonerscommissie.</p>
+
+    <div class="agenda-venster" id="agenda-venster" hidden>
+      <iframe id="agenda-iframe" title="Bezetting van de recreatiezaal" loading="lazy" src=""></iframe>
+    </div>
+
+    <p class="agenda-onder" id="agenda-onder" hidden>Past de agenda niet goed op uw scherm? <a id="link-agenda" href="#" target="_blank" rel="noopener">Open hem in een apart tabblad</a>.</p>
     <p class="agenda-plek" id="agenda-nog-niet" hidden>De agenda is nog niet gekoppeld aan de website.</p>
   </section>
 
@@ -763,12 +792,23 @@
 
   (function () {
     var link = document.getElementById("link-agenda");
+    var venster = document.getElementById("agenda-venster");
+    var iframe = document.getElementById("agenda-iframe");
+    var onder = document.getElementById("agenda-onder");
     var nogNiet = document.getElementById("agenda-nog-niet");
+
     if (AGENDA_URL) {
-      if (link) { link.href = AGENDA_URL; link.hidden = false; }
+      // De agenda staat in de pagina zelf, zodat bewoners de bezetting
+      // meteen zien zonder eerst weg te klikken. De losse link blijft
+      // eronder staan voor kleine schermen, waar zo'n venster krap is.
+      if (iframe) iframe.src = AGENDA_URL;
+      if (venster) venster.hidden = false;
+      if (link) link.href = AGENDA_URL;
+      if (onder) onder.hidden = false;
       if (nogNiet) nogNiet.hidden = true;
     } else {
-      if (link) link.hidden = true;
+      if (venster) venster.hidden = true;
+      if (onder) onder.hidden = true;
       if (nogNiet) nogNiet.hidden = false;
     }
   })();
