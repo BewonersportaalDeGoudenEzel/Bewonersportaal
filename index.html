@@ -492,8 +492,7 @@
 </header>
 
 <div class="install-balk" id="install-balk" hidden>
-  <p id="install-tekst-android" hidden><strong>Tip voor Android</strong> (Samsung en andere): zet het portaal op uw beginscherm. Open het menu van uw browser — de drie streepjes rechtsonder, of de drie puntjes rechtsboven — en kies "Toevoegen aan startscherm".</p>
-  <p id="install-tekst-ios" hidden><strong>Tip voor iPhone en iPad</strong> (Safari): zet het portaal op uw beginscherm. Tik onderin op het deelicoon — het vierkantje met het pijltje omhoog — en kies "Zet op beginscherm".</p>
+  <p id="install-tekst" hidden></p>
   <button type="button" class="install-sluit" id="install-sluit" aria-label="Melding sluiten">✕</button>
 </div>
 
@@ -1005,6 +1004,11 @@
       if (inhoud) inhoud.hidden = false;
       if (afgeschermdUitleg) afgeschermdUitleg.hidden = true;
       laadMededelingen(b);
+      // Even uitstellen: dit stukje staat in een eerder scriptblok dan
+      // toonBeginschermTip, dus die functie bestaat op dit moment nog niet.
+      setTimeout(function () {
+        if (typeof toonBeginschermTip === "function") toonBeginschermTip();
+      }, 0);
       if (ingelogdBalk && ingelogdTekst) {
         var naam = ((b.voornaam || "") + " " + (b.achternaam || "")).trim();
         ingelogdTekst.textContent = "Aangemeld als " + (naam || "bewoner") + " — huisnummer " + b.huisnummer + ". Uw gegevens worden automatisch ingevuld.";
@@ -1171,12 +1175,54 @@
   // de handmatige stap. Dat maakt een gewone snelkoppeling, zonder
   // enige waarschuwing, op elke telefoon.
   // ─────────────────────────────────────────────────────────────────
-  (function () {
+  // De tip verschijnt pas NA het aanmelden. Iemand die voor het eerst
+  // binnenkomt heeft er nog niets aan: eerst aanmelden, dan pas op het
+  // beginscherm zetten. Wordt aangeroepen vanuit toonIngelogd hieronder.
+  // Elke browser verstopt "toevoegen aan startscherm" ergens anders: bij
+  // Samsung Internet zit het menu rechtsonder, bij Chrome rechtsboven, bij
+  // Firefox weer elders, en op een iPhone kan het alleen in Safari. Een
+  // algemene tekst als "open het menu van uw browser" helpt dan niemand.
+  // Daarom kijken we welke browser het is en tonen we alleen die stappen.
+  function bepaalBrowser() {
+    var ua = window.navigator.userAgent;
+    var isIos = /iPhone|iPad|iPod/i.test(ua) ||
+                (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var isAndroid = /Android/i.test(ua);
+
+    if (isIos) {
+      if (/CriOS|FxiOS|EdgiOS|OPT\//i.test(ua)) return "ios-anders";
+      return "safari";
+    }
+    if (isAndroid) {
+      if (/SamsungBrowser/i.test(ua)) return "samsung";
+      if (/EdgA/i.test(ua)) return "edge";
+      if (/OPR|OPX/i.test(ua)) return "opera";
+      if (/Firefox|FxiOS/i.test(ua)) return "firefox";
+      if (/Chrome/i.test(ua)) return "chrome";
+      return "android-anders";
+    }
+    return "computer";
+  }
+
+  var TIPTEKSTEN = {
+    samsung: "<strong>Tip voor Samsung Internet:</strong> tik <strong>rechtsonder</strong> op de drie streepjes \u2630, kies <strong>Pagina toevoegen aan</strong> en daarna <strong>Startscherm</strong>. Dan staat het portaal als app op uw telefoon.",
+    chrome: "<strong>Tip voor Chrome:</strong> tik <strong>rechtsboven</strong> op de drie puntjes \u22EE en kies <strong>Toevoegen aan startscherm</strong>. Dan staat het portaal als app op uw telefoon.",
+    firefox: "<strong>Tip voor Firefox:</strong> tik <strong>rechtsonder</strong> op de drie puntjes \u22EE en kies <strong>Toevoegen aan startscherm</strong>. Dan staat het portaal als app op uw telefoon.",
+    edge: "<strong>Tip voor Edge:</strong> tik <strong>onderaan in het midden</strong> op de drie streepjes en kies <strong>Toevoegen aan telefoon</strong>. Dan staat het portaal als app op uw telefoon.",
+    opera: "<strong>Tip voor Opera:</strong> tik op het menu en kies <strong>Toevoegen aan</strong> en daarna <strong>Startscherm</strong>. Dan staat het portaal als app op uw telefoon.",
+    "android-anders": "<strong>Tip:</strong> open het menu van uw browser \u2014 de drie streepjes of drie puntjes \u2014 en kies <strong>Toevoegen aan startscherm</strong>. Dan staat het portaal als app op uw telefoon.",
+    safari: "<strong>Tip voor Safari:</strong> tik <strong>onderin</strong> op het deelicoon (het vierkantje met het pijltje omhoog) en kies <strong>Zet op beginscherm</strong>. Dan staat het portaal als app op uw iPhone.",
+    "ios-anders": "<strong>Tip:</strong> op een iPhone lukt dit alleen in <strong>Safari</strong>. Open deze pagina daar, tik onderin op het deelicoon (vierkantje met pijltje omhoog) en kies <strong>Zet op beginscherm</strong>."
+  };
+
+  // De tip verschijnt pas NA het aanmelden. Iemand die voor het eerst
+  // binnenkomt heeft er nog niets aan: eerst aanmelden, dan pas op het
+  // beginscherm zetten. Wordt aangeroepen vanuit toonIngelogd hieronder.
+  function toonBeginschermTip() {
     var balk = document.getElementById("install-balk");
-    var tekstAndroid = document.getElementById("install-tekst-android");
-    var tekstIos = document.getElementById("install-tekst-ios");
+    var tekstVak = document.getElementById("install-tekst");
     var sluitKnop = document.getElementById("install-sluit");
-    if (!balk) return;
+    if (!balk || !tekstVak) return;
 
     var SLEUTEL = "gouden-ezel-tip-verborgen";
     try {
@@ -1188,21 +1234,11 @@
       if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) return;
     } catch (e) {}
 
-    // Alleen tonen op een telefoon of tablet — op een pc heeft een
-    // beginscherm-pictogram weinig zin, en dan zou de tekst over "de
-    // drie puntjes" ook nog eens niet kloppen.
-    var ua = window.navigator.userAgent;
-    var isIos = /iphone|ipad|ipod/i.test(ua) ||
-                (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPad op iPadOS
-    var isAndroid = /android/i.test(ua);
+    var tekst = TIPTEKSTEN[bepaalBrowser()];
+    if (!tekst) return; // op een computer heeft dit geen zin
 
-    if (isIos) {
-      if (tekstIos) tekstIos.hidden = false;
-    } else if (isAndroid) {
-      if (tekstAndroid) tekstAndroid.hidden = false;
-    } else {
-      return;
-    }
+    tekstVak.innerHTML = tekst;
+    tekstVak.hidden = false;
     balk.hidden = false;
 
     if (sluitKnop) {
@@ -1213,7 +1249,7 @@
         } catch (e) {}
       });
     }
-  })();
+  }
 </script>
 
 <script src="schoonmaakschema.js"></script>
