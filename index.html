@@ -261,6 +261,15 @@
     font-size: 0.95rem;
   }
 
+  .afgeschermd-uitleg {
+    max-width: 620px;
+    margin: 4px 0 0 0;
+    color: #444;
+    font-size: 1rem;
+  }
+  .afgeschermd-uitleg[hidden] { display: none; }
+  #portaal-inhoud[hidden] { display: none; }
+
   .form-status {
     padding: 14px 18px;
     border-radius: 10px;
@@ -577,6 +586,13 @@
     <button type="button" class="knop secundair" id="knop-afmelden">Afmelden</button>
   </div>
 
+  <p class="afgeschermd-uitleg" id="afgeschermd-uitleg" hidden>
+    Meld u hierboven aan om reparatieverzoeken te doen, de recreatiezaal aan te
+    vragen en de mededelingen van de bewonerscommissie te lezen.
+  </p>
+
+  <div id="portaal-inhoud" hidden>
+
   <div class="kaarten">
 
     <div class="kaart">
@@ -717,6 +733,8 @@
     <p class="agenda-plek" id="agenda-nog-niet" hidden>De agenda is nog niet gekoppeld aan de website.</p>
   </section>
 
+  </div><!-- einde portaal-inhoud -->
+
 </main>
 
 <footer>
@@ -799,11 +817,25 @@
     sluitKnop.focus();
   }
 
-  (function () {
+  // De mededelingen worden NIET meer openbaar opgehaald. Het script geeft
+  // ze alleen vrij aan wie huisnummer en pincode meestuurt, zodat er ook
+  // via de achterdeur niets te lezen valt zonder aanmelding. Daarom een
+  // POST en geen adres met gegevens erin — een pincode hoort niet in een
+  // webadres, want die blijft in geschiedenis en logboeken staan.
+  function laadMededelingen(bewoner) {
     var lijst = document.getElementById("mededelingen-lijst");
     if (!MEDEDELINGEN_SCRIPT_URL || !lijst) return;
+    if (!bewoner || !bewoner.huisnummer || !bewoner.pincode) return;
 
-    fetch(MEDEDELINGEN_SCRIPT_URL + "?actie=mededelingen")
+    fetch(MEDEDELINGEN_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        verzoekType: "mededelingen-ophalen",
+        huisnummer: bewoner.huisnummer,
+        pincode: bewoner.pincode
+      })
+    })
       .then(function (response) { return response.json(); })
       .then(function (json) {
         if (!json || !json.ok || !Array.isArray(json.mededelingen)) return;
@@ -861,9 +893,9 @@
         });
       })
       .catch(function () {
-        // geen internet of script niet bereikbaar: laat de bestaande tekst gewoon staan
+        // geen internet of script niet bereikbaar: laat de bestaande tekst staan
       });
-  })();
+  }
 </script>
 
 <script>
@@ -965,8 +997,14 @@
       if (status) status.hidden = true;
     }
 
+    var inhoud = document.getElementById("portaal-inhoud");
+    var afgeschermdUitleg = document.getElementById("afgeschermd-uitleg");
+
     function toonIngelogd(b) {
       balk.hidden = true;
+      if (inhoud) inhoud.hidden = false;
+      if (afgeschermdUitleg) afgeschermdUitleg.hidden = true;
+      laadMededelingen(b);
       if (ingelogdBalk && ingelogdTekst) {
         var naam = ((b.voornaam || "") + " " + (b.achternaam || "")).trim();
         ingelogdTekst.textContent = "Aangemeld als " + (naam || "bewoner") + " — huisnummer " + b.huisnummer + ". Uw gegevens worden automatisch ingevuld.";
@@ -996,6 +1034,8 @@
       toonIngelogd(bewoner);
     } else {
       balk.hidden = false;
+      if (inhoud) inhoud.hidden = true;
+      if (afgeschermdUitleg) afgeschermdUitleg.hidden = false;
       werkFormulierLinksBij(null);
     }
 
