@@ -336,6 +336,19 @@
     font-size: 1.2rem;
   }
   .mededeling p { margin: 0; }
+  .mededeling-fotos {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .mededeling-fotos img {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 10px;
+    border: 1px solid var(--rand);
+  }
 
   .zaal-blok {
     border-top: 1px solid var(--rand);
@@ -429,9 +442,8 @@
 </header>
 
 <div class="install-balk" id="install-balk" hidden>
-  <p id="install-tekst-android" hidden>Installeer deze app op uw telefoon voor snelle toegang vanaf uw beginscherm.</p>
-  <p id="install-tekst-ios" hidden>Installeer deze app: tik onderin Safari op het deelicoon (vierkant met pijl omhoog) en kies "Zet op beginscherm".</p>
-  <button type="button" class="knop" id="knop-installeer" hidden>App installeren</button>
+  <p id="install-tekst-android" hidden><strong>Tip voor Android</strong> (Samsung en andere): zet het portaal op uw beginscherm. Open het menu van uw browser — de drie streepjes rechtsonder, of de drie puntjes rechtsboven — en kies "Toevoegen aan startscherm".</p>
+  <p id="install-tekst-ios" hidden><strong>Tip voor iPhone en iPad</strong> (Safari): zet het portaal op uw beginscherm. Tik onderin op het deelicoon — het vierkantje met het pijltje omhoog — en kies "Zet op beginscherm".</p>
   <button type="button" class="install-sluit" id="install-sluit" aria-label="Melding sluiten">✕</button>
 </div>
 
@@ -670,52 +682,10 @@
   <p>Bewonerscommissie Polanenflat</p>
 </footer>
 
-<script>
-  // ─────────────────────────────────────────────────────────────────
-  // PERSOONLIJKE MANIFEST (voor "toevoegen aan startscherm")
-  //
-  // Normaal wijst manifest.json altijd naar index.html, dus als je de
-  // pagina als app installeert zou het icoon straks weer de kale,
-  // niet-persoonlijke pagina openen — de naam/appartement-gegevens
-  // zijn dan kwijt. Dit stukje bouwt daarom, alleen als er persoonlijke
-  // gegevens in de link staan, een eigen manifest-bestand "in het
-  // geheugen" (een Blob) met de persoonlijke link als start_url, en
-  // wisselt daarmee het manifest van de pagina om — VOORDAT de
-  // service worker hieronder wordt geregistreerd. Zo blijft het
-  // startscherm-icoon voor deze bewoner altijd naar zijn/haar eigen
-  // pagina wijzen.
-  // ─────────────────────────────────────────────────────────────────
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var voornaam = params.get("voornaam");
-    var achternaam = params.get("achternaam");
-    var huisnummer = params.get("huisnummer");
-
-    if (voornaam || achternaam || huisnummer) {
-      var manifest = {
-        name: "De Gouden Ezel - Bewonersportaal",
-        short_name: "De Gouden Ezel",
-        description: "Reparatieverzoeken, recreatiezaal reserveren, vragen aan de bewonerscommissie en mededelingen.",
-        start_url: window.location.pathname + window.location.search,
-        scope: "./",
-       "display": "browser",
-        background_color: "#f5f6f4",
-        theme_color: "#2f6f4f",
-        lang: "nl",
-        icons: [
-          { src: new URL("Gouden%20Ezel.png", window.location.href).href, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-          { src: new URL("Gangster%20Ezel.png", window.location.href).href, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-        ]
-      };
-      try {
-        var blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
-        var manifestUrl = URL.createObjectURL(blob);
-        var manifestLink = document.getElementById("manifest-link");
-        if (manifestLink) manifestLink.setAttribute("href", manifestUrl);
-      } catch (e) {}
-    }
-  })();
-</script>
+<!-- Het oude "persoonlijke manifest" is verwijderd: dat dwong de
+     pagina in app-modus, waardoor Android een minipakketje bouwde en
+     Play Protect dat blokkeerde. Het portaal opent nu gewoon in de
+     browser. -->
 
 <script>
   if ('serviceWorker' in navigator) {
@@ -789,6 +759,20 @@
           blok.appendChild(datum);
           blok.appendChild(titel);
           blok.appendChild(tekst);
+
+          if (Array.isArray(m.fotos) && m.fotos.length) {
+            var strook = document.createElement("div");
+            strook.className = "mededeling-fotos";
+            m.fotos.forEach(function (adres, index) {
+              var afbeelding = document.createElement("img");
+              afbeelding.src = adres;
+              afbeelding.loading = "lazy";
+              afbeelding.alt = "Foto " + (index + 1) + " bij de mededeling: " + (m.titel || "");
+              strook.appendChild(afbeelding);
+            });
+            blok.appendChild(strook);
+          }
+
           lijst.appendChild(blok);
         });
       })
@@ -1053,64 +1037,56 @@
 
 <script>
   // ─────────────────────────────────────────────────────────────────
-  // APP INSTALLEREN
+  // TIP-BALK: OP HET BEGINSCHERM ZETTEN
   //
-  // Op Android/Chrome (en desktop Chrome/Edge) kan de browser de app
-  // automatisch aanbieden om te installeren via het "beforeinstallprompt"-
-  // event — daarmee kunnen we een eigen "App installeren"-knop tonen die
-  // de installatie direct start, zonder omweg via het browsermenu.
-  //
-  // Op iPhone (Safari) bestaat deze automatische installatie niet — dat
-  // is een beperking van Apple, geen keuze van deze website. Daar tonen
-  // we in plaats daarvan een korte tekst met de handmatige stap.
+  // We gebruiken hier BEWUST geen automatische installatie meer
+  // ("beforeinstallprompt"). Android bouwde daarbij zelf een klein
+  // pakketje van deze website, en Google Play Protect blokkeerde dat
+  // met de melding "Onveilige app geblokkeerd" — schrikbarend voor
+  // bewoners, terwijl er niets mis is. Nu tonen we alleen een tip met
+  // de handmatige stap. Dat maakt een gewone snelkoppeling, zonder
+  // enige waarschuwing, op elke telefoon.
   // ─────────────────────────────────────────────────────────────────
   (function () {
     var balk = document.getElementById("install-balk");
-    var knopInstall = document.getElementById("knop-installeer");
     var tekstAndroid = document.getElementById("install-tekst-android");
     var tekstIos = document.getElementById("install-tekst-ios");
     var sluitKnop = document.getElementById("install-sluit");
     if (!balk) return;
 
-    function isStandalone() {
-      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-    }
-    if (isStandalone()) return; // al geïnstalleerd: geen melding tonen
+    var SLEUTEL = "gouden-ezel-tip-verborgen";
+    try {
+      if (window.localStorage && localStorage.getItem(SLEUTEL) === "ja") return;
+    } catch (e) {}
 
-    var isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-    var deferredPrompt = null;
+    // Al vanaf het beginscherm geopend? Dan is de tip overbodig.
+    try {
+      if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) return;
+    } catch (e) {}
 
-    window.addEventListener("beforeinstallprompt", function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-      balk.hidden = false;
-      if (knopInstall) knopInstall.hidden = false;
-      if (tekstAndroid) tekstAndroid.hidden = false;
-    });
+    // Alleen tonen op een telefoon of tablet — op een pc heeft een
+    // beginscherm-pictogram weinig zin, en dan zou de tekst over "de
+    // drie puntjes" ook nog eens niet kloppen.
+    var ua = window.navigator.userAgent;
+    var isIos = /iphone|ipad|ipod/i.test(ua) ||
+                (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPad op iPadOS
+    var isAndroid = /android/i.test(ua);
 
     if (isIos) {
-      balk.hidden = false;
       if (tekstIos) tekstIos.hidden = false;
+    } else if (isAndroid) {
+      if (tekstAndroid) tekstAndroid.hidden = false;
+    } else {
+      return;
     }
-
-    if (knopInstall) {
-      knopInstall.addEventListener("click", function () {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function () {
-          deferredPrompt = null;
-          balk.hidden = true;
-        });
-      });
-    }
-
-    window.addEventListener("appinstalled", function () {
-      balk.hidden = true;
-    });
+    balk.hidden = false;
 
     if (sluitKnop) {
       sluitKnop.addEventListener("click", function () {
         balk.hidden = true;
+        try {
+          if (window.localStorage) localStorage.setItem(SLEUTEL, "ja");
+        } catch (e) {}
       });
     }
   })();

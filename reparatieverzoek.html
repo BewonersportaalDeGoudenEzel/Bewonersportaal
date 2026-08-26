@@ -201,6 +201,11 @@
     color: #555;
     font-size: 0.9rem;
   }
+  .veld-hulp-blok {
+    margin: 0 0 10px 0;
+    font-size: 0.95rem;
+    color: #444;
+  }
   .veld-groep input[type="text"],
   .veld-groep input[type="tel"],
   .veld-groep input[type="email"],
@@ -275,18 +280,46 @@
   }
   .foto-voorbeeld-wrap {
     margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
-  .foto-voorbeeld-wrap img {
+  .foto-kaartje {
+    position: relative;
+    width: 140px;
+  }
+  .foto-kaartje img {
     display: block;
-    max-width: 100%;
-    max-height: 260px;
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
     border-radius: 10px;
     border: 1px solid var(--rand);
   }
-  .foto-voorbeeld-wrap p {
-    margin: 8px 0 0 0;
-    font-size: 0.95rem;
+  .foto-kaartje .verwijder {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: var(--oranje);
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+  }
+  .foto-kaartje .verwijder:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+  .foto-kaartje .bijschrift {
+    margin: 6px 0 0 0;
+    font-size: 0.85rem;
     color: #555;
+    text-align: center;
   }
   .foto-status {
     margin: 0;
@@ -440,24 +473,25 @@
         </div>
 
         <div class="veld-groep foto-veld" data-foto-veld="eigen">
-          <label>Foto van de storing * <span class="veld-hulp">(verplicht)</span></label>
+          <label>Foto's van de storing * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
+          <p class="veld-hulp-blok">Maak ter plekke een foto, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit.</p>
           <div class="knop-rij">
-            <button type="button" class="knop secundair" data-foto-knop="eigen">📷 Maak of kies een foto</button>
+            <button type="button" class="knop secundair" data-foto-knop="eigen">📷 Foto maken</button>
+            <button type="button" class="knop secundair" data-foto-knop-galerij="eigen">🖼️ Foto kiezen</button>
           </div>
           <input type="file" accept="image/*" capture="environment" data-foto-input="eigen" hidden>
-          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="eigen" hidden>
-            <img data-foto-voorbeeld="eigen" alt="Gemaakte foto van de storing">
-            <p>Dit is uw foto.</p>
-          </div>
+          <input type="file" accept="image/*" multiple data-foto-input-galerij="eigen" hidden>
+          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="eigen" hidden></div>
           <p class="foto-status" data-foto-status="eigen">Nog geen foto toegevoegd.</p>
         </div>
 
         <div class="veld-groep">
           <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
           <div class="keuze-lijst" data-privacy="eigen">
-            <label><input type="checkbox" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen mag de gegevens verwerken</label>
-            <label><input type="checkbox" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage.</label>
+            <label><input type="radio" name="privacy-eigen" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De bewonerscommissie mag mijn gegevens gebruiken om rapportage op te bouwen.</label>
+            <label><input type="radio" name="privacy-eigen" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen Vastgoedbeheer mag mijn gegevens verwerken.</label>
           </div>
+          <p class="veld-hulp-blok" style="margin-top:10px;">Kiest u de tweede optie, dan krijgt Hoen uw melding met naam en telefoonnummer, maar bewaart de bewonerscommissie alleen uw huisnummer, het soort storing en de datum. Uw naam en contactgegevens komen bij ons dan niet in de administratie — <strong>uw melding telt dan niet volledig mee in het dossier</strong> dat wij opbouwen om de verhuurder aan te spreken.</p>
         </div>
 
         <div class="veld-groep">
@@ -571,24 +605,25 @@
         </div>
 
         <div class="veld-groep foto-veld" data-foto-veld="algemeen">
-          <label>Foto van de storing * <span class="veld-hulp">(verplicht)</span></label>
+          <label>Foto's van de storing * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
+          <p class="veld-hulp-blok">Maak ter plekke een foto, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit.</p>
           <div class="knop-rij">
-            <button type="button" class="knop secundair" data-foto-knop="algemeen">📷 Maak of kies een foto</button>
+            <button type="button" class="knop secundair" data-foto-knop="algemeen">📷 Foto maken</button>
+            <button type="button" class="knop secundair" data-foto-knop-galerij="algemeen">🖼️ Foto kiezen</button>
           </div>
           <input type="file" accept="image/*" capture="environment" data-foto-input="algemeen" hidden>
-          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="algemeen" hidden>
-            <img data-foto-voorbeeld="algemeen" alt="Gemaakte foto van de storing">
-            <p>Dit is uw foto.</p>
-          </div>
+          <input type="file" accept="image/*" multiple data-foto-input-galerij="algemeen" hidden>
+          <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="algemeen" hidden></div>
           <p class="foto-status" data-foto-status="algemeen">Nog geen foto toegevoegd.</p>
         </div>
 
         <div class="veld-groep">
           <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
           <div class="keuze-lijst" data-privacy="algemeen">
-            <label><input type="checkbox" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen mag de gegevens verwerken</label>
-            <label><input type="checkbox" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage.</label>
+            <label><input type="radio" name="privacy-algemeen" value="De Bewonerscommissie mag de gegevens verwerken voor het opbouwen van rapportage."> De bewonerscommissie mag mijn gegevens gebruiken om rapportage op te bouwen.</label>
+            <label><input type="radio" name="privacy-algemeen" value="Alleen Hoen mag de gegevens verwerken"> Alleen Hoen Vastgoedbeheer mag mijn gegevens verwerken.</label>
           </div>
+          <p class="veld-hulp-blok" style="margin-top:10px;">Kiest u de tweede optie, dan krijgt Hoen uw melding met naam en telefoonnummer, maar bewaart de bewonerscommissie alleen uw huisnummer, het soort storing en de datum. Uw naam en contactgegevens komen bij ons dan niet in de administratie — <strong>uw melding telt dan niet volledig mee in het dossier</strong> dat wij opbouwen om de verhuurder aan te spreken.</p>
         </div>
 
         <div class="veld-groep">
@@ -716,7 +751,8 @@
   // voordat 'm wordt meegestuurd, zodat het versturen ook op een
   // trage mobiele verbinding goed werkt.
   // ─────────────────────────────────────────────────────────────────
-  var fotoData = { eigen: null, algemeen: null };
+  var MAX_FOTOS = 5;
+  var fotoData = { eigen: [], algemeen: [] };
 
   function verkleinFoto(bestand, callback) {
     var reader = new FileReader();
@@ -742,36 +778,136 @@
     reader.readAsDataURL(bestand);
   }
 
+  // Tekent de strook met miniaturen opnieuw, inclusief een kruisje om
+  // een foto weer weg te halen. Bewoners kiezen soms per ongeluk de
+  // verkeerde foto uit hun galerij; dan moeten ze niet opnieuw hoeven
+  // beginnen.
+  function tekenFotos(prefix) {
+    var wrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
+    var status = document.querySelector('[data-foto-status="' + prefix + '"]');
+    var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
+    var knop = document.querySelector('[data-foto-knop="' + prefix + '"]');
+    if (!wrap) return;
+
+    var lijst = fotoData[prefix];
+    wrap.innerHTML = "";
+    wrap.hidden = lijst.length === 0;
+
+    lijst.forEach(function (dataUrl, index) {
+      var kaartje = document.createElement("div");
+      kaartje.className = "foto-kaartje";
+
+      var afbeelding = document.createElement("img");
+      afbeelding.src = dataUrl;
+      afbeelding.alt = "Foto " + (index + 1) + " van de storing";
+      kaartje.appendChild(afbeelding);
+
+      var knopWeg = document.createElement("button");
+      knopWeg.type = "button";
+      knopWeg.className = "verwijder";
+      knopWeg.setAttribute("aria-label", "Foto " + (index + 1) + " verwijderen");
+      knopWeg.textContent = "\u2715";
+      knopWeg.addEventListener("click", function () {
+        fotoData[prefix].splice(index, 1);
+        tekenFotos(prefix);
+      });
+      kaartje.appendChild(knopWeg);
+
+      var bijschrift = document.createElement("p");
+      bijschrift.className = "bijschrift";
+      bijschrift.textContent = "Foto " + (index + 1);
+      kaartje.appendChild(bijschrift);
+
+      wrap.appendChild(kaartje);
+    });
+
+    if (status) {
+      if (lijst.length === 0) status.textContent = "Nog geen foto toegevoegd.";
+      else if (lijst.length === 1) status.textContent = "1 foto toegevoegd \u2713";
+      else status.textContent = lijst.length + " foto's toegevoegd \u2713";
+    }
+    if (veld) {
+      if (lijst.length > 0) veld.classList.add("heeft-foto");
+      else veld.classList.remove("heeft-foto");
+    }
+    var knopGalerij = document.querySelector('[data-foto-knop-galerij="' + prefix + '"]');
+    var vol = lijst.length >= MAX_FOTOS;
+    if (knop) {
+      knop.textContent = lijst.length === 0
+        ? "\uD83D\uDCF7 Foto maken"
+        : "\uD83D\uDCF7 Nog een foto maken";
+      knop.disabled = vol;
+    }
+    if (knopGalerij) {
+      knopGalerij.textContent = lijst.length === 0
+        ? "\uD83D\uDDBC\uFE0F Foto kiezen"
+        : "\uD83D\uDDBC\uFE0F Nog een foto kiezen";
+      knopGalerij.disabled = vol;
+    }
+  }
+
+  // Twee knoppen, één verwerking: "Foto maken" opent meteen de camera
+  // (capture), "Foto kiezen" opent de galerij en laat er meerdere
+  // tegelijk aanvinken. Dat tweede is er voor het geval de storing al
+  // verholpen of opgeruimd is — een lekkage die is opgedweild valt
+  // anders niet meer vast te leggen.
   (function () {
     ["eigen", "algemeen"].forEach(function (prefix) {
-      var knop = document.querySelector('[data-foto-knop="' + prefix + '"]');
-      var input = document.querySelector('[data-foto-input="' + prefix + '"]');
-      var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
-      var voorbeeld = document.querySelector('[data-foto-voorbeeld="' + prefix + '"]');
       var status = document.querySelector('[data-foto-status="' + prefix + '"]');
-      var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
-      if (!knop || !input) return;
 
-      knop.addEventListener("click", function () { input.click(); });
+      function verwerkBestanden(input) {
+        var bestanden = input.files ? Array.prototype.slice.call(input.files) : [];
+        if (bestanden.length === 0) return;
 
-      input.addEventListener("change", function () {
-        var bestand = input.files && input.files[0];
-        if (!bestand) return;
+        var ruimte = MAX_FOTOS - fotoData[prefix].length;
+        var teveel = bestanden.length > ruimte;
+        if (teveel) bestanden = bestanden.slice(0, ruimte);
 
-        if (status) status.textContent = "Foto wordt verwerkt...";
+        if (bestanden.length === 0) {
+          if (status) status.textContent = "U kunt maximaal " + MAX_FOTOS + " foto's meesturen.";
+          input.value = "";
+          return;
+        }
 
-        verkleinFoto(bestand, function (dataUrl) {
-          if (!dataUrl) {
-            if (status) status.textContent = "Dit lukte niet — probeer een andere foto.";
-            return;
-          }
-          fotoData[prefix] = dataUrl;
-          if (voorbeeld) voorbeeld.src = dataUrl;
-          if (voorbeeldWrap) voorbeeldWrap.hidden = false;
-          if (status) status.textContent = "Foto toegevoegd ✓";
-          if (veld) veld.classList.add("heeft-foto");
+        if (status) status.textContent = bestanden.length === 1
+          ? "Foto wordt verwerkt..."
+          : "Foto's worden verwerkt...";
+
+        var nogTeGaan = bestanden.length;
+        var misluktAantal = 0;
+
+        bestanden.forEach(function (bestand) {
+          verkleinFoto(bestand, function (dataUrl) {
+            if (dataUrl) fotoData[prefix].push(dataUrl);
+            else misluktAantal++;
+            nogTeGaan--;
+            if (nogTeGaan === 0) {
+              tekenFotos(prefix);
+              if (misluktAantal > 0 && status) {
+                status.textContent = misluktAantal === 1
+                  ? "E\u00e9n foto lukte niet \u2014 probeer die opnieuw."
+                  : misluktAantal + " foto's lukten niet \u2014 probeer die opnieuw.";
+              } else if (teveel && status) {
+                status.textContent = "Maximaal " + MAX_FOTOS + " foto's \u2014 de rest is niet toegevoegd.";
+              }
+              input.value = "";
+            }
+          });
         });
+      }
+
+      [
+        ['[data-foto-knop="' + prefix + '"]', '[data-foto-input="' + prefix + '"]'],
+        ['[data-foto-knop-galerij="' + prefix + '"]', '[data-foto-input-galerij="' + prefix + '"]']
+      ].forEach(function (paar) {
+        var knop = document.querySelector(paar[0]);
+        var input = document.querySelector(paar[1]);
+        if (!knop || !input) return;
+        knop.addEventListener("click", function () { input.click(); });
+        input.addEventListener("change", function () { verwerkBestanden(input); });
       });
+
+      tekenFotos(prefix);
     });
   })();
 </script>
@@ -786,7 +922,7 @@
   function verzamelAangevinkt(container) {
     if (!container) return [];
     var waarden = [];
-    container.querySelectorAll('input[type="checkbox"]:checked').forEach(function (vak) {
+    container.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked').forEach(function (vak) {
       if (vak.hasAttribute("data-andere-vak")) {
         var tekstVeld = container.querySelector('[data-andere-tekst="' + vak.getAttribute("data-andere-vak") + '"]');
         waarden.push(tekstVeld && tekstVeld.value ? tekstVeld.value : "Andere");
@@ -829,15 +965,15 @@
         return;
       }
       if (privacyGekozen.length === 0) {
-        toonStatus("Vink bij het privacy-akkoord minstens één optie aan.", "fout");
+        toonStatus("Maak bij het privacy-akkoord een keuze.", "fout");
         return;
       }
       if (!gelezenVak || !gelezenVak.checked) {
         toonStatus("Vink aan dat u ‘Besluit kleine herstellingen’ heeft gelezen.", "fout");
         return;
       }
-      if (!fotoData[prefix]) {
-        toonStatus("Voeg een foto van de storing toe voordat u verstuurt.", "fout");
+      if (!fotoData[prefix] || fotoData[prefix].length === 0) {
+        toonStatus("Voeg minstens één foto van de storing toe voordat u verstuurt.", "fout");
         return;
       }
       if (!REPARATIE_SCRIPT_URL) {
@@ -861,7 +997,12 @@
         typeStoring: document.getElementById(prefix + "-type-storing").value,
         watIsHetProbleem: document.getElementById(prefix + "-omschrijving").value,
         privacyKeuze: privacyGekozen.join("; "),
-        fotoBase64: fotoData[prefix],
+        fotos: fotoData[prefix].map(function (dataUrl) {
+          return { base64: dataUrl, type: "image/jpeg" };
+        }),
+        // Blijft meegestuurd voor het geval er nog een oudere versie van
+        // het script draait: die kent alleen één foto.
+        fotoBase64: fotoData[prefix][0],
         fotoType: "image/jpeg"
       };
 
@@ -879,15 +1020,10 @@
         .then(function (response) { return response.json(); })
         .then(function (json) {
           if (json && json.ok) {
-            toonStatus("Bedankt! Uw melding is verstuurd naar de bewonerscommissie.", "gelukt");
+            toonStatus("Bedankt! Uw melding is verstuurd naar Hoen Vastgoedbeheer en naar de bewonerscommissie. U krijgt zelf een bevestiging per e-mail.", "gelukt");
             form.reset();
-            fotoData[prefix] = null;
-            var veld = document.querySelector('[data-foto-veld="' + prefix + '"]');
-            var voorbeeldWrap = document.querySelector('[data-foto-voorbeeld-wrap="' + prefix + '"]');
-            var fotoStatus = document.querySelector('[data-foto-status="' + prefix + '"]');
-            if (veld) veld.classList.remove("heeft-foto");
-            if (voorbeeldWrap) voorbeeldWrap.hidden = true;
-            if (fotoStatus) fotoStatus.textContent = "Nog geen foto toegevoegd.";
+            fotoData[prefix] = [];
+            tekenFotos(prefix);
           } else {
             toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
           }

@@ -150,6 +150,28 @@
   }
   .veld-groep textarea { min-height: 130px; resize: vertical; }
 
+  .foto-veld {
+    border: 2px dashed var(--rand);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .foto-veld.heeft-foto { border-style: solid; border-color: var(--groen); }
+  .foto-hulp { margin: 0 0 10px 0; font-size: 0.95rem; color: #444; }
+  .foto-strook { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .foto-kaartje { position: relative; width: 140px; }
+  .foto-kaartje img {
+    display: block; width: 100%; height: 140px; object-fit: cover;
+    border-radius: 10px; border: 1px solid var(--rand);
+  }
+  .foto-kaartje .verwijder {
+    position: absolute; top: -10px; right: -10px;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2px solid #fff; background: var(--oranje); color: #fff;
+    font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 0;
+  }
+  .foto-kaartje .verwijder:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+  .foto-status { margin: 0; font-size: 0.92rem; color: #555; }
+
   .form-status {
     padding: 14px 18px;
     border-radius: 10px;
@@ -196,6 +218,19 @@
         <textarea id="mededeling-tekst" name="tekst" required></textarea>
       </div>
 
+      <div class="veld-groep foto-veld" id="foto-veld">
+        <label>Foto's <span style="font-weight:400;color:#555;font-size:0.9rem;">(mag, hoeft niet — maximaal drie)</span></label>
+        <p class="foto-hulp">Bijvoorbeeld een foto van de nieuwe wasruimte, een aankondiging of een uitnodiging. De foto's komen onder de mededeling op de hoofdpagina te staan en zijn voor iedereen zichtbaar.</p>
+        <div class="knop-rij">
+          <button type="button" class="knop secundair" id="knop-foto-maken">📷 Foto maken</button>
+          <button type="button" class="knop secundair" id="knop-foto-kiezen">🖼️ Foto kiezen</button>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="foto-input-camera" hidden>
+        <input type="file" accept="image/*" multiple id="foto-input-galerij" hidden>
+        <div class="foto-strook" id="foto-strook" hidden></div>
+        <p class="foto-status" id="foto-status">Nog geen foto toegevoegd.</p>
+      </div>
+
       <div class="knop-rij">
         <button type="submit" class="knop">Mededeling plaatsen</button>
       </div>
@@ -210,6 +245,138 @@
   // verzoekType: "mededeling" hieronder), maar controleert daarbij
   // eerst het wachtwoord.
   var MEDEDELING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // FOTO'S BIJ EEN MEDEDELING (optioneel)
+  //
+  // Twee knoppen: eentje die meteen de camera opent en eentje die de
+  // galerij opent. De foto's worden in de browser verkleind voordat ze
+  // worden verstuurd, anders duurt het plaatsen op een telefoon veel
+  // te lang.
+  // ─────────────────────────────────────────────────────────────────
+  var MAX_FOTOS = 3;
+  var fotoLijst = [];
+
+  function verkleinFoto(bestand, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var MAX = 1600;
+        var w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w >= h) { h = Math.round(h * (MAX / w)); w = MAX; }
+          else { w = Math.round(w * (MAX / h)); h = MAX; }
+        }
+        var canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { callback(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { callback(null); };
+    reader.readAsDataURL(bestand);
+  }
+
+  function tekenFotos() {
+    var strook = document.getElementById("foto-strook");
+    var status = document.getElementById("foto-status");
+    var veld = document.getElementById("foto-veld");
+    var knopMaken = document.getElementById("knop-foto-maken");
+    var knopKiezen = document.getElementById("knop-foto-kiezen");
+    if (!strook) return;
+
+    strook.innerHTML = "";
+    strook.hidden = fotoLijst.length === 0;
+
+    fotoLijst.forEach(function (dataUrl, index) {
+      var kaartje = document.createElement("div");
+      kaartje.className = "foto-kaartje";
+
+      var afbeelding = document.createElement("img");
+      afbeelding.src = dataUrl;
+      afbeelding.alt = "Foto " + (index + 1);
+      kaartje.appendChild(afbeelding);
+
+      var weg = document.createElement("button");
+      weg.type = "button";
+      weg.className = "verwijder";
+      weg.setAttribute("aria-label", "Foto " + (index + 1) + " verwijderen");
+      weg.textContent = "✕";
+      weg.addEventListener("click", function () {
+        fotoLijst.splice(index, 1);
+        tekenFotos();
+      });
+      kaartje.appendChild(weg);
+
+      strook.appendChild(kaartje);
+    });
+
+    if (status) {
+      if (fotoLijst.length === 0) status.textContent = "Nog geen foto toegevoegd.";
+      else if (fotoLijst.length === 1) status.textContent = "1 foto toegevoegd ✓";
+      else status.textContent = fotoLijst.length + " foto's toegevoegd ✓";
+    }
+    if (veld) {
+      if (fotoLijst.length > 0) veld.classList.add("heeft-foto");
+      else veld.classList.remove("heeft-foto");
+    }
+    var vol = fotoLijst.length >= MAX_FOTOS;
+    if (knopMaken) knopMaken.disabled = vol;
+    if (knopKiezen) knopKiezen.disabled = vol;
+  }
+
+  (function () {
+    var status = document.getElementById("foto-status");
+
+    function verwerk(input) {
+      var bestanden = input.files ? Array.prototype.slice.call(input.files) : [];
+      if (bestanden.length === 0) return;
+
+      var ruimte = MAX_FOTOS - fotoLijst.length;
+      var teveel = bestanden.length > ruimte;
+      if (teveel) bestanden = bestanden.slice(0, ruimte);
+      if (bestanden.length === 0) {
+        if (status) status.textContent = "U kunt maximaal " + MAX_FOTOS + " foto's meesturen.";
+        input.value = "";
+        return;
+      }
+
+      if (status) status.textContent = "Bezig met verwerken...";
+      var nogTeGaan = bestanden.length;
+      var mislukt = 0;
+
+      bestanden.forEach(function (bestand) {
+        verkleinFoto(bestand, function (dataUrl) {
+          if (dataUrl) fotoLijst.push(dataUrl); else mislukt++;
+          nogTeGaan--;
+          if (nogTeGaan === 0) {
+            tekenFotos();
+            if (mislukt > 0 && status) {
+              status.textContent = "Niet elke foto lukte — probeer die opnieuw.";
+            } else if (teveel && status) {
+              status.textContent = "Maximaal " + MAX_FOTOS + " foto's — de rest is niet toegevoegd.";
+            }
+            input.value = "";
+          }
+        });
+      });
+    }
+
+    [["knop-foto-maken", "foto-input-camera"], ["knop-foto-kiezen", "foto-input-galerij"]].forEach(function (paar) {
+      var knop = document.getElementById(paar[0]);
+      var input = document.getElementById(paar[1]);
+      if (!knop || !input) return;
+      knop.addEventListener("click", function () { input.click(); });
+      input.addEventListener("change", function () { verwerk(input); });
+    });
+
+    tekenFotos();
+  })();
 </script>
 
 <script>
@@ -241,7 +408,10 @@
         verzoekType: "mededeling",
         wachtwoord: document.getElementById("mededeling-wachtwoord").value,
         titel: document.getElementById("mededeling-titel").value,
-        tekst: document.getElementById("mededeling-tekst").value
+        tekst: document.getElementById("mededeling-tekst").value,
+        fotos: fotoLijst.map(function (dataUrl) {
+          return { base64: dataUrl, type: "image/jpeg" };
+        })
       };
 
       var knop = form.querySelector('button[type="submit"]');
@@ -261,6 +431,8 @@
           if (json && json.ok) {
             toonStatus("Geplaatst! De mededeling staat nu op de hoofdpagina.", "gelukt");
             form.reset();
+            fotoLijst.length = 0;
+            tekenFotos();
           } else {
             toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
           }
