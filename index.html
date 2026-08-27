@@ -142,8 +142,12 @@
   .knop {
     display: inline-block;
     text-decoration: none;
+    font-family: inherit;
     font-size: 1.1rem;
     font-weight: 600;
+    /* Zonder deze regel worden <button>-knoppen lager dan <a>-knoppen:
+       een button erft de regelafstand van de pagina niet vanzelf. */
+    line-height: 1.6;
     padding: 16px 24px;
     border-radius: 10px;
     color: #fff;
@@ -160,6 +164,15 @@
     border: 2px solid var(--groen-donker);
   }
   .knop.secundair:hover, .knop.secundair:focus { background: #eef3ef; }
+
+  /* Blauwe knop — gebruikt bij het reserveren van de recreatiezaal, zodat
+     die zich onderscheidt van de groene knoppen voor reparatieverzoeken. */
+  .knop.blauw {
+    background: #2b5faa;
+    color: #fff;
+    border: none;
+  }
+  .knop.blauw:hover, .knop.blauw:focus { background: #22497f; }
 
   a.knop:focus, button.knop:focus {
     outline: 3px solid #ffbf47;
@@ -632,7 +645,7 @@
       <h2>Recreatiezaal</h2>
       <p>Wilt u de recreatiezaal gebruiken, bijvoorbeeld voor een verjaardag? Bekijk hieronder hoe u reserveert en aan welke voorwaarden dat verbonden is.</p>
       <div class="knop-rij">
-        <button type="button" class="knop secundair" id="knop-zaal-tonen" aria-expanded="false" aria-controls="zaal-inhoud">Meer bekijken</button>
+        <button type="button" class="knop blauw" id="knop-zaal-tonen" aria-expanded="false" aria-controls="zaal-inhoud">Recreatiezaal reserveren</button>
       </div>
       <div id="zaal-inhoud" hidden>
 
@@ -716,7 +729,7 @@
       <h2>Mededelingen</h2>
       <p>Het laatste nieuws en aankondigingen van de bewonerscommissie.</p>
       <div class="knop-rij">
-        <a class="knop secundair" href="#mededelingen">Mededelingen bekijken</a>
+        <a class="knop blauw" href="#mededelingen">Mededelingen bekijken</a>
       </div>
     </div>
 
@@ -725,9 +738,9 @@
       <h2>Schoonmaak</h2>
       <p>Benieuwd wat de schoonmaker in het gebouw doet? Bekijk het overzicht per week, maand of jaar.</p>
       <div class="knop-rij">
-        <button type="button" class="knop secundair" id="knop-schoonmaak-week" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze week bekijken</button>
-        <button type="button" class="knop secundair" id="knop-schoonmaak-maand" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze maand bekijken</button>
-        <button type="button" class="knop secundair" id="knop-schoonmaak-jaar" aria-expanded="false" aria-controls="schoonmaak-inhoud">Dit jaar bekijken</button>
+        <button type="button" class="knop blauw" id="knop-schoonmaak-week" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze week bekijken</button>
+        <button type="button" class="knop blauw" id="knop-schoonmaak-maand" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze maand bekijken</button>
+        <button type="button" class="knop blauw" id="knop-schoonmaak-jaar" aria-expanded="false" aria-controls="schoonmaak-inhoud">Dit jaar bekijken</button>
       </div>
       <div id="schoonmaak-inhoud" hidden>
         <p class="schoonmaak-intro" id="schoonmaak-intro-tekst"></p>
@@ -1350,7 +1363,7 @@
         var toonNu = zaalInhoud.hidden;
         zaalInhoud.hidden = !toonNu;
         knopZaalTonen.setAttribute("aria-expanded", toonNu ? "true" : "false");
-        knopZaalTonen.textContent = toonNu ? "Verbergen" : "Meer bekijken";
+        knopZaalTonen.textContent = toonNu ? "Verbergen" : "Recreatiezaal reserveren";
         if (toonNu) zaalInhoud.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
     }
