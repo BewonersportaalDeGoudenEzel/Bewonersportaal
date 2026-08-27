@@ -355,6 +355,52 @@
   .in-voorbereiding p { margin: 0 0 10px 0; }
   .in-voorbereiding p:last-child { margin-bottom: 0; }
 
+  .spoed-nummer {
+    background: #eef3ef;
+    border: 2px solid var(--groen-donker);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 4px 0 18px 0;
+  }
+  .spoed-nummer .spoed-label {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: var(--groen-donker);
+  }
+  .spoed-nummer .spoed-telefoon {
+    margin: 0 0 6px 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--tekst);
+  }
+  .spoed-nummer .spoed-telefoon a { color: inherit; text-decoration: none; }
+  .spoed-nummer p:last-child { margin: 0; font-size: 0.92rem; color: #444; }
+
+  .spoed-tabel {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 18px 0;
+  }
+  .spoed-tabel td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rand);
+    vertical-align: top;
+    font-size: 0.95rem;
+  }
+  .spoed-tabel td:first-child {
+    font-weight: 700;
+    white-space: nowrap;
+    padding-right: 16px;
+    color: var(--tekst);
+  }
+  .spoed-tabel td:last-child { color: #555; }
+
+  .spoed-let-op {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #555;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { scroll-behavior: auto !important; }
   }
@@ -643,6 +689,35 @@
     </div>
   </div>
 
+  <div class="kaart">
+    <button type="button" class="keuze-knop" id="keuze-spoed" aria-pressed="false" aria-expanded="false" aria-controls="sectie-spoed">
+      <span class="emoji" aria-hidden="true">🚨</span>Spoedreparatie
+    </button>
+
+    <div id="sectie-spoed" hidden>
+      <p>Voor spoedeisende meldingen die niet kunnen wachten tot de eerstvolgende werkdag is de verhuurder telefonisch bereikbaar. Hieronder ziet u welk nummer <strong>nu, op dit moment</strong>, van toepassing is.</p>
+
+      <div class="spoed-nummer">
+        <p class="spoed-label" id="spoed-nu-label">Bel nu:</p>
+        <p class="spoed-telefoon" id="spoed-nu-nummer"></p>
+        <p id="spoed-nu-toelichting"></p>
+      </div>
+
+      <table class="spoed-tabel">
+        <tr>
+          <td>020-305 44 50</td>
+          <td>Op werkdagen van 12:00 tot 13:30 uur en van 16:00 tot 17:00 uur</td>
+        </tr>
+        <tr>
+          <td>06 15 86 04 63</td>
+          <td>Buiten kantooruren en op werkdagen na 17:00 uur</td>
+        </tr>
+      </table>
+
+      <p class="spoed-let-op">Gaat het niet om een spoedeisend geval? Vul dan gewoon het gewone reparatieverzoek in bij "Eigen woning" of "Algemene ruimte" hierboven.</p>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -675,28 +750,68 @@
   // KEUZE: EIGEN WONING OF ALGEMENE RUIMTE
   // ─────────────────────────────────────────────────────────────────
   (function () {
-    var knopEigen = document.getElementById("keuze-eigen-woning");
-    var knopAlgemeen = document.getElementById("keuze-algemene-ruimte");
-    var sectieEigen = document.getElementById("sectie-eigen-woning");
-    var sectieAlgemeen = document.getElementById("sectie-algemene-ruimte");
-    if (!knopEigen || !knopAlgemeen || !sectieEigen || !sectieAlgemeen) return;
+    var paren = [
+      { knop: document.getElementById("keuze-eigen-woning"), sectie: document.getElementById("sectie-eigen-woning") },
+      { knop: document.getElementById("keuze-algemene-ruimte"), sectie: document.getElementById("sectie-algemene-ruimte") },
+      { knop: document.getElementById("keuze-spoed"), sectie: document.getElementById("sectie-spoed") }
+    ];
+    if (paren.some(function (p) { return !p.knop || !p.sectie; })) return;
 
-    function toon(watKnop, watSectie, anderKnop, anderSectie) {
-      watSectie.hidden = false;
-      anderSectie.hidden = true;
-      watKnop.setAttribute("aria-pressed", "true");
-      watKnop.setAttribute("aria-expanded", "true");
-      anderKnop.setAttribute("aria-pressed", "false");
-      anderKnop.setAttribute("aria-expanded", "false");
-      watSectie.scrollIntoView({ behavior: "smooth", block: "start" });
+    function toon(gekozen) {
+      paren.forEach(function (p) {
+        var actief = p === gekozen;
+        p.sectie.hidden = !actief;
+        p.knop.setAttribute("aria-pressed", actief ? "true" : "false");
+        p.knop.setAttribute("aria-expanded", actief ? "true" : "false");
+      });
+      gekozen.sectie.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    knopEigen.addEventListener("click", function () {
-      toon(knopEigen, sectieEigen, knopAlgemeen, sectieAlgemeen);
+    paren.forEach(function (p) {
+      p.knop.addEventListener("click", function () { toon(p); });
     });
-    knopAlgemeen.addEventListener("click", function () {
-      toon(knopAlgemeen, sectieAlgemeen, knopEigen, sectieEigen);
-    });
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // SPOEDREPARATIE — welk telefoonnummer is NU van toepassing?
+  //
+  // De vaste lijn (020-305 44 50) is alleen bereikbaar op werkdagen
+  // van 12:00-13:30 uur en van 16:00-17:00 uur. Buiten die tijden
+  // (dus ook 's ochtends, tussendoor, 's avonds en in het weekend)
+  // belt men het mobiele nummer.
+  // ─────────────────────────────────────────────────────────────────
+  (function () {
+    var label = document.getElementById("spoed-nu-label");
+    var nummerEl = document.getElementById("spoed-nu-nummer");
+    var toelichtingEl = document.getElementById("spoed-nu-toelichting");
+    var knopSpoed = document.getElementById("keuze-spoed");
+    if (!nummerEl || !toelichtingEl || !knopSpoed) return;
+
+    function binnenVasteLijnTijd(nu) {
+      var dag = nu.getDay(); // 0 = zondag, 6 = zaterdag
+      if (dag === 0 || dag === 6) return false;
+      var minutenSindsMidnacht = nu.getHours() * 60 + nu.getMinutes();
+      var vanaf1 = 12 * 60, tot1 = 13 * 60 + 30;
+      var vanaf2 = 16 * 60, tot2 = 17 * 60;
+      return (minutenSindsMidnacht >= vanaf1 && minutenSindsMidnacht < tot1) ||
+             (minutenSindsMidnacht >= vanaf2 && minutenSindsMidnacht < tot2);
+    }
+
+    function werkBij() {
+      var nu = new Date();
+      if (binnenVasteLijnTijd(nu)) {
+        nummerEl.innerHTML = '<a href="tel:0203054450">020-305 44 50</a>';
+        toelichtingEl.textContent = "U belt nu binnen de bereikbaarheidstijden van de vaste lijn (werkdagen 12:00–13:30 en 16:00–17:00 uur).";
+      } else {
+        nummerEl.innerHTML = '<a href="tel:0615860463">06 15 86 04 63</a>';
+        toelichtingEl.textContent = "De vaste lijn is nu niet bereikbaar (alleen op werkdagen 12:00–13:30 en 16:00–17:00 uur) — bel daarom dit mobiele nummer.";
+      }
+    }
+
+    werkBij();
+    knopSpoed.addEventListener("click", werkBij);
   })();
 </script>
 
