@@ -705,12 +705,16 @@
 
       <table class="spoed-tabel">
         <tr>
+          <td>020-305 44 77</td>
+          <td>Op werkdagen van 8:30 tot 12:00 uur en van 13:30 tot 16:00 uur</td>
+        </tr>
+        <tr>
           <td>020-305 44 50</td>
           <td>Op werkdagen van 12:00 tot 13:30 uur en van 16:00 tot 17:00 uur</td>
         </tr>
         <tr>
           <td>06 15 86 04 63</td>
-          <td>Buiten kantooruren en op werkdagen na 17:00 uur</td>
+          <td>Buiten kantooruren, in het weekend en op werkdagen na 17:00 uur</td>
         </tr>
       </table>
 
@@ -777,36 +781,53 @@
   // ─────────────────────────────────────────────────────────────────
   // SPOEDREPARATIE — welk telefoonnummer is NU van toepassing?
   //
-  // De vaste lijn (020-305 44 50) is alleen bereikbaar op werkdagen
-  // van 12:00-13:30 uur en van 16:00-17:00 uur. Buiten die tijden
-  // (dus ook 's ochtends, tussendoor, 's avonds en in het weekend)
-  // belt men het mobiele nummer.
+  // Op werkdagen is de verhuurder van 8:30 tot 17:00 uur telefonisch
+  // bereikbaar, maar via twee verschillende nummers:
+  //   020-305 44 77  →  8:30-12:00 en 13:30-16:00 uur
+  //   020-305 44 50  →  12:00-13:30 en 16:00-17:00 uur
+  // Buiten die tijden — 's avonds, 's nachts, in het weekend en op
+  // feestdagen — geldt het mobiele nummer van de technische dienst.
   // ─────────────────────────────────────────────────────────────────
   (function () {
-    var label = document.getElementById("spoed-nu-label");
     var nummerEl = document.getElementById("spoed-nu-nummer");
     var toelichtingEl = document.getElementById("spoed-nu-toelichting");
     var knopSpoed = document.getElementById("keuze-spoed");
     if (!nummerEl || !toelichtingEl || !knopSpoed) return;
 
-    function binnenVasteLijnTijd(nu) {
+    // Elk blok: van welk tijdstip tot welk tijdstip (in minuten na
+    // middernacht), met het nummer dat dan gebeld moet worden.
+    var BLOKKEN = [
+      { vanaf:  8 * 60 + 30, tot: 12 * 60,      nummer: "020-305 44 77", bel: "0203054477",
+        tijden: "werkdagen 8:30–12:00 en 13:30–16:00 uur" },
+      { vanaf: 12 * 60,      tot: 13 * 60 + 30, nummer: "020-305 44 50", bel: "0203054450",
+        tijden: "werkdagen 12:00–13:30 en 16:00–17:00 uur" },
+      { vanaf: 13 * 60 + 30, tot: 16 * 60,      nummer: "020-305 44 77", bel: "0203054477",
+        tijden: "werkdagen 8:30–12:00 en 13:30–16:00 uur" },
+      { vanaf: 16 * 60,      tot: 17 * 60,      nummer: "020-305 44 50", bel: "0203054450",
+        tijden: "werkdagen 12:00–13:30 en 16:00–17:00 uur" }
+    ];
+
+    function blokVoor(nu) {
       var dag = nu.getDay(); // 0 = zondag, 6 = zaterdag
-      if (dag === 0 || dag === 6) return false;
-      var minutenSindsMidnacht = nu.getHours() * 60 + nu.getMinutes();
-      var vanaf1 = 12 * 60, tot1 = 13 * 60 + 30;
-      var vanaf2 = 16 * 60, tot2 = 17 * 60;
-      return (minutenSindsMidnacht >= vanaf1 && minutenSindsMidnacht < tot1) ||
-             (minutenSindsMidnacht >= vanaf2 && minutenSindsMidnacht < tot2);
+      if (dag === 0 || dag === 6) return null;
+      var minuten = nu.getHours() * 60 + nu.getMinutes();
+      for (var i = 0; i < BLOKKEN.length; i++) {
+        if (minuten >= BLOKKEN[i].vanaf && minuten < BLOKKEN[i].tot) return BLOKKEN[i];
+      }
+      return null;
     }
 
     function werkBij() {
-      var nu = new Date();
-      if (binnenVasteLijnTijd(nu)) {
-        nummerEl.innerHTML = '<a href="tel:0203054450">020-305 44 50</a>';
-        toelichtingEl.textContent = "U belt nu binnen de bereikbaarheidstijden van de vaste lijn (werkdagen 12:00–13:30 en 16:00–17:00 uur).";
+      var blok = blokVoor(new Date());
+      if (blok) {
+        nummerEl.innerHTML = '<a href="tel:' + blok.bel + '">' + blok.nummer + '</a>';
+        toelichtingEl.textContent =
+          "Dit nummer is nu bereikbaar (" + blok.tijden + ").";
       } else {
         nummerEl.innerHTML = '<a href="tel:0615860463">06 15 86 04 63</a>';
-        toelichtingEl.textContent = "De vaste lijn is nu niet bereikbaar (alleen op werkdagen 12:00–13:30 en 16:00–17:00 uur) — bel daarom dit mobiele nummer.";
+        toelichtingEl.textContent =
+          "Het kantoor is nu gesloten. Dit is het mobiele nummer van de technische dienst, " +
+          "voor spoedeisende meldingen buiten kantooruren.";
       }
     }
 
