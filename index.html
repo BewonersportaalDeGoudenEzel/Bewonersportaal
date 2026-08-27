@@ -561,7 +561,13 @@
       </div>
       <div class="veld-groep">
         <label for="aanmeld-code">Aanmeldcode van uw kaartje *</label>
-        <input type="text" id="aanmeld-code" required autocomplete="off" maxlength="8">
+        <!-- autocapitalize/autocorrect uit: op een iPhone maakt Safari
+             anders een "woord" van de code (AL5J → Al5j of erger). De
+             code wordt in het script toch hoofdletterongevoelig
+             vergeleken, maar zo ziet de bewoner meteen wat er op zijn
+             kaartje staat. -->
+        <input type="text" id="aanmeld-code" required autocomplete="off" maxlength="8"
+               autocapitalize="characters" autocorrect="off" spellcheck="false">
       </div>
       <div class="veld-groep">
         <label for="aanmeld-voornaam">Voornaam *</label>

@@ -387,6 +387,7 @@
     vertical-align: top;
     font-size: 0.95rem;
   }
+  .spoed-tabel td:first-child a { color: inherit; text-decoration: none; border-bottom: 1px dotted #234f38; }
   .spoed-tabel td:first-child {
     font-weight: 700;
     white-space: nowrap;
@@ -705,15 +706,15 @@
 
       <table class="spoed-tabel">
         <tr>
-          <td>020-305 44 77</td>
+          <td><a href="tel:0203054477">020-305 44 77</a></td>
           <td>Op werkdagen van 8:30 tot 12:00 uur en van 13:30 tot 16:00 uur</td>
         </tr>
         <tr>
-          <td>020-305 44 50</td>
+          <td><a href="tel:0203054450">020-305 44 50</a></td>
           <td>Op werkdagen van 12:00 tot 13:30 uur en van 16:00 tot 17:00 uur</td>
         </tr>
         <tr>
-          <td>06 15 86 04 63</td>
+          <td><a href="tel:0615860463">06 15 86 04 63</a></td>
           <td>Buiten kantooruren, in het weekend en op werkdagen na 17:00 uur</td>
         </tr>
       </table>
@@ -833,6 +834,46 @@
 
     werkBij();
     knopSpoed.addEventListener("click", werkBij);
+
+    // ── Tellen hoe vaak er op een spoednummer wordt getikt ──
+    // Alleen een streepje zetten: datum, tijd en welk nummer. Geen
+    // huisnummer, geen naam. Zo kunnen wij aan de verhuurder laten zien
+    // hoe vaak er buiten kantooruren gebeld moet worden.
+    //
+    // Het versturen mag het bellen NOOIT ophouden. Daarom gebruiken we
+    // sendBeacon: de telefoon geeft het op de achtergrond door en opent
+    // meteen de belapp. Lukt het niet, dan gebeurt er verder niets —
+    // een mislukte telling is nooit een reden om iemand niet te laten
+    // bellen. Om diezelfde reden wachten we ook niet op een antwoord.
+    var alGeteld = {};
+    function meldSpoedbel(nummer) {
+      // Dubbeltikken binnen een minuut telt als één keer.
+      var nu = Date.now();
+      if (alGeteld[nummer] && nu - alGeteld[nummer] < 60000) return;
+      alGeteld[nummer] = nu;
+      try {
+        var pakket = JSON.stringify({ verzoekType: "spoedbel", nummer: nummer });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(REPARATIE_SCRIPT_URL, new Blob([pakket], { type: "text/plain" }));
+        } else {
+          fetch(REPARATIE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            keepalive: true,
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: pakket
+          }).catch(function () {});
+        }
+      } catch (fout) {
+        // stil laten mislukken — bellen gaat voor
+      }
+    }
+
+    document.getElementById("sectie-spoed").addEventListener("click", function (gebeurtenis) {
+      var link = gebeurtenis.target.closest ? gebeurtenis.target.closest('a[href^="tel:"]') : null;
+      if (!link) return;
+      meldSpoedbel(link.textContent.trim());
+    });
   })();
 </script>
 
