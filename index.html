@@ -165,15 +165,6 @@
   }
   .knop.secundair:hover, .knop.secundair:focus { background: #eef3ef; }
 
-  /* Blauwe knop — gebruikt bij het reserveren van de recreatiezaal, zodat
-     die zich onderscheidt van de groene knoppen voor reparatieverzoeken. */
-  .knop.blauw {
-    background: #2b5faa;
-    color: #fff;
-    border: none;
-  }
-  .knop.blauw:hover, .knop.blauw:focus { background: #22497f; }
-
   a.knop:focus, button.knop:focus {
     outline: 3px solid #ffbf47;
     outline-offset: 2px;
@@ -645,7 +636,7 @@
       <h2>Recreatiezaal</h2>
       <p>Wilt u de recreatiezaal gebruiken, bijvoorbeeld voor een verjaardag? Bekijk hieronder hoe u reserveert en aan welke voorwaarden dat verbonden is.</p>
       <div class="knop-rij">
-        <button type="button" class="knop blauw" id="knop-zaal-tonen" aria-expanded="false" aria-controls="zaal-inhoud">Recreatiezaal reserveren</button>
+        <button type="button" class="knop" id="knop-zaal-tonen" aria-expanded="false" aria-controls="zaal-inhoud">Recreatiezaal reserveren</button>
       </div>
       <div id="zaal-inhoud" hidden>
 
@@ -729,7 +720,7 @@
       <h2>Mededelingen</h2>
       <p>Het laatste nieuws en aankondigingen van de bewonerscommissie.</p>
       <div class="knop-rij">
-        <a class="knop blauw" href="#mededelingen">Mededelingen bekijken</a>
+        <a class="knop" href="#mededelingen">Mededelingen bekijken</a>
       </div>
     </div>
 
@@ -738,9 +729,9 @@
       <h2>Schoonmaak</h2>
       <p>Benieuwd wat de schoonmaker in het gebouw doet? Bekijk het overzicht per week, maand of jaar.</p>
       <div class="knop-rij">
-        <button type="button" class="knop blauw" id="knop-schoonmaak-week" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze week bekijken</button>
-        <button type="button" class="knop blauw" id="knop-schoonmaak-maand" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze maand bekijken</button>
-        <button type="button" class="knop blauw" id="knop-schoonmaak-jaar" aria-expanded="false" aria-controls="schoonmaak-inhoud">Dit jaar bekijken</button>
+        <button type="button" class="knop" id="knop-schoonmaak-week" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze week bekijken</button>
+        <button type="button" class="knop" id="knop-schoonmaak-maand" aria-expanded="false" aria-controls="schoonmaak-inhoud">Deze maand bekijken</button>
+        <button type="button" class="knop" id="knop-schoonmaak-jaar" aria-expanded="false" aria-controls="schoonmaak-inhoud">Dit jaar bekijken</button>
       </div>
       <div id="schoonmaak-inhoud" hidden>
         <p class="schoonmaak-intro" id="schoonmaak-intro-tekst"></p>
