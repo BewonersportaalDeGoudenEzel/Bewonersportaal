@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<title>Privacyverklaring — De Gouden Ezel</title>
+<meta name="description" content="Welke gegevens het bewonersportaal bewaart, waarvoor, wie erbij kan en hoe lang.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --oranje: #b3540f;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+    font-size: 1rem;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #ffffff;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    margin-bottom: 14px;
+  }
+  header h1 { margin: 0 0 8px 0; font-size: 1.7rem; line-height: 1.25; }
+  header p { margin: 0; color: #d7e6dc; font-size: 1rem; }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 60px 16px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .kaart > :first-child { margin-top: 0; }
+  .kaart > :last-child { margin-bottom: 0; }
+
+  h2 {
+    font-size: 1.3rem;
+    color: var(--groen-donker);
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: 1.05rem;
+    color: var(--groen-donker);
+    margin: 20px 0 6px 0;
+  }
+  p { margin: 0 0 14px 0; }
+
+  ul { margin: 0 0 14px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  .kader {
+    border: 2px solid var(--groen-donker);
+    background: #f2f7f3;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 18px 0;
+  }
+  .kader.oranje { border-color: var(--oranje); background: #fdf1e6; }
+  .kader .kop { display: block; font-weight: 700; margin-bottom: 6px; }
+  .kader p:last-child { margin-bottom: 0; }
+
+  table.gegevens {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4px 0 16px 0;
+    font-size: 0.95rem;
+  }
+  table.gegevens th,
+  table.gegevens td {
+    text-align: left;
+    vertical-align: top;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--rand);
+  }
+  table.gegevens th {
+    background: var(--groen-donker);
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  table.gegevens tr:nth-child(even) td { background: #f5f6f4; }
+  .tabel-wrap { overflow-x: auto; }
+
+  .bijgewerkt {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  footer {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 16px 50px 16px;
+    color: #555;
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Naar de inhoud</a>
+
+<header>
+  <img class="logo" src="Gouden%20Ezel.png" alt="">
+  <h1>Privacyverklaring</h1>
+  <p>Bewonersportaal De Gouden Ezel — Jan van Polanenflat</p>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" href="index.html">&larr; Terug naar het portaal</a>
+
+  <div class="kaart">
+    <h2>Waar dit over gaat</h2>
+    <p>Het bewonersportaal is gemaakt door de bewonerscommissie van de Jan van Polanenflat. U kunt er een reparatieverzoek indienen, de recreatiezaal aanvragen, een vraag stellen, mededelingen lezen en het schoonmaakrooster bekijken.</p>
+    <p>Daarvoor zijn een paar gegevens van u nodig. Hieronder staat precies welke dat zijn, waarvoor ze gebruikt worden, wie ze te zien krijgt en hoe lang ze bewaard blijven. In gewone taal, zonder kleine lettertjes.</p>
+    <p class="bijgewerkt">Laatst bijgewerkt op 28 augustus 2026.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Wie is verantwoordelijk?</h2>
+    <p><strong>Bewonerscommissie Polanenflat</strong><br>
+    Jan van Polanenstraat, Heemskerk<br>
+    E-mail: <a href="mailto:polanenflat@gmail.com">polanenflat@gmail.com</a></p>
+    <p>Wij zijn bewoners van deze flat, net als u, en doen dit vrijwillig en onbetaald. Heeft u een vraag of een klacht over uw gegevens, mail ons dan gerust — of gebruik de knop "Vragen en opmerkingen" op het portaal.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Welke gegevens bewaren wij, en waarom?</h2>
+
+    <div class="tabel-wrap">
+      <table class="gegevens">
+        <tr>
+          <th>Gegeven</th>
+          <th>Waarvoor</th>
+        </tr>
+        <tr>
+          <td>Huisnummer</td>
+          <td>Om te weten om welke woning het gaat, en om te tellen hoe vaak er iets kapot is per woning of per etage.</td>
+        </tr>
+        <tr>
+          <td>Naam</td>
+          <td>Zodat de monteur weet bij wie hij moet zijn, en zodat wij u kunnen aanspreken.</td>
+        </tr>
+        <tr>
+          <td>Telefoonnummer</td>
+          <td>Zodat de verhuurder een afspraak met u kan maken.</td>
+        </tr>
+        <tr>
+          <td>E-mailadres</td>
+          <td>Om u een bevestiging te sturen van wat u heeft ingediend. Niet verplicht.</td>
+        </tr>
+        <tr>
+          <td>Adresgegevens (straat, verdieping, postcode, plaats)</td>
+          <td>Nodig voor de melding aan de verhuurder.</td>
+        </tr>
+        <tr>
+          <td>Wat u meldt, en de foto's erbij</td>
+          <td>Om de reparatie te laten uitvoeren, en om te kunnen aantonen wat er speelde.</td>
+        </tr>
+        <tr>
+          <td>Uw pincode</td>
+          <td>Om te controleren dat u het bent. <strong>De pincode zelf wordt niet bewaard</strong> — alleen een onomkeerbare versleuteling ervan. Ook wij kunnen hem niet zien of opzoeken.</td>
+        </tr>
+        <tr>
+          <td>Datum en tijd van uw melding</td>
+          <td>Om te kunnen laten zien hoe lang iets blijft liggen.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="kader oranje">
+      <span class="kop">Belangrijk om te weten</span>
+      <p>De verhuurder krijgt uw gegevens <strong>sowieso</strong>, ook als u het portaal niet gebruikt. Belt u zelf, dan vraagt de telefonist erom. Meldt u het via hun website, dan vult u ze daar in. Via het portaal gaat er dus niets extra's naar de verhuurder — het scheelt u alleen typewerk.</p>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <h2>Naar wie gaat uw melding?</h2>
+    <p>Een reparatieverzoek gaat naar <strong>storingen@hoen.nl</strong> (de verhuurder) en naar <strong>polanenflat@gmail.com</strong> (de bewonerscommissie). Bovenaan uw bevestigingsmail staat naar welke adressen uw melding is gegaan, zodat u het kunt nakijken.</p>
+
+    <h3>U bepaalt zelf of wij mogen meekijken</h3>
+    <p>Bij elk reparatieverzoek kiest u één van deze twee:</p>
+    <ul>
+      <li><strong>Hoen Vastgoedbeheer én de bewonerscommissie</strong> mogen mijn gegevens verwerken. Uw melding telt dan volledig mee in het dossier waarmee wij de verhuurder aanspreken.</li>
+      <li><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken. Dan bewaren wij <em>alleen</em> uw huisnummer, het soort storing en de datum. Geen naam, geen telefoonnummer, geen omschrijving, geen foto's. Uw melding telt dan wel mee als aantal, maar niet met inhoud.</li>
+    </ul>
+    <p>Die keuze wordt ook echt uitgevoerd: bij "alleen Hoen" komen uw naam en gegevens niet in onze administratie en niet in de mail aan de commissie terecht.</p>
+
+    <h3>Verder deelt de bewonerscommissie niets</h3>
+    <div class="kader">
+      <span class="kop">Wij delen uw gegevens en foto's met niemand</span>
+      <p>Niet met andere partijen, en niet met andere bewoners van de flat. Uw naam, adres, telefoonnummer, e-mailadres, de omschrijving van uw melding en de foto's die u meestuurt blijven binnen de bewonerscommissie en gaan verder alleen naar de verhuurder, omdat die de reparatie moet uitvoeren.</p>
+      <p>Uw gegevens worden ook nooit verkocht en nooit gebruikt voor reclame.</p>
+    </div>
+
+    <p>Wat wij wél naar buiten brengen zijn <strong>cijfers zonder personen erin</strong>. Denk aan:</p>
+    <ul>
+      <li>het aantal storingen in een periode;</li>
+      <li>welk type storing het was — lift, verlichting, lekkage, schimmel;</li>
+      <li>op welke verdieping of in welke ruimte het speelde;</li>
+      <li>hoe lang het duurde voordat er iets gebeurde.</li>
+    </ul>
+    <p>Dus bijvoorbeeld: "acht liftstoringen in een half jaar, waarvan vijf op de bovenste verdiepingen." <strong>Geen namen, geen contactgegevens, geen huisnummers en geen foto's.</strong> Daarmee spreken wij de verhuurder aan zonder dat iemand terug te vinden is.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Wie kan erbij?</h2>
+    <ul>
+      <li><strong>De leden van de bewonerscommissie.</strong> Zij beheren de mailbox polanenflat@gmail.com en de bijbehorende administratie.</li>
+      <li><strong>De verhuurder</strong>, voor de melding die u zelf indient.</li>
+      <li><strong>Google</strong>, omdat het portaal draait op Google Spreadsheets, Google Drive en Gmail. Google verwerkt die gegevens namens ons en heeft ze niet voor eigen gebruik.</li>
+    </ul>
+    <p>Andere bewoners kunnen niet bij uw meldingen. Als u op het portaal uw eigen reparatieverzoeken bekijkt, worden alleen de meldingen van úw huisnummer opgehaald, en alleen wanneer de pincode klopt die bij dat huisnummer hoort.</p>
+
+    <div class="kader oranje">
+      <span class="kop">Over de foto's die u meestuurt</span>
+      <p>Foto's bij een reparatieverzoek worden bewaard in de Google Drive van de bewonerscommissie. Ze staan op "iedereen met de link" — dat is nodig om ze in de mail aan de verhuurder te kunnen tonen. Wie de link heeft kan de foto dus bekijken, ook zonder wachtwoord. Die links delen wij alleen in de mail aan de verhuurder en aan onszelf.</p>
+      <p><strong>Maak daarom geen foto's waarop mensen herkenbaar staan</strong>, en fotografeer alleen wat kapot is.</p>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <h2>Hoe lang bewaren wij het?</h2>
+    <ul>
+      <li><strong>Reparatieverzoeken:</strong> vijf jaar. Zo lang hebben wij ze nodig om patronen te kunnen aantonen bij de verhuurder, de gemeente of de Huurcommissie.</li>
+      <li><strong>Vragen aan de commissie:</strong> twee jaar.</li>
+      <li><strong>Zaalreserveringen:</strong> twee jaar.</li>
+      <li><strong>Uw aanmelding</strong> (naam, adres, telefoonnummer, e-mailadres): zolang u in de flat woont. Verhuist u, laat het ons dan weten — dan halen wij uw gegevens eruit.</li>
+      <li><strong>Foto's:</strong> zolang de melding zelf bewaard wordt.</li>
+    </ul>
+    <p>Tikt iemand op het portaal een spoednummer aan, dan tellen wij alleen dát: de datum, het tijdstip en welk nummer. Geen naam en geen huisnummer. Daar is dus niet aan te zien wie er gebeld heeft.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Wat zijn uw rechten?</h2>
+    <p>U mag ons altijd vragen om:</p>
+    <ul>
+      <li><strong>Inzage</strong> — te zien welke gegevens wij van u hebben.</li>
+      <li><strong>Correctie</strong> — een fout te laten verbeteren, bijvoorbeeld een verkeerd telefoonnummer.</li>
+      <li><strong>Verwijdering</strong> — uw gegevens te laten wissen. Let op: de melding bij de verhuurder blijft dan wel bestaan, daar gaan wij niet over.</li>
+      <li><strong>Bezwaar</strong> — te laten weten dat u niet wilt dat wij uw melding voor het dossier gebruiken.</li>
+    </ul>
+    <p>Mail daarvoor naar <a href="mailto:polanenflat@gmail.com">polanenflat@gmail.com</a>. Wij reageren binnen vier weken. Komt u er met ons niet uit, dan kunt u een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Hoe beveiligen wij het?</h2>
+    <ul>
+      <li>Het portaal werkt via een beveiligde verbinding (https).</li>
+      <li>Uw pincode wordt versleuteld opgeslagen en is ook voor ons niet leesbaar. Bent u hem kwijt, dan kunnen wij hem alleen wissen zodat u een nieuwe kiest.</li>
+      <li>Om uw eigen meldingen te bekijken zijn uw huisnummer én uw pincode nodig.</li>
+      <li>De administratie staat in een Google-account waar alleen de bewonerscommissie bij kan.</li>
+    </ul>
+    <div class="kader">
+      <span class="kop">Eerlijk over de grens hiervan</span>
+      <p>Een pincode van vier cijfers is geen zwaar wachtwoord. Wij hebben er bewust voor gekozen omdat het portaal ook bruikbaar moet zijn voor bewoners die niet handig zijn met techniek. Deel uw pincode dus niet, en schrijf hem op een plek die alleen u kent.</p>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <h2>Cookies</h2>
+    <p>Het portaal gebruikt geen cookies en houdt uw surfgedrag niet bij. Uw gegevens worden alleen in uw eigen telefoon of computer bewaard, zodat u ze niet elke keer opnieuw hoeft in te typen. U wist ze door op "Afmelden" te tikken op de startpagina.</p>
+  </div>
+
+  <div class="kaart">
+    <h2>Wijzigingen</h2>
+    <p>Verandert er iets aan het portaal waardoor deze verklaring niet meer klopt, dan passen wij hem aan en zetten wij de nieuwe datum bovenaan. Bij belangrijke wijzigingen plaatsen wij ook een mededeling op het portaal.</p>
+  </div>
+</main>
+
+<footer>
+  <p>Deze verklaring gaat over het bewonersportaal van de bewonerscommissie. De verhuurder heeft een eigen privacyverklaring voor wat zij met uw melding doen: <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring Hoen Vastgoedbeheer</a>.</p>
+</footer>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+</script>
+
+</body>
+</html>

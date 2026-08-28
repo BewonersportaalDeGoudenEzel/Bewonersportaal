@@ -177,6 +177,49 @@
     font-size: 1.5rem;
   }
 
+
+  /* ─── Ingediende reparatieverzoeken ─── */
+  .melding-kaart {
+    border: 2px solid var(--rand);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 14px;
+    background: #fff;
+  }
+  .melding-kaart.opgepakt { border-color: var(--groen); background: #f2f7f3; }
+  .melding-kaart.ontevreden { border-color: var(--oranje); background: #fdf1e6; }
+  .melding-datum { font-size: 0.9rem; color: #555; margin: 0; }
+  .melding-titel { font-weight: 700; margin: 2px 0 6px 0; }
+  .melding-tekst { margin: 0 0 10px 0; }
+  .melding-status {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+  .melding-status.opgepakt { background: var(--groen); color: #fff; }
+  .melding-status.ontevreden { background: var(--oranje); color: #fff; }
+  .melding-status.wacht { background: #eceff0; color: #555; }
+  .melding-toelichting {
+    margin: 8px 0 0 0;
+    font-size: 0.95rem;
+    color: #333;
+    border-left: 4px solid var(--rand);
+    padding-left: 12px;
+  }
+  .melding-vraag { font-weight: 600; margin: 12px 0 4px 0; }
+  .melding-knoppen { display: flex; flex-wrap: wrap; gap: 10px; }
+  .melding-knoppen .knop { font-size: 1rem; padding: 12px 18px; }
+  .knop.oranje { background: var(--oranje); }
+  .knop.oranje:hover, .knop.oranje:focus { background: #8c4109; }
+  .melding-waarom { margin-top: 12px; }
+  /* .veld-groep zet display:flex, en dat wint het van het standaard
+     verbergen. Zonder deze regel staat het tekstvak meteen open. */
+  .melding-waarom[hidden] { display: none; }
+  .melding-waarom textarea { min-height: 90px; }
+
   /* ─── Formulier ─── */
   .meld-formulier {
     border-top: 1px solid var(--rand);
@@ -727,6 +770,52 @@
     </div>
   </div>
 
+  <div class="kaart">
+    <button type="button" class="keuze-knop" id="keuze-geschiedenis" aria-pressed="false" aria-expanded="false" aria-controls="sectie-geschiedenis">
+      <span class="emoji" aria-hidden="true">&#128203;</span>Ingediende reparatieverzoeken
+    </button>
+
+    <div id="sectie-geschiedenis" hidden>
+      <p>Alles wat <strong>u</strong> heeft ingediend, nieuwste bovenaan. Alleen u ziet deze lijst &mdash; andere bewoners kunnen er niet bij.</p>
+
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-geschiedenis-ophalen">Lijst ophalen</button>
+      </div>
+
+      <p class="form-status" id="geschiedenis-status" hidden></p>
+      <div id="geschiedenis-lijst"></div>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <button type="button" class="keuze-knop" id="keuze-openstaand" aria-pressed="false" aria-expanded="false" aria-controls="sectie-openstaand">
+      <span class="emoji" aria-hidden="true">&#9203;</span>Openstaande reparatieverzoeken
+    </button>
+
+    <div id="sectie-openstaand" hidden>
+      <p>Hier staan de verzoeken waarvan u nog niet heeft laten weten hoe het is afgelopen.</p>
+      <p>Is de reparatie gedaan? Meld hem af als <strong>opgelost</strong>. Ging het niet goed, kies dan <strong>niet naar tevredenheid</strong> en schrijf erbij wat er mis is &mdash; dan nemen wij contact op en telt het mee in het dossier.</p>
+
+      <div id="mijn-aanmelden" hidden>
+        <div class="veld-groep">
+          <label for="mijn-huisnummer">Huisnummer</label>
+          <input type="text" inputmode="numeric" id="mijn-huisnummer" autocomplete="off">
+        </div>
+        <div class="veld-groep">
+          <label for="mijn-pincode">Pincode</label>
+          <input type="text" inputmode="numeric" id="mijn-pincode" autocomplete="off" maxlength="4">
+        </div>
+      </div>
+
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-openstaand-ophalen">Lijst ophalen</button>
+      </div>
+
+      <p class="form-status" id="openstaand-status" hidden></p>
+      <div id="openstaand-lijst"></div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -762,7 +851,9 @@
     var paren = [
       { knop: document.getElementById("keuze-eigen-woning"), sectie: document.getElementById("sectie-eigen-woning") },
       { knop: document.getElementById("keuze-algemene-ruimte"), sectie: document.getElementById("sectie-algemene-ruimte") },
-      { knop: document.getElementById("keuze-spoed"), sectie: document.getElementById("sectie-spoed") }
+      { knop: document.getElementById("keuze-spoed"), sectie: document.getElementById("sectie-spoed") },
+      { knop: document.getElementById("keuze-geschiedenis"), sectie: document.getElementById("sectie-geschiedenis") },
+      { knop: document.getElementById("keuze-openstaand"), sectie: document.getElementById("sectie-openstaand") }
     ];
     if (paren.some(function (p) { return !p.knop || !p.sectie; })) return;
 
@@ -1221,6 +1312,283 @@
 
   initMeldFormulier("eigen", "Eigen woning");
   initMeldFormulier("algemeen", "Algemene ruimte");
+</script>
+
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // INGEDIENDE EN OPENSTAANDE REPARATIEVERZOEKEN
+  //
+  // Twee blokjes, één lijst. "Ingediend" is de geschiedenis: alles wat
+  // deze bewoner ooit heeft gemeld. "Openstaand" toont daarvan alleen
+  // de verzoeken waarvan hij nog niet heeft laten weten hoe het is
+  // afgelopen — daar staan de knoppen om af te melden.
+  //
+  // De lijst wordt bij de server opgehaald met huisnummer + pincode.
+  // De server geeft ALLEEN de meldingen terug die bij dat huisnummer
+  // horen; hier in de browser wordt dus niets weggefilterd wat een
+  // ander niet mag zien. Zou iemand met de pagina knoeien, dan komt er
+  // nog steeds niets van een buurman terug.
+  // ─────────────────────────────────────────────────────────────────
+  (function () {
+    var veldHuisnummer = document.getElementById("mijn-huisnummer");
+    var veldPincode = document.getElementById("mijn-pincode");
+    var aanmeldVak = document.getElementById("mijn-aanmelden");
+    if (!veldHuisnummer || !veldPincode) return;
+
+    var blokken = {
+      geschiedenis: {
+        knop: document.getElementById("keuze-geschiedenis"),
+        ophalen: document.getElementById("knop-geschiedenis-ophalen"),
+        lijst: document.getElementById("geschiedenis-lijst"),
+        status: document.getElementById("geschiedenis-status"),
+        // De geschiedenis toont alles, zonder knoppen om af te melden.
+        toont: function () { return true; },
+        metKnoppen: false,
+        leeg: "U heeft nog geen reparatieverzoeken ingediend via het portaal."
+      },
+      openstaand: {
+        knop: document.getElementById("keuze-openstaand"),
+        ophalen: document.getElementById("knop-openstaand-ophalen"),
+        lijst: document.getElementById("openstaand-lijst"),
+        status: document.getElementById("openstaand-status"),
+        toont: function (m) { return !m.status; },
+        metKnoppen: true,
+        leeg: "Er staat niets meer open — u heeft van al uw verzoeken doorgegeven hoe het is afgelopen."
+      }
+    };
+
+    var params = new URLSearchParams(window.location.search);
+    var huisnummerUitLink = params.get("huisnummer") || "";
+    var pincodeUitLink = params.get("pincode") || "";
+    if (huisnummerUitLink && pincodeUitLink) {
+      veldHuisnummer.value = huisnummerUitLink;
+      veldPincode.value = pincodeUitLink;
+    } else {
+      aanmeldVak.hidden = false;
+      veldHuisnummer.value = huisnummerUitLink;
+    }
+
+    var meldingen = null;   // wat de server teruggaf
+    var bezig = false;
+
+    function toonStatus(blok, tekst, soort) {
+      if (!blok.status) return;
+      blok.status.textContent = tekst;
+      blok.status.className = "form-status" + (soort ? " " + soort : "");
+      blok.status.hidden = !tekst;
+    }
+    function toonStatusOveral(tekst, soort) {
+      Object.keys(blokken).forEach(function (k) { toonStatus(blokken[k], tekst, soort); });
+    }
+
+    function tekst(el, waarde) { el.textContent = waarde; return el; }
+
+    function maakKnop(label, klasse) {
+      var k = document.createElement("button");
+      k.type = "button";
+      k.className = "knop" + (klasse ? " " + klasse : "");
+      k.textContent = label;
+      return k;
+    }
+
+    function stuur(pakket) {
+      return fetch(REPARATIE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(pakket)
+      }).then(function (r) { return r.json(); });
+    }
+
+    // ── Eén melding tekenen ──
+    function tekenMelding(m, blok) {
+      var kaart = document.createElement("div");
+      kaart.className = "melding-kaart";
+      var isNegatief = m.status === "Niet naar tevredenheid";
+      if (m.status && !isNegatief) kaart.className += " opgepakt";
+      if (isNegatief) kaart.className += " ontevreden";
+
+      var datum = tekst(document.createElement("p"), m.datum);
+      datum.className = "melding-datum";
+      kaart.appendChild(datum);
+
+      var titel = tekst(document.createElement("p"),
+        (m.typeStoring || "Reparatieverzoek") + (m.waarProbleem ? " — " + m.waarProbleem : ""));
+      titel.className = "melding-titel";
+      kaart.appendChild(titel);
+
+      if (m.omschrijving) {
+        var oms = tekst(document.createElement("p"), m.omschrijving);
+        oms.className = "melding-tekst";
+        kaart.appendChild(oms);
+      }
+
+      if (m.meldingnummerHoen) {
+        var nummer = tekst(document.createElement("p"),
+          "Meldingnummer bij de verhuurder: " + m.meldingnummerHoen);
+        nummer.className = "melding-datum";
+        nummer.style.fontWeight = "700";
+        kaart.appendChild(nummer);
+      }
+
+      // Al afgemeld? Dan alleen laten zien wat er is doorgegeven.
+      if (m.status) {
+        var badge = tekst(document.createElement("span"),
+          isNegatief ? "\u26A0 U gaf aan: niet naar tevredenheid" : "\u2713 U gaf aan: opgelost");
+        badge.className = "melding-status " + (isNegatief ? "ontevreden" : "opgepakt");
+        kaart.appendChild(badge);
+
+        if (m.toelichting) {
+          var toe = tekst(document.createElement("p"), m.toelichting);
+          toe.className = "melding-toelichting";
+          kaart.appendChild(toe);
+        }
+
+        var opnieuw = maakKnop("Toch iets anders aangeven", "secundair");
+        opnieuw.style.marginTop = "10px";
+        opnieuw.addEventListener("click", function () {
+          m.status = "";
+          m.toelichting = "";
+          tekenAlles();
+          toonStatus(blokken.openstaand,
+            "Deze staat weer open — u vindt hem bij \u201cOpenstaande reparatieverzoeken\u201d.", "");
+        });
+        kaart.appendChild(opnieuw);
+        return kaart;
+      }
+
+      // Nog niet afgemeld. In de geschiedenis alleen tonen dat het
+      // openstaat; de knoppen horen bij het andere blokje.
+      if (!blok.metKnoppen) {
+        var wacht = tekst(document.createElement("span"), "Nog niet afgemeld");
+        wacht.className = "melding-status wacht";
+        kaart.appendChild(wacht);
+        return kaart;
+      }
+
+      var vraag = tekst(document.createElement("p"), "Is deze reparatie inmiddels gedaan?");
+      vraag.className = "melding-vraag";
+      kaart.appendChild(vraag);
+
+      var knoppen = document.createElement("div");
+      knoppen.className = "melding-knoppen";
+      var knopJa = maakKnop("Ja, opgelost");
+      var knopNee = maakKnop("Niet naar tevredenheid", "oranje");
+      knoppen.appendChild(knopJa);
+      knoppen.appendChild(knopNee);
+      kaart.appendChild(knoppen);
+
+      var waarom = document.createElement("div");
+      waarom.className = "melding-waarom veld-groep";
+      waarom.hidden = true;
+      var label = document.createElement("label");
+      label.textContent = "Wat is er niet goed gegaan?";
+      var vak = document.createElement("textarea");
+      var versturen = maakKnop("Versturen", "oranje");
+      versturen.style.marginTop = "10px";
+      waarom.appendChild(label);
+      waarom.appendChild(vak);
+      waarom.appendChild(versturen);
+      kaart.appendChild(waarom);
+
+      function bewaar(status, toelichting) {
+        knopJa.disabled = true; knopNee.disabled = true; versturen.disabled = true;
+        toonStatus(blok, "Bezig met opslaan\u2026", "bezig");
+        stuur({
+          verzoekType: "melding-status",
+          huisnummer: veldHuisnummer.value.trim(),
+          pincode: veldPincode.value.trim(),
+          meldingId: m.id,
+          status: status,
+          toelichting: toelichting || ""
+        }).then(function (antwoord) {
+          if (!antwoord || !antwoord.ok) {
+            toonStatus(blok, (antwoord && antwoord.error) || "Opslaan is niet gelukt.", "fout");
+            knopJa.disabled = false; knopNee.disabled = false; versturen.disabled = false;
+            return;
+          }
+          m.status = status;
+          m.toelichting = toelichting || "";
+          tekenAlles();
+          toonStatus(blok, "Bedankt, het is doorgegeven. U vindt hem terug bij \u201cIngediende reparatieverzoeken\u201d.", "gelukt");
+        }).catch(function () {
+          toonStatus(blok, "Er ging iets mis met versturen. Probeer het zo nog eens.", "fout");
+          knopJa.disabled = false; knopNee.disabled = false; versturen.disabled = false;
+        });
+      }
+
+      knopJa.addEventListener("click", function () { bewaar("Opgelost", ""); });
+      knopNee.addEventListener("click", function () { waarom.hidden = false; vak.focus(); });
+      versturen.addEventListener("click", function () {
+        var reden = vak.value.trim();
+        if (!reden) {
+          toonStatus(blok, "Schrijf er even bij wat er niet goed ging.", "fout");
+          vak.focus();
+          return;
+        }
+        bewaar("Niet naar tevredenheid", reden);
+      });
+
+      return kaart;
+    }
+
+    // ── Beide lijsten opnieuw tekenen ──
+    function tekenAlles() {
+      if (!meldingen) return;
+      Object.keys(blokken).forEach(function (naam) {
+        var blok = blokken[naam];
+        blok.lijst.innerHTML = "";
+        var passend = meldingen.filter(blok.toont);
+        if (!passend.length) {
+          toonStatus(blok, blok.leeg, "");
+          return;
+        }
+        toonStatus(blok, "", "");
+        passend.forEach(function (m) { blok.lijst.appendChild(tekenMelding(m, blok)); });
+      });
+    }
+
+    function haalOp(blok) {
+      var huisnummer = veldHuisnummer.value.trim();
+      var pincode = veldPincode.value.trim();
+      if (!huisnummer || !pincode) {
+        aanmeldVak.hidden = false;
+        toonStatus(blok, "Vul uw huisnummer en pincode in bij \u201cOpenstaande reparatieverzoeken\u201d.", "fout");
+        return;
+      }
+      if (bezig) return;
+      bezig = true;
+      toonStatus(blok, "Bezig met ophalen\u2026", "bezig");
+      stuur({ verzoekType: "mijn-meldingen", huisnummer: huisnummer, pincode: pincode })
+        .then(function (antwoord) {
+          bezig = false;
+          if (!antwoord || !antwoord.ok) {
+            aanmeldVak.hidden = false;
+            toonStatus(blok, (antwoord && antwoord.error) || "Ophalen is niet gelukt.", "fout");
+            return;
+          }
+          meldingen = antwoord.meldingen || [];
+          tekenAlles();
+        })
+        .catch(function () {
+          bezig = false;
+          toonStatus(blok, "Er ging iets mis met ophalen. Probeer het zo nog eens.", "fout");
+        });
+    }
+
+    Object.keys(blokken).forEach(function (naam) {
+      var blok = blokken[naam];
+      if (blok.ophalen) blok.ophalen.addEventListener("click", function () { haalOp(blok); });
+      // Meteen ophalen zodra een blokje opengaat en de gegevens al
+      // bekend zijn — scheelt een tik.
+      if (blok.knop) {
+        blok.knop.addEventListener("click", function () {
+          if (meldingen) { tekenAlles(); return; }
+          if (veldHuisnummer.value.trim() && veldPincode.value.trim()) haalOp(blok);
+        });
+      }
+    });
+  })();
 </script>
 
 </body>
