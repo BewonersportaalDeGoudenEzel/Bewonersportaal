@@ -931,6 +931,28 @@
 
       <p class="form-status" id="oud-status" hidden></p>
 
+      <!-- Verschijnt pas als de tekst op de foto niet te lezen was. Dan
+           kan de bewoner het zelf invullen en het nog een keer proberen,
+           in plaats van tegen een dichte deur te lopen. -->
+      <div class="doorstuur-kader" id="oud-handmatig" hidden>
+        <p class="doorstuur-titel">Vul het dan zelf even in</p>
+        <div class="veld-groep">
+          <label for="oud-datum">Wanneer heeft u het gemeld?</label>
+          <input type="date" id="oud-datum">
+        </div>
+        <div class="veld-groep">
+          <label for="oud-type">Wat was er kapot?</label>
+          <input type="text" id="oud-type" placeholder="Bijvoorbeeld: lekkage, lift, schimmel" autocomplete="off">
+        </div>
+        <div class="veld-groep">
+          <label for="oud-omschrijving">Korte omschrijving <span class="veld-hulp">(mag leeg blijven)</span></label>
+          <textarea id="oud-omschrijving" rows="3" placeholder="Bijvoorbeeld: de kraan in de keuken lekte."></textarea>
+        </div>
+        <div class="knop-rij">
+          <button type="button" class="knop" id="knop-oud-nogmaals">Opnieuw proberen</button>
+        </div>
+      </div>
+
       <div class="doorstuur-kader">
         <p class="doorstuur-titel">Lukt het niet, of is de foto niet goed leesbaar?</p>
         <p>Stuur dan de mail van Hoen door naar
@@ -1380,8 +1402,15 @@
     }
 
     var bezig = false;
+    var handmatigVak = document.getElementById("oud-handmatig");
+    var knopNogmaals = document.getElementById("knop-oud-nogmaals");
 
-    knop.addEventListener("click", function () {
+    function waarde(id) {
+      var veld = document.getElementById(id);
+      return veld ? (veld.value || "").trim() : "";
+    }
+
+    function versturen() {
       if (bezig) return;
 
       var huisnummer = (veldHuisnummer.value || "").trim();
@@ -1402,6 +1431,7 @@
 
       bezig = true;
       knop.disabled = true;
+      if (knopNogmaals) knopNogmaals.disabled = true;
       // Tekst van een foto lezen duurt even — een paar seconden per
       // afbeelding. Dat moet je zeggen, anders drukt iemand vier keer.
       toon("Bezig met lezen van de foto... dit duurt een paar seconden.", "bezig");
@@ -1410,6 +1440,11 @@
         verzoekType: "oude-melding",
         huisnummer: huisnummer,
         pincode: pincode,
+        // Deze drie zijn leeg zolang de foto gewoon leesbaar is; ze
+        // worden pas ingevuld als het lezen niet lukte.
+        datum: waarde("oud-datum"),
+        typeStoring: waarde("oud-type"),
+        omschrijving: waarde("oud-omschrijving"),
         fotos: fotoData.oud.map(function (dataUrl) {
           return { base64: dataUrl, type: "image/jpeg" };
         })
@@ -1424,9 +1459,16 @@
         .then(function (antwoord) {
           bezig = false;
           knop.disabled = false;
+          if (knopNogmaals) knopNogmaals.disabled = false;
 
           if (!antwoord || !antwoord.ok) {
             toon((antwoord && antwoord.error) || "Er ging iets mis. Probeer het later nog eens.", "fout");
+            // Kon de foto niet gelezen worden, dan verschijnen de velden
+            // waarin de bewoner het zelf kan invullen.
+            if (antwoord && antwoord.vraagDatum && handmatigVak) {
+              handmatigVak.hidden = false;
+              handmatigVak.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
             return;
           }
 
@@ -1440,13 +1482,22 @@
 
           fotoData.oud = [];
           tekenFotos("oud");
+          if (handmatigVak) handmatigVak.hidden = true;
+          ["oud-datum", "oud-type", "oud-omschrijving"].forEach(function (id) {
+            var veld = document.getElementById(id);
+            if (veld) veld.value = "";
+          });
         })
         .catch(function () {
           bezig = false;
           knop.disabled = false;
+          if (knopNogmaals) knopNogmaals.disabled = false;
           toon("Versturen lukte niet. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
         });
-    });
+    }
+
+    knop.addEventListener("click", versturen);
+    if (knopNogmaals) knopNogmaals.addEventListener("click", versturen);
   })();
 </script>
 
