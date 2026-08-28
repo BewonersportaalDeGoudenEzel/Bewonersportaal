@@ -189,6 +189,9 @@
   .melding-kaart.opgepakt { border-color: var(--groen); background: #f2f7f3; }
   .melding-kaart.ontevreden { border-color: var(--oranje); background: #fdf1e6; }
   .melding-datum { font-size: 0.9rem; color: #555; margin: 0; }
+  /* Regels die ónder het meldingnummer komen, iets losser zodat het
+     geen dichtgedrukt blokje grijze tekst wordt. */
+  .melding-extra { margin-top: 6px; }
   .melding-titel { font-weight: 700; margin: 2px 0 6px 0; }
   .melding-tekst { margin: 0 0 10px 0; }
   .melding-status {
@@ -209,6 +212,69 @@
     border-left: 4px solid var(--rand);
     padding-left: 12px;
   }
+  /* Blokje onder de geschiedenis: oude meldingen doorsturen. */
+  .doorstuur-kader {
+    margin-top: 20px;
+    padding: 16px 18px;
+    border: 2px dashed var(--rand);
+    border-radius: 12px;
+    background: #fafbfa;
+  }
+  .doorstuur-kader p { margin: 0 0 10px 0; }
+  .doorstuur-kader p:last-child { margin-bottom: 0; }
+  .doorstuur-titel { font-weight: 700; }
+  .doorstuur-klein { font-size: 0.92rem; color: #555; }
+  /* De plaatjes bij "zo stuurt u de mail door". height:auto hoort erbij:
+     zonder die regel houdt de browser de hoogte uit het
+     width/height-kenmerk aan en wordt de afbeelding uitgerekt. De
+     plaatjes zijn expres zo breed als de kolom, want anders is de tekst
+     op het nagemaakte telefoonscherm niet meer te lezen. */
+  .uitleg-plaat {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 4px 0 0 0;
+    background: #fff;
+  }
+  .stappen-doorsturen {
+    list-style: none;
+    counter-reset: stapteller;
+    margin: 14px 0;
+    padding: 0;
+  }
+  .stappen-doorsturen li {
+    counter-increment: stapteller;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  /* Het nummer staat los van de tekst (absoluut geplaatst) en niet als
+     flex-item ernaast. Een flexbox knipt namelijk de zin in stukken bij
+     elk stukje vetgedrukte tekst, en dan loopt een lang woord als een
+     e-mailadres buiten het scherm. */
+  .stappen-doorsturen li::before {
+    content: counter(stapteller);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--groen);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .stappen-doorsturen li p {
+    margin: 0 0 8px 38px;
+    /* Een e-mailadres mag desnoods afbreken; buiten beeld lopen niet. */
+    overflow-wrap: break-word;
+  }
+
   .melding-vraag { font-weight: 600; margin: 12px 0 4px 0; }
   .melding-knoppen { display: flex; flex-wrap: wrap; gap: 10px; }
   .melding-knoppen .knop { font-size: 1rem; padding: 12px 18px; }
@@ -252,6 +318,7 @@
   .veld-groep input[type="text"],
   .veld-groep input[type="tel"],
   .veld-groep input[type="email"],
+  .veld-groep input[type="date"],
   .veld-groep select,
   .veld-groep textarea {
     font: inherit;
@@ -784,6 +851,15 @@
 
       <p class="form-status" id="geschiedenis-status" hidden></p>
       <div id="geschiedenis-lijst"></div>
+
+      <div class="doorstuur-kader">
+        <p class="doorstuur-titel">Al eerder iets gemeld dit jaar?</p>
+        <p>Heeft u dit jaar al een reparatieverzoek gedaan toen dit portaal er nog niet was? Dan kan die melding er alsnog bij, met de datum waarop u hem destijds heeft gedaan. Twee manieren, kies wat u het makkelijkst vindt:</p>
+        <p><strong>1.</strong> Stuur de bevestigingsmail van Hoen door naar
+          <a href="mailto:polanenflat@gmail.com?subject=Melding%20van%20voor%20het%20portaal">polanenflat@gmail.com</a>. Weet u niet hoe doorsturen werkt? Bij <strong>&ldquo;Melding van v&oacute;&oacute;r het portaal&rdquo;</strong> hieronder staat het met plaatjes uitgelegd.</p>
+        <p><strong>2.</strong> Of maak een schermafbeelding van die mail en stuur die hieronder in bij <strong>&ldquo;Melding van v&oacute;&oacute;r het portaal&rdquo;</strong>. Wij lezen de datum en het meldingnummer van de foto af.</p>
+        <p class="doorstuur-klein">Lukt geen van beide? Geef het dan even door aan de bewonerscommissie; wij zetten hem er dan met de hand bij.</p>
+      </div>
     </div>
   </div>
 
@@ -813,6 +889,73 @@
 
       <p class="form-status" id="openstaand-status" hidden></p>
       <div id="openstaand-lijst"></div>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <button type="button" class="keuze-knop" id="keuze-oud" aria-pressed="false" aria-expanded="false" aria-controls="sectie-oud">
+      <span class="emoji" aria-hidden="true">&#128248;</span>Melding van v&oacute;&oacute;r het portaal
+    </button>
+
+    <div id="sectie-oud" hidden>
+      <p>Heeft u dit jaar al iets gemeld toen dit portaal er nog niet was? Maak een <strong>schermafbeelding van de bevestigingsmail van Hoen</strong> en stuur die hier in. Wij lezen daar zelf de datum en het meldingnummer van af, zodat uw melding meetelt in het dossier.</p>
+      <p class="veld-hulp-blok">Er gaat <strong>geen nieuw reparatieverzoek</strong> naar Hoen. Uw melding is daar al bekend &mdash; hij komt alleen bij ons in de lijst te staan.</p>
+
+      <div id="oud-aanmelden" hidden>
+        <div class="veld-groep">
+          <label for="oud-huisnummer">Huisnummer</label>
+          <input type="text" inputmode="numeric" id="oud-huisnummer" autocomplete="off">
+        </div>
+        <div class="veld-groep">
+          <label for="oud-pincode">Pincode</label>
+          <input type="text" inputmode="numeric" id="oud-pincode" autocomplete="off" maxlength="4">
+        </div>
+      </div>
+
+      <div class="veld-groep foto-veld" data-foto-veld="oud">
+        <label>Foto's of schermafbeeldingen van de mail * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
+        <p class="veld-hulp-blok">Zorg dat de <strong>datum</strong> en het <strong>meldingnummer</strong> goed leesbaar op de afbeelding staan. Past de mail niet op één scherm? Maak dan gerust twee afbeeldingen.</p>
+        <div class="knop-rij">
+          <button type="button" class="knop secundair" data-foto-knop="oud">&#128247; Foto maken</button>
+          <button type="button" class="knop secundair" data-foto-knop-galerij="oud">&#128444;&#65039; Afbeelding kiezen</button>
+        </div>
+        <input type="file" accept="image/*" capture="environment" data-foto-input="oud" hidden>
+        <input type="file" accept="image/*" multiple data-foto-input-galerij="oud" hidden>
+        <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="oud" hidden></div>
+        <p class="foto-status" data-foto-status="oud">Nog geen foto toegevoegd.</p>
+      </div>
+
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-oud-versturen">Melding toevoegen</button>
+      </div>
+
+      <p class="form-status" id="oud-status" hidden></p>
+
+      <div class="doorstuur-kader">
+        <p class="doorstuur-titel">Lukt het niet, of is de foto niet goed leesbaar?</p>
+        <p>Stuur dan de mail van Hoen door naar
+          <a href="mailto:polanenflat@gmail.com?subject=Melding%20van%20voor%20het%20portaal">polanenflat@gmail.com</a>. Dat werkt altijd, want dan staan de datum en het meldingnummer er gewoon als tekst in. Zo doet u dat:</p>
+
+        <ol class="stappen-doorsturen">
+          <li>
+            <p><strong>Open de mail van Hoen</strong> die u destijds kreeg. Tik rechtsboven op de <strong>drie puntjes</strong>.</p>
+            <img class="uitleg-plaat" src="doorsturen-1.png" width="600" height="428" loading="lazy"
+                 alt="Een geopende mail met als onderwerp Ontvangstbevestiging van melding. Rechtsboven zijn de drie puntjes omcirkeld.">
+          </li>
+          <li>
+            <p>Tik in het lijstje op <strong>Doorsturen</strong>.</p>
+            <img class="uitleg-plaat" src="doorsturen-2.png" width="600" height="457" loading="lazy"
+                 alt="Een lijstje met Beantwoorden, Allen beantwoorden, Doorsturen en Verwijderen. Doorsturen is omkaderd.">
+          </li>
+          <li>
+            <p>Typ bij <strong>Aan</strong> ons adres <strong>polanenflat@gmail.com</strong> en tik op de verzendknop. De tekst van Hoen laat u eronder staan &mdash; daar staan de datum en het meldingnummer in.</p>
+            <img class="uitleg-plaat" src="doorsturen-3.png" width="600" height="536" loading="lazy"
+                 alt="Een nieuwe mail met polanenflat@gmail.com in het veld Aan. De ronde verzendknop rechtsonder is omcirkeld.">
+          </li>
+        </ol>
+
+        <p class="doorstuur-klein">Ziet uw mailapp er anders uit? Zoek dan naar <strong>Doorsturen</strong> of <strong>Forward</strong> &mdash; vaak een pijl naar rechts. Lukt het echt niet, geef het dan door aan de bewonerscommissie; wij zetten uw melding er met de hand bij.</p>
+      </div>
     </div>
   </div>
 
@@ -853,7 +996,8 @@
       { knop: document.getElementById("keuze-algemene-ruimte"), sectie: document.getElementById("sectie-algemene-ruimte") },
       { knop: document.getElementById("keuze-spoed"), sectie: document.getElementById("sectie-spoed") },
       { knop: document.getElementById("keuze-geschiedenis"), sectie: document.getElementById("sectie-geschiedenis") },
-      { knop: document.getElementById("keuze-openstaand"), sectie: document.getElementById("sectie-openstaand") }
+      { knop: document.getElementById("keuze-openstaand"), sectie: document.getElementById("sectie-openstaand") },
+      { knop: document.getElementById("keuze-oud"), sectie: document.getElementById("sectie-oud") }
     ];
     if (paren.some(function (p) { return !p.knop || !p.sectie; })) return;
 
@@ -1026,14 +1170,24 @@
   // trage mobiele verbinding goed werkt.
   // ─────────────────────────────────────────────────────────────────
   var MAX_FOTOS = 5;
-  var fotoData = { eigen: [], algemeen: [] };
+  var fotoData = { eigen: [], algemeen: [], oud: [] };
 
-  function verkleinFoto(bestand, callback) {
+  // Schermafbeeldingen van een mail moeten LEESBAAR blijven: daar moet
+  // de computer letters uit halen. Die worden dus minder klein gemaakt
+  // en met minder verlies opgeslagen dan een gewone foto van een storing.
+  var FOTO_INSTELLINGEN = {
+    eigen: { max: 1600, kwaliteit: 0.82 },
+    algemeen: { max: 1600, kwaliteit: 0.82 },
+    oud: { max: 2200, kwaliteit: 0.92 }
+  };
+
+  function verkleinFoto(bestand, callback, instellingen) {
+    var keuze = instellingen || { max: 1600, kwaliteit: 0.82 };
     var reader = new FileReader();
     reader.onload = function (e) {
       var img = new Image();
       img.onload = function () {
-        var MAX = 1600;
+        var MAX = keuze.max;
         var w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w >= h) { h = Math.round(h * (MAX / w)); w = MAX; }
@@ -1043,7 +1197,7 @@
         canvas.width = w;
         canvas.height = h;
         canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL("image/jpeg", 0.82));
+        callback(canvas.toDataURL("image/jpeg", keuze.kwaliteit));
       };
       img.onerror = function () { callback(null); };
       img.src = e.target.result;
@@ -1126,7 +1280,7 @@
   // verholpen of opgeruimd is — een lekkage die is opgedweild valt
   // anders niet meer vast te leggen.
   (function () {
-    ["eigen", "algemeen"].forEach(function (prefix) {
+    ["eigen", "algemeen", "oud"].forEach(function (prefix) {
       var status = document.querySelector('[data-foto-status="' + prefix + '"]');
 
       function verwerkBestanden(input) {
@@ -1166,7 +1320,7 @@
               }
               input.value = "";
             }
-          });
+          }, FOTO_INSTELLINGEN[prefix]);
         });
       }
 
@@ -1182,6 +1336,116 @@
       });
 
       tekenFotos(prefix);
+    });
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // MELDING VAN VÓÓR HET PORTAAL — met een foto van de mail van Hoen
+  //
+  // Er gaat hier NIETS naar de verhuurder. De melding is bij Hoen al
+  // bekend; hij komt alleen in onze eigen lijst te staan zodat het
+  // jaaroverzicht klopt.
+  //
+  // Het huisnummer wordt niet van de foto gelezen maar van de
+  // aanmelding: de melding komt dus altijd op het huisnummer waarvoor
+  // de pincode klopt. Fotografeert iemand per ongeluk de mail van de
+  // buurman, dan komt die melding op zijn eigen huisnummer terecht en
+  // niet op dat van de buurman.
+  // ─────────────────────────────────────────────────────────────────
+  (function () {
+    var knop = document.getElementById("knop-oud-versturen");
+    var status = document.getElementById("oud-status");
+    var veldHuisnummer = document.getElementById("oud-huisnummer");
+    var veldPincode = document.getElementById("oud-pincode");
+    var aanmeldVak = document.getElementById("oud-aanmelden");
+    if (!knop || !veldHuisnummer || !veldPincode) return;
+
+    var params = new URLSearchParams(window.location.search);
+    var huisnummerUitLink = params.get("huisnummer") || "";
+    var pincodeUitLink = params.get("pincode") || "";
+    if (huisnummerUitLink && pincodeUitLink) {
+      veldHuisnummer.value = huisnummerUitLink;
+      veldPincode.value = pincodeUitLink;
+    } else {
+      aanmeldVak.hidden = false;
+      veldHuisnummer.value = huisnummerUitLink;
+    }
+
+    function toon(tekst, soort) {
+      status.textContent = tekst;
+      status.className = "form-status" + (soort ? " " + soort : "");
+      status.hidden = !tekst;
+    }
+
+    var bezig = false;
+
+    knop.addEventListener("click", function () {
+      if (bezig) return;
+
+      var huisnummer = (veldHuisnummer.value || "").trim();
+      var pincode = (veldPincode.value || "").trim();
+      if (!huisnummer || !pincode) {
+        aanmeldVak.hidden = false;
+        toon("Vul uw huisnummer en pincode in.", "fout");
+        return;
+      }
+      if (!fotoData.oud.length) {
+        toon("Voeg eerst een foto of schermafbeelding van de mail toe.", "fout");
+        return;
+      }
+      if (!REPARATIE_SCRIPT_URL) {
+        toon("Het portaal is nog niet ingesteld. Neem contact op met de bewonerscommissie.", "fout");
+        return;
+      }
+
+      bezig = true;
+      knop.disabled = true;
+      // Tekst van een foto lezen duurt even — een paar seconden per
+      // afbeelding. Dat moet je zeggen, anders drukt iemand vier keer.
+      toon("Bezig met lezen van de foto... dit duurt een paar seconden.", "bezig");
+
+      var pakket = {
+        verzoekType: "oude-melding",
+        huisnummer: huisnummer,
+        pincode: pincode,
+        fotos: fotoData.oud.map(function (dataUrl) {
+          return { base64: dataUrl, type: "image/jpeg" };
+        })
+      };
+
+      fetch(REPARATIE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(pakket)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (antwoord) {
+          bezig = false;
+          knop.disabled = false;
+
+          if (!antwoord || !antwoord.ok) {
+            toon((antwoord && antwoord.error) || "Er ging iets mis. Probeer het later nog eens.", "fout");
+            return;
+          }
+
+          // Laten zien wat er gevonden is, zodat de bewoner zelf kan
+          // controleren of het klopt.
+          var regels = ["Gelukt — uw melding van " + antwoord.datum + " is toegevoegd."];
+          if (antwoord.meldingnummer) regels.push("Meldingnummer bij de verhuurder: " + antwoord.meldingnummer + ".");
+          if (antwoord.typeStoring) regels.push("Gelezen als: " + antwoord.typeStoring + ".");
+          regels.push("U vindt hem terug bij “Ingediende reparatieverzoeken”.");
+          toon(regels.join(" "), "gelukt");
+
+          fotoData.oud = [];
+          tekenFotos("oud");
+        })
+        .catch(function () {
+          bezig = false;
+          knop.disabled = false;
+          toon("Versturen lukte niet. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
+        });
     });
   })();
 </script>
@@ -1429,6 +1693,25 @@
         nummer.className = "melding-datum";
         nummer.style.fontWeight = "700";
         kaart.appendChild(nummer);
+      }
+
+      // Heeft de verhuurder zelf al gemeld dat het klaar is? Dan mag u
+      // dat weten. Of het ook écht goed is, bepaalt u hieronder zelf.
+      if (m.opgelostBijHoen) {
+        var gereed = tekst(document.createElement("p"),
+          "De verhuurder meldde dit gereed op " + m.opgelostBijHoen + ".");
+        gereed.className = "melding-datum melding-extra";
+        kaart.appendChild(gereed);
+      }
+
+      // Meldingen die van vóór het portaal komen, staan erbij omdat de
+      // bewoner ze zelf heeft doorgestuurd. Even benoemen, anders is het
+      // een raadsel waar die regel vandaan komt.
+      if (m.bron === "Doorgestuurd door bewoner") {
+        var herkomst = tekst(document.createElement("p"),
+          "Overgenomen uit de mail die u heeft doorgestuurd.");
+        herkomst.className = "melding-datum melding-extra";
+        kaart.appendChild(herkomst);
       }
 
       // Al afgemeld? Dan alleen laten zien wat er is doorgegeven.

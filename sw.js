@@ -1,4 +1,4 @@
-const CACHE_NAAM = "gouden-ezel-v68";
+const CACHE_NAAM = "gouden-ezel-v71";
 const BESTANDEN = [
   "./",
   "./index.html",
@@ -11,7 +11,10 @@ const BESTANDEN = [
   "./schoonmaakschema.js",
   "./Gouden%20Ezel.png",
   "./Gangster%20Ezel.png",
-  "./logo-ezel.png"
+  "./logo-ezel.png",
+  "./doorsturen-1.png",
+  "./doorsturen-2.png",
+  "./doorsturen-3.png"
 ];
 
 self.addEventListener("install", (event) => {
