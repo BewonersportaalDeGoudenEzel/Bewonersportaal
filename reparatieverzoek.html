@@ -224,57 +224,6 @@
   .doorstuur-kader p:last-child { margin-bottom: 0; }
   .doorstuur-titel { font-weight: 700; }
   .doorstuur-klein { font-size: 0.92rem; color: #555; }
-  /* De plaatjes bij "zo stuurt u de mail door". height:auto hoort erbij:
-     zonder die regel houdt de browser de hoogte uit het
-     width/height-kenmerk aan en wordt de afbeelding uitgerekt. De
-     plaatjes zijn expres zo breed als de kolom, want anders is de tekst
-     op het nagemaakte telefoonscherm niet meer te lezen. */
-  .uitleg-plaat {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    margin: 4px 0 0 0;
-    background: #fff;
-  }
-  .stappen-doorsturen {
-    list-style: none;
-    counter-reset: stapteller;
-    margin: 14px 0;
-    padding: 0;
-  }
-  .stappen-doorsturen li {
-    counter-increment: stapteller;
-    margin-bottom: 20px;
-    position: relative;
-  }
-  /* Het nummer staat los van de tekst (absoluut geplaatst) en niet als
-     flex-item ernaast. Een flexbox knipt namelijk de zin in stukken bij
-     elk stukje vetgedrukte tekst, en dan loopt een lang woord als een
-     e-mailadres buiten het scherm. */
-  .stappen-doorsturen li::before {
-    content: counter(stapteller);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--groen);
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-  }
-  .stappen-doorsturen li p {
-    margin: 0 0 8px 38px;
-    /* Een e-mailadres mag desnoods afbreken; buiten beeld lopen niet. */
-    overflow-wrap: break-word;
-  }
-
   .melding-vraag { font-weight: 600; margin: 12px 0 4px 0; }
   .melding-knoppen { display: flex; flex-wrap: wrap; gap: 10px; }
   .melding-knoppen .knop { font-size: 1rem; padding: 12px 18px; }
@@ -854,11 +803,8 @@
 
       <div class="doorstuur-kader">
         <p class="doorstuur-titel">Al eerder iets gemeld dit jaar?</p>
-        <p>Heeft u dit jaar al een reparatieverzoek gedaan toen dit portaal er nog niet was? Dan kan die melding er alsnog bij, met de datum waarop u hem destijds heeft gedaan. Twee manieren, kies wat u het makkelijkst vindt:</p>
-        <p><strong>1.</strong> Stuur de bevestigingsmail van Hoen door naar
-          <a href="mailto:polanenflat@gmail.com?subject=Melding%20van%20voor%20het%20portaal">polanenflat@gmail.com</a>. Weet u niet hoe doorsturen werkt? Bij <strong>&ldquo;Melding van v&oacute;&oacute;r het portaal&rdquo;</strong> hieronder staat het met plaatjes uitgelegd.</p>
-        <p><strong>2.</strong> Of maak een schermafbeelding van die mail en stuur die hieronder in bij <strong>&ldquo;Melding van v&oacute;&oacute;r het portaal&rdquo;</strong>. Wij lezen de datum en het meldingnummer van de foto af.</p>
-        <p class="doorstuur-klein">Lukt geen van beide? Geef het dan even door aan de bewonerscommissie; wij zetten hem er dan met de hand bij.</p>
+        <p>Heeft u dit jaar al een reparatieverzoek gedaan toen dit portaal er nog niet was? Dan kan die melding er alsnog bij, met de datum waarop u hem destijds heeft gedaan. Maak een <strong>schermafbeelding van de bevestigingsmail van Hoen</strong> en stuur die hieronder in bij <strong>&ldquo;Melding van v&oacute;&oacute;r het portaal&rdquo;</strong>.</p>
+        <p class="doorstuur-klein">Lukt dat niet? Geef het dan even door aan de bewonerscommissie; wij zetten hem er dan met de hand bij.</p>
       </div>
     </div>
   </div>
@@ -898,7 +844,7 @@
     </button>
 
     <div id="sectie-oud" hidden>
-      <p>Heeft u dit jaar al iets gemeld toen dit portaal er nog niet was? Maak een <strong>schermafbeelding van de bevestigingsmail van Hoen</strong> en stuur die hier in. Wij lezen daar zelf de datum en het meldingnummer van af, zodat uw melding meetelt in het dossier.</p>
+      <p>Heeft u dit jaar al iets gemeld toen dit portaal er nog niet was? Maak een <strong>schermafbeelding van de bevestigingsmail van Hoen</strong> en stuur die hier in, met de datum erbij. Dan telt uw melding mee in het dossier.</p>
       <p class="veld-hulp-blok">Er gaat <strong>geen nieuw reparatieverzoek</strong> naar Hoen. Uw melding is daar al bekend &mdash; hij komt alleen bij ons in de lijst te staan.</p>
 
       <div id="oud-aanmelden" hidden>
@@ -914,7 +860,7 @@
 
       <div class="veld-groep foto-veld" data-foto-veld="oud">
         <label>Foto's of schermafbeeldingen van de mail * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
-        <p class="veld-hulp-blok">Zorg dat de <strong>datum</strong> en het <strong>meldingnummer</strong> goed leesbaar op de afbeelding staan. Past de mail niet op één scherm? Maak dan gerust twee afbeeldingen.</p>
+        <p class="veld-hulp-blok">De bewonerscommissie kijkt de afbeelding na en zet uw melding in de lijst. Past de mail niet op één scherm? Maak dan gerust twee afbeeldingen.</p>
         <div class="knop-rij">
           <button type="button" class="knop secundair" data-foto-knop="oud">&#128247; Foto maken</button>
           <button type="button" class="knop secundair" data-foto-knop-galerij="oud">&#128444;&#65039; Afbeelding kiezen</button>
@@ -925,17 +871,8 @@
         <p class="foto-status" data-foto-status="oud">Nog geen foto toegevoegd.</p>
       </div>
 
-      <div class="knop-rij">
-        <button type="button" class="knop" id="knop-oud-versturen">Melding toevoegen</button>
-      </div>
-
-      <p class="form-status" id="oud-status" hidden></p>
-
-      <!-- Verschijnt pas als de tekst op de foto niet te lezen was. Dan
-           kan de bewoner het zelf invullen en het nog een keer proberen,
-           in plaats van tegen een dichte deur te lopen. -->
-      <div class="doorstuur-kader" id="oud-handmatig" hidden>
-        <p class="doorstuur-titel">Vul het dan zelf even in</p>
+      <div class="doorstuur-kader" id="oud-handmatig">
+        <p class="doorstuur-titel">Wat stond er in die melding?</p>
         <div class="veld-groep">
           <label for="oud-datum">Wanneer heeft u het gemeld?</label>
           <input type="date" id="oud-datum">
@@ -948,35 +885,17 @@
           <label for="oud-omschrijving">Korte omschrijving <span class="veld-hulp">(mag leeg blijven)</span></label>
           <textarea id="oud-omschrijving" rows="3" placeholder="Bijvoorbeeld: de kraan in de keuken lekte."></textarea>
         </div>
-        <div class="knop-rij">
-          <button type="button" class="knop" id="knop-oud-nogmaals">Opnieuw proberen</button>
-        </div>
       </div>
 
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-oud-versturen">Melding toevoegen</button>
+      </div>
+
+      <p class="form-status" id="oud-status" hidden></p>
+
       <div class="doorstuur-kader">
-        <p class="doorstuur-titel">Lukt het niet, of is de foto niet goed leesbaar?</p>
-        <p>Stuur dan de mail van Hoen door naar
-          <a href="mailto:polanenflat@gmail.com?subject=Melding%20van%20voor%20het%20portaal">polanenflat@gmail.com</a>. Dat werkt altijd, want dan staan de datum en het meldingnummer er gewoon als tekst in. Zo doet u dat:</p>
-
-        <ol class="stappen-doorsturen">
-          <li>
-            <p><strong>Open de mail van Hoen</strong> die u destijds kreeg. Tik rechtsboven op de <strong>drie puntjes</strong>.</p>
-            <img class="uitleg-plaat" src="doorsturen-1.png" width="600" height="428" loading="lazy"
-                 alt="Een geopende mail met als onderwerp Ontvangstbevestiging van melding. Rechtsboven zijn de drie puntjes omcirkeld.">
-          </li>
-          <li>
-            <p>Tik in het lijstje op <strong>Doorsturen</strong>.</p>
-            <img class="uitleg-plaat" src="doorsturen-2.png" width="600" height="457" loading="lazy"
-                 alt="Een lijstje met Beantwoorden, Allen beantwoorden, Doorsturen en Verwijderen. Doorsturen is omkaderd.">
-          </li>
-          <li>
-            <p>Typ bij <strong>Aan</strong> ons adres <strong>polanenflat@gmail.com</strong> en tik op de verzendknop. De tekst van Hoen laat u eronder staan &mdash; daar staan de datum en het meldingnummer in.</p>
-            <img class="uitleg-plaat" src="doorsturen-3.png" width="600" height="536" loading="lazy"
-                 alt="Een nieuwe mail met polanenflat@gmail.com in het veld Aan. De ronde verzendknop rechtsonder is omcirkeld.">
-          </li>
-        </ol>
-
-        <p class="doorstuur-klein">Ziet uw mailapp er anders uit? Zoek dan naar <strong>Doorsturen</strong> of <strong>Forward</strong> &mdash; vaak een pijl naar rechts. Lukt het echt niet, geef het dan door aan de bewonerscommissie; wij zetten uw melding er met de hand bij.</p>
+        <p class="doorstuur-titel">Lukt het niet?</p>
+        <p class="doorstuur-klein">Geef uw melding dan even door aan de bewonerscommissie &mdash; met de datum en wat er kapot was. Wij zetten hem er met de hand bij.</p>
       </div>
     </div>
   </div>
@@ -1402,8 +1321,6 @@
     }
 
     var bezig = false;
-    var handmatigVak = document.getElementById("oud-handmatig");
-    var knopNogmaals = document.getElementById("knop-oud-nogmaals");
 
     function waarde(id) {
       var veld = document.getElementById(id);
@@ -1429,19 +1346,19 @@
         return;
       }
 
+      if (!waarde("oud-datum")) {
+        toon("Vul erbij wanneer u de melding heeft gedaan.", "fout");
+        return;
+      }
+
       bezig = true;
       knop.disabled = true;
-      if (knopNogmaals) knopNogmaals.disabled = true;
-      // Tekst van een foto lezen duurt even — een paar seconden per
-      // afbeelding. Dat moet je zeggen, anders drukt iemand vier keer.
-      toon("Bezig met lezen van de foto... dit duurt een paar seconden.", "bezig");
+      toon("Bezig met versturen...", "bezig");
 
       var pakket = {
         verzoekType: "oude-melding",
         huisnummer: huisnummer,
         pincode: pincode,
-        // Deze drie zijn leeg zolang de foto gewoon leesbaar is; ze
-        // worden pas ingevuld als het lezen niet lukte.
         datum: waarde("oud-datum"),
         typeStoring: waarde("oud-type"),
         omschrijving: waarde("oud-omschrijving"),
@@ -1459,30 +1376,17 @@
         .then(function (antwoord) {
           bezig = false;
           knop.disabled = false;
-          if (knopNogmaals) knopNogmaals.disabled = false;
 
           if (!antwoord || !antwoord.ok) {
             toon((antwoord && antwoord.error) || "Er ging iets mis. Probeer het later nog eens.", "fout");
-            // Kon de foto niet gelezen worden, dan verschijnen de velden
-            // waarin de bewoner het zelf kan invullen.
-            if (antwoord && antwoord.vraagDatum && handmatigVak) {
-              handmatigVak.hidden = false;
-              handmatigVak.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }
             return;
           }
 
-          // Laten zien wat er gevonden is, zodat de bewoner zelf kan
-          // controleren of het klopt.
-          var regels = ["Gelukt — uw melding van " + antwoord.datum + " is toegevoegd."];
-          if (antwoord.meldingnummer) regels.push("Meldingnummer bij de verhuurder: " + antwoord.meldingnummer + ".");
-          if (antwoord.typeStoring) regels.push("Gelezen als: " + antwoord.typeStoring + ".");
-          regels.push("U vindt hem terug bij “Ingediende reparatieverzoeken”.");
-          toon(regels.join(" "), "gelukt");
+          toon("Gelukt — uw melding van " + antwoord.datum + " is doorgegeven. " +
+               "De bewonerscommissie kijkt de afbeelding na en zet hem in de lijst.", "gelukt");
 
           fotoData.oud = [];
           tekenFotos("oud");
-          if (handmatigVak) handmatigVak.hidden = true;
           ["oud-datum", "oud-type", "oud-omschrijving"].forEach(function (id) {
             var veld = document.getElementById(id);
             if (veld) veld.value = "";
@@ -1491,13 +1395,11 @@
         .catch(function () {
           bezig = false;
           knop.disabled = false;
-          if (knopNogmaals) knopNogmaals.disabled = false;
           toon("Versturen lukte niet. Controleer uw internetverbinding en probeer het opnieuw.", "fout");
         });
     }
 
     knop.addEventListener("click", versturen);
-    if (knopNogmaals) knopNogmaals.addEventListener("click", versturen);
   })();
 </script>
 
