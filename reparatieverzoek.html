@@ -563,14 +563,18 @@
           <label for="eigen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
           <select id="eigen-type-storing" name="typeStoring" required>
             <option value="">Kies een categorie</option>
-            <option>Ongedierte</option>
-            <option>Riool / afvoer</option>
+            <option>Verwarming & Warm water</option>
+            <option>Water & Sanitair</option>
             <option>Lekkage</option>
+            <option>Verstoppingen</option>
+            <option>Riolering</option>
+            <option>Verlichting & Elektra</option>
+            <option>Huishoudelijke apparaten (Witgoed)</option>
+            <option>Ongediertebestrijding</option>
             <option>Schimmel</option>
-            <option>Elektra</option>
-            <option>Sanitair / kraan</option>
-            <option>Verwarming</option>
-            <option>Deur / slot</option>
+            <option>Intercom/Deurbel</option>
+            <option>Deuren, ramen & houtwerk</option>
+            <option>Sleutels</option>
             <option>Overig</option>
           </select>
         </div>
@@ -600,13 +604,24 @@
             <label><input type="radio" name="privacy-eigen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan bewaren wij alleen uw <strong>huisnummer, het soort storing en de datum</strong> — geen naam, geen telefoonnummer, geen foto's. Uw melding telt dan wel mee als aantal, maar <strong>niet volledig mee in het dossier</strong> waarmee wij de verhuurder aanspreken.</p>
+          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
+          <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder aanspreken. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
         </div>
 
         <div class="veld-groep">
           <label class="keuze-lijst" style="flex-direction: row;">
             <input type="checkbox" data-gelezen="eigen" required>
             <span>Ja, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten. Ik heb <a href="https://wetten.overheid.nl/BWBR0014931" target="_blank" rel="noopener">'Besluit kleine herstellingen'</a> gelezen *</span>
+          </label>
+        </div>
+
+        <!-- Dezelfde verklaring die onder het formulier van Hoen zelf staat.
+             Omdat wij de melding namens de bewoner doorsturen, moet hij die
+             hier afgeven — anders zou niemand hem gegeven hebben. -->
+        <div class="veld-groep">
+          <label class="keuze-lijst" style="flex-direction: row;">
+            <input type="checkbox" data-privacy-hoen="eigen" required>
+            <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
           </label>
         </div>
 
@@ -698,14 +713,19 @@
           <label for="algemeen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
           <select id="algemeen-type-storing" name="typeStoring" required>
             <option value="">Kies een categorie</option>
-            <option>Ongedierte</option>
-            <option>Riool / afvoer</option>
+            <option>Liftstoring</option>
+            <option>CV (blokverwarming)</option>
+            <option>Centrale toegangsdeur</option>
+            <option>Intercom (buitenpaneel)</option>
+            <option>Verlichting & Elektra</option>
             <option>Lekkage</option>
+            <option>Riolering</option>
+            <option>Verstoppingen</option>
+            <option>Schoonmaak</option>
+            <option>Parkeren</option>
+            <option>Ongediertebestrijding</option>
             <option>Schimmel</option>
-            <option>Elektra</option>
-            <option>Verlichting</option>
-            <option>Lift</option>
-            <option>Deur / slot</option>
+            <option>Deuren, ramen & houtwerk</option>
             <option>Overig</option>
           </select>
         </div>
@@ -735,13 +755,24 @@
             <label><input type="radio" name="privacy-algemeen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan bewaren wij alleen uw <strong>huisnummer, het soort storing en de datum</strong> — geen naam, geen telefoonnummer, geen foto's. Uw melding telt dan wel mee als aantal, maar <strong>niet volledig mee in het dossier</strong> waarmee wij de verhuurder aanspreken.</p>
+          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
+          <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder aanspreken. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
         </div>
 
         <div class="veld-groep">
           <label class="keuze-lijst" style="flex-direction: row;">
             <input type="checkbox" data-gelezen="algemeen" required>
             <span>Ja, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten. Ik heb <a href="https://wetten.overheid.nl/BWBR0014931" target="_blank" rel="noopener">'Besluit kleine herstellingen'</a> gelezen *</span>
+          </label>
+        </div>
+
+        <!-- Dezelfde verklaring die onder het formulier van Hoen zelf staat.
+             Omdat wij de melding namens de bewoner doorsturen, moet hij die
+             hier afgeven — anders zou niemand hem gegeven hebben. -->
+        <div class="veld-groep">
+          <label class="keuze-lijst" style="flex-direction: row;">
+            <input type="checkbox" data-privacy-hoen="algemeen" required>
+            <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
           </label>
         </div>
 
@@ -1443,6 +1474,7 @@
       var privacyContainer = document.querySelector('[data-privacy="' + prefix + '"]');
       var verdiepingVak = document.querySelector('input[name="verdieping-' + prefix + '"]:checked');
       var gelezenVak = document.querySelector('[data-gelezen="' + prefix + '"]');
+      var privacyHoenVak = document.querySelector('[data-privacy-hoen="' + prefix + '"]');
 
       var waarGekozen = verzamelAangevinkt(waarContainer);
       var privacyGekozen = verzamelAangevinkt(privacyContainer);
@@ -1461,6 +1493,10 @@
       }
       if (!gelezenVak || !gelezenVak.checked) {
         toonStatus("Vink aan dat u ‘Besluit kleine herstellingen’ heeft gelezen.", "fout");
+        return;
+      }
+      if (!privacyHoenVak || !privacyHoenVak.checked) {
+        toonStatus("Vink aan dat u akkoord gaat met de privacyverklaring van Hoen.", "fout");
         return;
       }
       if (!fotoData[prefix] || fotoData[prefix].length === 0) {
@@ -1488,6 +1524,11 @@
         typeStoring: document.getElementById(prefix + "-type-storing").value,
         watIsHetProbleem: document.getElementById(prefix + "-omschrijving").value,
         privacyKeuze: privacyGekozen.join("; "),
+        // Het vinkje "Besluit kleine herstellingen" wordt meegestuurd, niet
+        // alleen gecontroleerd. Zonder dit stond er in de mail aan Hoen
+        // nergens dat de bewoner die verklaring had afgegeven.
+        akkoordKleineHerstellingen: (gelezenVak && gelezenVak.checked) ? "Ja" : "",
+        akkoordPrivacyHoen: (privacyHoenVak && privacyHoenVak.checked) ? "Ja" : "",
         fotos: fotoData[prefix].map(function (dataUrl) {
           return { base64: dataUrl, type: "image/jpeg" };
         }),
