@@ -602,10 +602,12 @@
           <div class="keuze-lijst" data-privacy="eigen">
             <label><input type="radio" name="privacy-eigen" value="Hoen Vastgoedbeheer en de bewonerscommissie mogen de gegevens verwerken"> <span><strong>Hoen Vastgoedbeheer én de bewonerscommissie</strong> mogen mijn gegevens verwerken.</span></label>
             <label><input type="radio" name="privacy-eigen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
+            <label><input type="radio" name="privacy-eigen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="eigen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
           <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
           <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder informeren. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
+          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de derde optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan een van de andere twee opties. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
         <div class="veld-groep">
@@ -617,8 +619,10 @@
 
         <!-- Dezelfde verklaring die onder het formulier van Hoen zelf staat.
              Omdat wij de melding namens de bewoner doorsturen, moet hij die
-             hier afgeven — anders zou niemand hem gegeven hebben. -->
-        <div class="veld-groep">
+             hier afgeven — anders zou niemand hem gegeven hebben. Kiest de
+             bewoner "Alleen de bewonerscommissie", dan gaat er niets naar
+             Hoen, en verdwijnt dit vinkje dus ook (zie script hieronder). -->
+        <div class="veld-groep" data-privacy-hoen-blok="eigen">
           <label class="keuze-lijst" style="flex-direction: row;">
             <input type="checkbox" data-privacy-hoen="eigen" required>
             <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
@@ -753,10 +757,12 @@
           <div class="keuze-lijst" data-privacy="algemeen">
             <label><input type="radio" name="privacy-algemeen" value="Hoen Vastgoedbeheer en de bewonerscommissie mogen de gegevens verwerken"> <span><strong>Hoen Vastgoedbeheer én de bewonerscommissie</strong> mogen mijn gegevens verwerken.</span></label>
             <label><input type="radio" name="privacy-algemeen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
+            <label><input type="radio" name="privacy-algemeen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="algemeen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
           <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
           <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder informeren. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
+          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de derde optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan een van de andere twee opties. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
         <div class="veld-groep">
@@ -768,8 +774,10 @@
 
         <!-- Dezelfde verklaring die onder het formulier van Hoen zelf staat.
              Omdat wij de melding namens de bewoner doorsturen, moet hij die
-             hier afgeven — anders zou niemand hem gegeven hebben. -->
-        <div class="veld-groep">
+             hier afgeven — anders zou niemand hem gegeven hebben. Kiest de
+             bewoner "Alleen de bewonerscommissie", dan gaat er niets naar
+             Hoen, en verdwijnt dit vinkje dus ook (zie script hieronder). -->
+        <div class="veld-groep" data-privacy-hoen-blok="algemeen">
           <label class="keuze-lijst" style="flex-direction: row;">
             <input type="checkbox" data-privacy-hoen="algemeen" required>
             <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
@@ -1467,6 +1475,32 @@
       status.className = "form-status " + soortStatus;
     }
 
+    // "Alleen de bewonerscommissie" betekent dat er niets naar Hoen gaat.
+    // Het vinkje voor Hoen's eigen privacyverklaring hoort dan niet meer
+    // bij het formulier — er is immers niemand bij Hoen om akkoord tegen
+    // te geven. Dit verbergt dat blok en haalt het "required" eraf zodra
+    // die derde optie gekozen wordt, en zet het weer terug bij de andere
+    // twee opties.
+    var privacyHoenBlok = document.querySelector('[data-privacy-hoen-blok="' + prefix + '"]');
+    var privacyHoenVakEl = document.querySelector('[data-privacy-hoen="' + prefix + '"]');
+    function bijwerkAlleenCommissie() {
+      var gekozenVak = document.querySelector('input[name="privacy-' + prefix + '"]:checked');
+      var isAlleenCommissie = !!(gekozenVak && gekozenVak.hasAttribute("data-alleen-commissie"));
+      if (privacyHoenBlok) privacyHoenBlok.hidden = isAlleenCommissie;
+      if (privacyHoenVakEl) {
+        if (isAlleenCommissie) {
+          privacyHoenVakEl.removeAttribute("required");
+          privacyHoenVakEl.checked = false;
+        } else {
+          privacyHoenVakEl.setAttribute("required", "required");
+        }
+      }
+    }
+    document.querySelectorAll('input[name="privacy-' + prefix + '"]').forEach(function (vak) {
+      vak.addEventListener("change", bijwerkAlleenCommissie);
+    });
+    bijwerkAlleenCommissie();
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -1478,6 +1512,8 @@
 
       var waarGekozen = verzamelAangevinkt(waarContainer);
       var privacyGekozen = verzamelAangevinkt(privacyContainer);
+      var alleenCommissieGekozen = privacyGekozen.length === 1 &&
+        privacyGekozen[0].toLowerCase().indexOf("alleen de bewonerscommissie") !== -1;
 
       if (!form.checkValidity()) {
         form.reportValidity();
@@ -1495,7 +1531,7 @@
         toonStatus("Vink aan dat u ‘Besluit kleine herstellingen’ heeft gelezen.", "fout");
         return;
       }
-      if (!privacyHoenVak || !privacyHoenVak.checked) {
+      if (!alleenCommissieGekozen && (!privacyHoenVak || !privacyHoenVak.checked)) {
         toonStatus("Vink aan dat u akkoord gaat met de privacyverklaring van Hoen.", "fout");
         return;
       }
