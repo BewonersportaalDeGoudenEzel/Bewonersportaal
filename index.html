@@ -374,6 +374,9 @@
     font-size: 1.2rem;
   }
   .mededeling p { margin: 0; }
+  .mededeling-tekst p { margin: 0 0 12px 0; }
+  .mededeling-tekst p:last-child { margin-bottom: 0; }
+  .mededeling-tekst strong { color: var(--groen-donker); }
   .mededeling-fotos {
     margin-top: 14px;
     display: flex;
@@ -920,12 +923,38 @@
           var titel = document.createElement("h3");
           titel.textContent = m.titel || "";
 
-          var tekst = document.createElement("p");
-          tekst.textContent = m.tekst || "";
+          // Elke regel van de mededeling wordt een eigen alinea (dus een
+          // regeleinde in de tekst wordt ook echt een regeleinde op het
+          // scherm — dat gebeurde hiervoor niet, waardoor alles achter
+          // elkaar aan één lange lap tekst leek). Begint een regel met
+          // "Iets, iets: ..." (een woord of korte omschrijving gevolgd
+          // door een dubbele punt, zoals "Parkeerplaatsen: ..."), dan
+          // wordt dat stukje vetgedrukt weergegeven — dat is het
+          // "kopje" van dat onderwerp. Er wordt hier bewust NIET met
+          // innerHTML gewerkt (dus geen opgemaakte tekst uit een
+          // tekstverwerker kan hier iets ongewenst doen): alles blijft
+          // gewone, veilige tekst, alleen de plek van de dubbele punt
+          // bepaalt wat vetgedrukt wordt.
+          var tekstBlok = document.createElement("div");
+          tekstBlok.className = "mededeling-tekst";
+          (m.tekst || "").split("\n").forEach(function (regel) {
+            if (regel === "") return;
+            var alinea = document.createElement("p");
+            var match = /^([^:]{1,60}):\s*(.*)$/.exec(regel);
+            if (match && match[2]) {
+              var label = document.createElement("strong");
+              label.textContent = match[1] + ":";
+              alinea.appendChild(label);
+              alinea.appendChild(document.createTextNode(" " + match[2]));
+            } else {
+              alinea.textContent = regel;
+            }
+            tekstBlok.appendChild(alinea);
+          });
 
           blok.appendChild(datum);
           blok.appendChild(titel);
-          blok.appendChild(tekst);
+          blok.appendChild(tekstBlok);
 
           if (Array.isArray(m.fotos) && m.fotos.length) {
             var strook = document.createElement("div");
