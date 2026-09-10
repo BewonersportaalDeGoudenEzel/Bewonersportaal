@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<meta name="robots" content="noindex, nofollow">
+<title>Dashboard — De Gouden Ezel</title>
+<meta name="description" content="Alleen voor de bewonerscommissie: cijfers over reparatieverzoeken en aanmeldingen.">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+
+    --db-bg: #15162e;
+    --db-kaart: #1d1f42;
+    --db-rand: #2a2c54;
+    --db-tekst: #f2f3fa;
+    --db-tekst-dim: #9294b8;
+    --db-cyaan: #2bd4f0;
+    --db-groen: #3ddc97;
+    --db-rood: #f65c7a;
+    --db-amber: #f6b94d;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+
+  .let-op {
+    background: #fff4e6;
+    border: 1px solid #e8c398;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .veld-groep { margin-bottom: 16px; }
+  .veld-groep label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+  .veld-groep input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--rand);
+    border-radius: 8px;
+    font-family: inherit;
+  }
+
+  button.knop {
+    background: var(--groen);
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.knop:disabled { opacity: 0.6; cursor: default; }
+
+  .status-tekst {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #a33;
+  }
+
+  /* ── Het dashboard zelf: donker paneel ── */
+  #dashboard-paneel {
+    background: var(--db-bg);
+    border-radius: 16px;
+    padding: 20px 16px 26px;
+    color: var(--db-tekst);
+  }
+  #dashboard-paneel[hidden] { display: none; }
+
+  .db-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .db-top h2 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+  .switcher {
+    display: inline-flex;
+    background: var(--db-kaart);
+    border: 1px solid var(--db-rand);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .switcher button {
+    border: none;
+    background: transparent;
+    color: var(--db-tekst-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button.actief {
+    background: linear-gradient(135deg, var(--db-cyaan), #4a7bf2);
+    color: #0c0d1e;
+  }
+
+  .db-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .db-grid[hidden] { display: none; }
+
+  .db-kaart {
+    background: var(--db-kaart);
+    border: 1px solid var(--db-rand);
+    border-radius: 16px;
+    padding: 18px 20px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+  }
+  .db-kaart .db-label {
+    font-size: 0.75rem;
+    color: var(--db-tekst-dim);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .db-groot { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .db-sub { font-size: 0.75rem; color: var(--db-tekst-dim); margin-top: 6px; }
+
+  .db-twee { display: flex; gap: 22px; }
+  .db-twee div { flex: 1; }
+  .db-twee .g { font-size: 1.5rem; font-weight: 700; }
+  .db-twee .l { font-size: 0.72rem; color: var(--db-tekst-dim); margin-top: 4px; }
+
+  .db-lijst-item { margin-top: 10px; }
+  .db-lijst-item:first-of-type { margin-top: 12px; }
+  .db-lijst-kop {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  .db-lijst-kop span:last-child { color: var(--db-tekst-dim); }
+  .db-balk-track { height: 6px; background: #2a2c54; border-radius: 6px; overflow: hidden; }
+  .db-balk-fill { height: 100%; border-radius: 6px; }
+
+  .db-leeg { color: var(--db-tekst-dim); font-size: 0.8rem; margin-top: 8px; }
+
+  .db-wide { grid-column: 1 / -1; }
+  .db-staafgrafiek {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 130px;
+    margin-top: 10px;
+    padding-top: 10px;
+    overflow-x: auto;
+  }
+  .db-staaf-kolom {
+    flex: 1;
+    min-width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+  .db-staaf {
+    width: 60%;
+    max-width: 34px;
+    background: linear-gradient(180deg, var(--db-cyaan), #4a7bf2);
+    border-radius: 5px 5px 0 0;
+    min-height: 2px;
+  }
+  .db-staaf-label { margin-top: 8px; font-size: 0.68rem; color: var(--db-tekst-dim); }
+  .db-staaf-getal { font-size: 0.65rem; color: var(--db-tekst-dim); margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Ga direct naar de inhoud</a>
+
+<header>
+  <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="100" height="100">
+  <h1>Dashboard</h1>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
+
+  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Bewoners zien hier nergens een link naartoe op de website. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf.</p>
+
+  <div class="kaart" id="login-kaart">
+    <form id="form-login" novalidate>
+      <div class="veld-groep">
+        <label for="dashboard-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="dashboard-huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="dashboard-pincode">Pincode (4 cijfers) *</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="dashboard-pincode" required autocomplete="off">
+      </div>
+      <button type="submit" class="knop" id="knop-inloggen">Bekijk dashboard</button>
+      <p class="status-tekst" id="login-status"></p>
+    </form>
+  </div>
+
+  <div id="dashboard-paneel" hidden>
+    <div class="db-top">
+      <h2>Polanenflat</h2>
+      <div class="switcher">
+        <button type="button" id="knop-reparatie" class="actief">Reparatieverzoeken</button>
+        <button type="button" id="knop-aanmeldingen">Aanmeldingen</button>
+      </div>
+    </div>
+
+    <div class="db-grid" id="grid-reparatie"></div>
+    <div class="db-grid" id="grid-aanmeldingen" hidden></div>
+  </div>
+</main>
+
+<script>
+  var DASHBOARD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  var kleuren = { cyaan: "#2bd4f0", groen: "#3ddc97", amber: "#f6b94d", rood: "#f65c7a" };
+
+  function el_(tag, klasse, tekst) {
+    var e = document.createElement(tag);
+    if (klasse) e.className = klasse;
+    if (tekst != null) e.textContent = tekst;
+    return e;
+  }
+
+  function kaartGroot_(label, waarde, sub) {
+    var kaart = el_("div", "db-kaart");
+    kaart.appendChild(el_("div", "db-label", label));
+    kaart.appendChild(el_("div", "db-groot", String(waarde)));
+    if (sub) kaart.appendChild(el_("div", "db-sub", sub));
+    return kaart;
+  }
+
+  function kaartTwee_(label, a, aLabel, b, bLabel, kleurA, kleurB) {
+    var kaart = el_("div", "db-kaart");
+    kaart.appendChild(el_("div", "db-label", label));
+    var rij = el_("div", "db-twee");
+    var linksDiv = el_("div"); var links = el_("div", "g", String(a)); links.style.color = kleurA;
+    linksDiv.appendChild(links); linksDiv.appendChild(el_("div", "l", aLabel));
+    var rechtsDiv = el_("div"); var rechts = el_("div", "g", String(b)); rechts.style.color = kleurB;
+    rechtsDiv.appendChild(rechts); rechtsDiv.appendChild(el_("div", "l", bLabel));
+    rij.appendChild(linksDiv); rij.appendChild(rechtsDiv);
+    kaart.appendChild(rij);
+    return kaart;
+  }
+
+  function kaartLijst_(label, items, kleurenLijst) {
+    var kaart = el_("div", "db-kaart");
+    kaart.appendChild(el_("div", "db-label", label));
+    if (!items.length) {
+      kaart.appendChild(el_("div", "db-leeg", "Nog geen gegevens."));
+      return kaart;
+    }
+    var max = Math.max.apply(null, items.map(function (i) { return i.aantal; })) || 1;
+    items.forEach(function (item, i) {
+      var wrap = el_("div", "db-lijst-item");
+      var kop = el_("div", "db-lijst-kop");
+      kop.appendChild(el_("span", null, item.label));
+      kop.appendChild(el_("span", null, String(item.aantal)));
+      wrap.appendChild(kop);
+      var track = el_("div", "db-balk-track");
+      var fill = el_("div", "db-balk-fill");
+      fill.style.width = Math.max(6, Math.round((item.aantal / max) * 100)) + "%";
+      fill.style.background = kleurenLijst[i % kleurenLijst.length];
+      track.appendChild(fill);
+      wrap.appendChild(track);
+      kaart.appendChild(wrap);
+    });
+    return kaart;
+  }
+
+  function kaartStaafgrafiek_(label, reeks) {
+    var kaart = el_("div", "db-kaart db-wide");
+    kaart.appendChild(el_("div", "db-label", label));
+    var grafiek = el_("div", "db-staafgrafiek");
+    if (!reeks.length) {
+      kaart.appendChild(el_("div", "db-leeg", "Nog geen gegevens."));
+      return kaart;
+    }
+    var max = Math.max.apply(null, reeks.map(function (r) { return r.aantal; })) || 1;
+    reeks.forEach(function (punt) {
+      var kolom = el_("div", "db-staaf-kolom");
+      kolom.appendChild(el_("div", "db-staaf-getal", String(punt.aantal)));
+      var staaf = el_("div", "db-staaf");
+      staaf.style.height = Math.max(2, Math.round((punt.aantal / max) * 100)) + "%";
+      kolom.appendChild(staaf);
+      // "2026-W35" → "W35"
+      var weekLabel = punt.week.indexOf("-W") > -1 ? punt.week.split("-W")[1].replace(/^0/, "W") : punt.week;
+      if (weekLabel.charAt(0) !== "W") weekLabel = "W" + weekLabel;
+      kolom.appendChild(el_("div", "db-staaf-label", weekLabel));
+      grafiek.appendChild(kolom);
+    });
+    kaart.appendChild(grafiek);
+    return kaart;
+  }
+
+  function toonReparatieverzoeken_(d) {
+    var grid = document.getElementById("grid-reparatie");
+    grid.innerHTML = "";
+    grid.appendChild(kaartGroot_("Reparatieverzoeken", d.totaal, "totaal ontvangen"));
+    grid.appendChild(kaartTwee_("Waar", d.eigenWoning, "eigen woning", d.algemeneRuimte, "algemene ruimte", kleuren.cyaan, kleuren.groen));
+    grid.appendChild(kaartLijst_("Type storing — eigen woning", d.typeStoringEigenWoning, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
+    grid.appendChild(kaartLijst_("Type storing — algemene ruimte", d.typeStoringAlgemeneRuimte, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
+    grid.appendChild(kaartTwee_("Aangemelde bewoners", d.aangemeldeBewoners, "aangemeld", d.metVerzoek, "met verzoek", kleuren.groen, kleuren.cyaan));
+    grid.appendChild(kaartStaafgrafiek_("Per week — reparatieverzoeken", d.perWeek));
+  }
+
+  function toonAanmeldingen_(d) {
+    var grid = document.getElementById("grid-aanmeldingen");
+    grid.innerHTML = "";
+    var pct = d.totaalHuisnummers ? Math.round((d.aangemeld / d.totaalHuisnummers) * 100) : 0;
+    grid.appendChild(kaartGroot_("Aangemeld op portaal", d.aangemeld + " / " + d.totaalHuisnummers, pct + "% van alle huisnummers"));
+    grid.appendChild(kaartTwee_("Koop / huur", d.huurwoningen, "huurwoningen", d.koopwoningen, "koopwoningen", kleuren.cyaan, kleuren.groen));
+    grid.appendChild(kaartLijst_("Voortgang huurwoningen", [
+      { label: "Aangemeld", aantal: d.huurAangemeld },
+      { label: "Niet aangemeld", aantal: d.huurNietAangemeld },
+      { label: "Wil niet aanmelden", aantal: d.wilNietAanmelden }
+    ], [kleuren.groen, kleuren.cyaan, kleuren.rood]));
+    grid.appendChild(kaartGroot_("Wil niet aanmelden", d.wilNietAanmelden, "huisnummers"));
+    grid.appendChild(kaartStaafgrafiek_("Per week — nieuwe aanmeldingen", d.perWeek));
+  }
+
+  var knopReparatie = document.getElementById("knop-reparatie");
+  var knopAanmeldingen = document.getElementById("knop-aanmeldingen");
+  var gridReparatie = document.getElementById("grid-reparatie");
+  var gridAanmeldingen = document.getElementById("grid-aanmeldingen");
+
+  knopReparatie.addEventListener("click", function () {
+    knopReparatie.classList.add("actief");
+    knopAanmeldingen.classList.remove("actief");
+    gridReparatie.hidden = false;
+    gridAanmeldingen.hidden = true;
+  });
+  knopAanmeldingen.addEventListener("click", function () {
+    knopAanmeldingen.classList.add("actief");
+    knopReparatie.classList.remove("actief");
+    gridAanmeldingen.hidden = false;
+    gridReparatie.hidden = true;
+  });
+
+  document.getElementById("form-login").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var huisnummer = document.getElementById("dashboard-huisnummer").value.trim();
+    var pincode = document.getElementById("dashboard-pincode").value.trim();
+    var status = document.getElementById("login-status");
+    var knop = document.getElementById("knop-inloggen");
+    if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+      status.textContent = "Vul een huisnummer en 4-cijferige pincode in.";
+      return;
+    }
+    status.textContent = "Bezig met laden...";
+    knop.disabled = true;
+
+    fetch(DASHBOARD_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ verzoekType: "dashboard-gegevens", huisnummer: huisnummer, pincode: pincode })
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        knop.disabled = false;
+        if (json && json.ok) {
+          status.textContent = "";
+          document.getElementById("login-kaart").hidden = true;
+          document.getElementById("dashboard-paneel").hidden = false;
+          toonReparatieverzoeken_(json.reparatieverzoeken);
+          toonAanmeldingen_(json.aanmeldingen);
+        } else {
+          status.textContent = (json && json.error) || "Kon niet inloggen.";
+        }
+      })
+      .catch(function () {
+        knop.disabled = false;
+        status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
+      });
+  });
+</script>
+
+</body>
+</html>
