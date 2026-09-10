@@ -260,22 +260,7 @@
 <main id="inhoud">
   <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
 
-  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Bewoners zien hier nergens een link naartoe op de website. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf.</p>
-
-  <div class="kaart" id="login-kaart">
-    <form id="form-login" novalidate>
-      <div class="veld-groep">
-        <label for="dashboard-huisnummer">Huisnummer *</label>
-        <input type="text" inputmode="numeric" id="dashboard-huisnummer" required autocomplete="off">
-      </div>
-      <div class="veld-groep">
-        <label for="dashboard-pincode">Pincode (4 cijfers) *</label>
-        <input type="password" inputmode="numeric" maxlength="4" id="dashboard-pincode" required autocomplete="off">
-      </div>
-      <button type="submit" class="knop" id="knop-inloggen">Bekijk dashboard</button>
-      <p class="status-tekst" id="login-status"></p>
-    </form>
-  </div>
+  <p class="status-tekst" id="laad-status" style="color: var(--tekst);">Bezig met laden...</p>
 
   <div id="dashboard-paneel" hidden>
     <div class="db-top">
@@ -418,42 +403,30 @@
     gridReparatie.hidden = true;
   });
 
-  document.getElementById("form-login").addEventListener("submit", function (event) {
-    event.preventDefault();
-    var huisnummer = document.getElementById("dashboard-huisnummer").value.trim();
-    var pincode = document.getElementById("dashboard-pincode").value.trim();
-    var status = document.getElementById("login-status");
-    var knop = document.getElementById("knop-inloggen");
-    if (!huisnummer || !/^\d{4}$/.test(pincode)) {
-      status.textContent = "Vul een huisnummer en 4-cijferige pincode in.";
-      return;
-    }
-    status.textContent = "Bezig met laden...";
-    knop.disabled = true;
-
+  function laadDashboard_() {
+    var status = document.getElementById("laad-status");
     fetch(DASHBOARD_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ verzoekType: "dashboard-gegevens", huisnummer: huisnummer, pincode: pincode })
+      body: JSON.stringify({ verzoekType: "dashboard-gegevens" })
     })
       .then(function (response) { return response.json(); })
       .then(function (json) {
-        knop.disabled = false;
         if (json && json.ok) {
-          status.textContent = "";
-          document.getElementById("login-kaart").hidden = true;
+          status.hidden = true;
           document.getElementById("dashboard-paneel").hidden = false;
           toonReparatieverzoeken_(json.reparatieverzoeken);
           toonAanmeldingen_(json.aanmeldingen);
         } else {
-          status.textContent = (json && json.error) || "Kon niet inloggen.";
+          status.textContent = (json && json.error) || "Kon de gegevens niet laden.";
         }
       })
       .catch(function () {
-        knop.disabled = false;
         status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
       });
-  });
+  }
+
+  laadDashboard_();
 </script>
 
 </body>
