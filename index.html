@@ -360,18 +360,20 @@
     font-size: 1.5rem;
   }
   .mededeling {
-    border-top: 1px solid var(--rand);
-    padding: 16px 0;
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
   }
-  .mededeling:first-of-type { border-top: none; padding-top: 4px; }
+  .mededeling:last-child { margin-bottom: 0; }
   .mededeling .datum {
     font-size: 0.95rem;
     color: #666;
     letter-spacing: 0.02em;
   }
   .mededeling h3 {
-    margin: 4px 0 6px 0;
-    font-size: 1.2rem;
+    margin: 4px 0 10px 0;
+    font-size: 1.7rem;
   }
   .mededeling p { margin: 0; }
   .mededeling-tekst p { margin: 0 0 12px 0; }
@@ -383,7 +385,8 @@
     flex-direction: column;
     gap: 14px;
   }
-  .mededeling-fotos img {
+  .mededeling-fotos img,
+  .mededeling-tekst img {
     display: block;
     width: 100%;
     height: auto;
@@ -391,9 +394,77 @@
     border: 1px solid var(--rand);
     cursor: zoom-in;
   }
-  .mededeling-fotos img:focus {
+  .mededeling-tekst img { margin: 0 0 12px 0; }
+  .mededeling-fotos img:focus,
+  .mededeling-tekst img:focus {
     outline: 3px solid #ffbf47;
     outline-offset: 2px;
+  }
+  .mededeling .sluit-knop {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--blauw);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* Oudere mededelingen: compacte rij, foto (of leeg vakje) links, titel
+     en een stukje tekst rechts, met een knop om 'm alsnog helemaal te
+     lezen. Alleen de nieuwste mededeling staat standaard volledig. */
+  .oudere-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.8rem;
+    color: #777;
+    margin: 4px 0 10px 0;
+  }
+  .mededeling-compact {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-top: 1px solid var(--rand);
+  }
+  .mededeling-compact:first-of-type { border-top: none; }
+  .mc-foto,
+  .mc-geen-foto {
+    flex: 0 0 84px;
+    width: 84px;
+    height: 84px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eceeec;
+  }
+  .mc-foto { border: 1px solid var(--rand); cursor: zoom-in; }
+  .mc-geen-foto {
+    border: 1px dashed var(--rand);
+    color: #888;
+    font-size: 0.7rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    padding: 4px;
+  }
+  .mc-inhoud { flex: 1 1 auto; min-width: 0; }
+  .mc-datum { font-size: 0.82rem; color: #777; }
+  .mc-titel { margin: 2px 0 4px 0; font-size: 1.05rem; font-weight: 700; }
+  .mc-snippet { margin: 0 0 4px 0; font-size: 0.92rem; color: #444; }
+  .mc-lees-verder {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--blauw);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   /* Vergroot weergeven: hele scherm, klik of Esc om te sluiten */
@@ -912,7 +983,32 @@
           return;
         }
 
-        json.mededelingen.forEach(function (m) {
+        // Bouwt één klikbare (uit te vergroten) foto-afbeelding, zowel
+        // voor een foto middenin de tekst als voor de strook onderaan.
+        function maakFotoElement(adres, volgnummer, titelTekst) {
+          var afbeelding = document.createElement("img");
+          afbeelding.src = adres;
+          afbeelding.loading = "lazy";
+          afbeelding.alt = "Foto " + volgnummer + " bij de mededeling: " + (titelTekst || "");
+          afbeelding.tabIndex = 0;
+          afbeelding.title = "Klik om te vergroten";
+          afbeelding.addEventListener("click", function () { toonGroot(adres, afbeelding.alt); });
+          afbeelding.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toonGroot(adres, afbeelding.alt);
+            }
+          });
+          return afbeelding;
+        }
+
+        // Bouwt de volledige weergave van één mededeling: titel, datum,
+        // en de tekst met kopjes en eventuele foto's middenin ("[foto N]"
+        // op een eigen regel) of, voor niet zo geplaatste foto's, in een
+        // strook onderaan. Wordt gebruikt voor de nieuwste mededeling
+        // (die staat altijd volledig) én voor elke oudere mededeling die
+        // via "Lees hele bericht" wordt opengeklapt.
+        function maakVolledigeMededeling(m) {
           var blok = document.createElement("div");
           blok.className = "mededeling";
 
@@ -923,22 +1019,38 @@
           var titel = document.createElement("h3");
           titel.textContent = m.titel || "";
 
+          var fotos = Array.isArray(m.fotos) ? m.fotos : [];
+          var gebruikteFotos = {};
+
           // Elke regel van de mededeling wordt een eigen alinea (dus een
           // regeleinde in de tekst wordt ook echt een regeleinde op het
-          // scherm — dat gebeurde hiervoor niet, waardoor alles achter
-          // elkaar aan één lange lap tekst leek). Begint een regel met
-          // "Iets, iets: ..." (een woord of korte omschrijving gevolgd
-          // door een dubbele punt, zoals "Parkeerplaatsen: ..."), dan
-          // wordt dat stukje vetgedrukt weergegeven — dat is het
-          // "kopje" van dat onderwerp. Er wordt hier bewust NIET met
-          // innerHTML gewerkt (dus geen opgemaakte tekst uit een
-          // tekstverwerker kan hier iets ongewenst doen): alles blijft
-          // gewone, veilige tekst, alleen de plek van de dubbele punt
-          // bepaalt wat vetgedrukt wordt.
+          // scherm). Begint een regel met "Iets, iets: ..." (een woord
+          // of korte omschrijving gevolgd door een dubbele punt, zoals
+          // "Parkeerplaatsen: ..."), dan wordt dat stukje vetgedrukt
+          // weergegeven — dat is het "kopje" van dat onderwerp. Staat er
+          // op een eigen regel iets als "[foto 1]", dan komt daar de
+          // eerste foto middenin de tekst te staan (zie mededeling-
+          // plaatsen.html voor de uitleg die de commissie hierover te
+          // zien krijgt). Er wordt hier bewust NIET met innerHTML
+          // gewerkt (dus geen opgemaakte tekst uit een tekstverwerker
+          // kan hier iets ongewenst doen): alles blijft gewone, veilige
+          // tekst, alleen de plek van de dubbele punt en het
+          // "[foto N]"-patroon bepalen de opmaak.
           var tekstBlok = document.createElement("div");
           tekstBlok.className = "mededeling-tekst";
           (m.tekst || "").split("\n").forEach(function (regel) {
             if (regel === "") return;
+
+            var fotoMatch = /^\[\s*foto\s*(\d+)\s*\]$/i.exec(regel.trim());
+            if (fotoMatch) {
+              var index = parseInt(fotoMatch[1], 10) - 1;
+              if (index >= 0 && index < fotos.length) {
+                gebruikteFotos[index] = true;
+                tekstBlok.appendChild(maakFotoElement(fotos[index], index + 1, m.titel));
+              }
+              return;
+            }
+
             var alinea = document.createElement("p");
             var match = /^([^:]{1,60}):\s*(.*)$/.exec(regel);
             if (match && match[2]) {
@@ -956,30 +1068,110 @@
           blok.appendChild(titel);
           blok.appendChild(tekstBlok);
 
-          if (Array.isArray(m.fotos) && m.fotos.length) {
+          // Foto's die niet met "[foto N]" in de tekst zijn geplaatst,
+          // verschijnen zoals voorheen gewoon onderaan.
+          var overigeFotos = fotos.filter(function (_, index) { return !gebruikteFotos[index]; });
+          if (overigeFotos.length) {
             var strook = document.createElement("div");
             strook.className = "mededeling-fotos";
-            m.fotos.forEach(function (adres, index) {
-              var afbeelding = document.createElement("img");
-              afbeelding.src = adres;
-              afbeelding.loading = "lazy";
-              afbeelding.alt = "Foto " + (index + 1) + " bij de mededeling: " + (m.titel || "");
-              afbeelding.tabIndex = 0;
-              afbeelding.title = "Klik om te vergroten";
-              afbeelding.addEventListener("click", function () { toonGroot(adres, afbeelding.alt); });
-              afbeelding.addEventListener("keydown", function (e) {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toonGroot(adres, afbeelding.alt);
-                }
-              });
-              strook.appendChild(afbeelding);
+            fotos.forEach(function (adres, index) {
+              if (gebruikteFotos[index]) return;
+              strook.appendChild(maakFotoElement(adres, index + 1, m.titel));
             });
             blok.appendChild(strook);
           }
 
-          lijst.appendChild(blok);
-        });
+          return blok;
+        }
+
+        // Haalt de eerste maximaal "aantal" woorden uit de tekst, voor
+        // het korte stukje bij een compacte, oudere mededeling. De
+        // "[foto N]"-regels tellen daarbij niet mee, zodat zo'n
+        // technische regel nooit in het stukje tekst verschijnt.
+        function maxWoorden(tekst, aantal) {
+          var zonderFotoRegels = (tekst || "")
+            .split("\n")
+            .filter(function (regel) { return !/^\[\s*foto\s*\d+\s*\]$/i.test(regel.trim()); })
+            .join(" ");
+          var woorden = zonderFotoRegels.trim().split(/\s+/).filter(Boolean);
+          if (woorden.length <= aantal) return woorden.join(" ");
+          return woorden.slice(0, aantal).join(" ") + "…";
+        }
+
+        // Bouwt de compacte rij voor een oudere mededeling: eerste foto
+        // (of een leeg vakje) links, titel + korte tekst rechts, met een
+        // knop om de hele mededeling alsnog te lezen.
+        function maakCompacteRij(m) {
+          var rij = document.createElement("div");
+          rij.className = "mededeling-compact";
+
+          var fotos = Array.isArray(m.fotos) ? m.fotos : [];
+          if (fotos.length) {
+            var mini = maakFotoElement(fotos[0], 1, m.titel);
+            mini.className = "mc-foto";
+            rij.appendChild(mini);
+          } else {
+            var leeg = document.createElement("div");
+            leeg.className = "mc-geen-foto";
+            leeg.textContent = "(geen foto)";
+            rij.appendChild(leeg);
+          }
+
+          var inhoud = document.createElement("div");
+          inhoud.className = "mc-inhoud";
+
+          var datum = document.createElement("div");
+          datum.className = "mc-datum";
+          datum.textContent = (m.datum || "").toString().toUpperCase();
+          inhoud.appendChild(datum);
+
+          var titel = document.createElement("h4");
+          titel.className = "mc-titel";
+          titel.textContent = m.titel || "";
+          inhoud.appendChild(titel);
+
+          var snippet = document.createElement("p");
+          snippet.className = "mc-snippet";
+          snippet.textContent = maxWoorden(m.tekst, 50);
+          inhoud.appendChild(snippet);
+
+          var leesKnop = document.createElement("button");
+          leesKnop.type = "button";
+          leesKnop.className = "mc-lees-verder";
+          leesKnop.textContent = "Lees hele bericht";
+          leesKnop.addEventListener("click", function () {
+            var volledig = maakVolledigeMededeling(m);
+            var sluitKnop = document.createElement("button");
+            sluitKnop.type = "button";
+            sluitKnop.className = "sluit-knop";
+            sluitKnop.textContent = "Terug naar overzicht";
+            sluitKnop.addEventListener("click", function () {
+              volledig.parentNode.replaceChild(rij, volledig);
+            });
+            volledig.appendChild(sluitKnop);
+            rij.parentNode.replaceChild(volledig, rij);
+          });
+          inhoud.appendChild(leesKnop);
+
+          rij.appendChild(inhoud);
+          return rij;
+        }
+
+        // De nieuwste mededeling staat altijd volledig. Is er meer dan
+        // één, dan komen de oudere mededelingen daaronder compact te
+        // staan, elk met een knop om 'm alsnog helemaal te lezen.
+        lijst.appendChild(maakVolledigeMededeling(json.mededelingen[0]));
+
+        if (json.mededelingen.length > 1) {
+          var label = document.createElement("p");
+          label.className = "oudere-label";
+          label.textContent = "Eerdere mededelingen";
+          lijst.appendChild(label);
+
+          json.mededelingen.slice(1).forEach(function (m) {
+            lijst.appendChild(maakCompacteRij(m));
+          });
+        }
       })
       .catch(function () {
         // geen internet of script niet bereikbaar: laat de bestaande tekst staan

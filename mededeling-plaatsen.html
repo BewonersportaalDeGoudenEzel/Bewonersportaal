@@ -102,6 +102,18 @@
     font-size: 0.95rem;
   }
 
+  .uitleg-foto {
+    background: #eef3ef;
+    border: 1px solid var(--groen);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+  }
+  .uitleg-foto-titel { margin: 0 0 8px 0; font-weight: 700; }
+  .uitleg-foto ol { margin: 0 0 10px 0; padding-left: 22px; }
+  .uitleg-foto li { margin-bottom: 4px; }
+  .uitleg-foto-onder { margin: 0; color: #444; }
+
   .knop-rij { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
 
   .knop {
@@ -170,6 +182,17 @@
     font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 0;
   }
   .foto-kaartje .verwijder:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+  .foto-kaartje .plaats-in-tekst {
+    display: block; width: 100%; margin-top: 6px;
+    font: inherit; font-size: 0.78rem; line-height: 1.3;
+    padding: 6px 4px; border-radius: 6px;
+    border: 1px solid var(--rand); background: #fff;
+    color: var(--groen-donker); cursor: pointer;
+  }
+  .foto-kaartje .plaats-in-tekst:hover,
+  .foto-kaartje .plaats-in-tekst:focus {
+    outline: 3px solid #ffbf47; outline-offset: 1px;
+  }
   .foto-status { margin: 0; font-size: 0.92rem; color: #555; }
 
   .form-status {
@@ -204,6 +227,17 @@
   <div class="kaart">
     <p class="intro-tekst">Wat u hier invult, verschijnt direct op de hoofdpagina bij "Mededelingen" — er hoeft niets naar GitHub geüpload te worden.</p>
 
+    <div class="uitleg-foto">
+      <p class="uitleg-foto-titel">Zo zet u een foto middenin de tekst</p>
+      <ol>
+        <li>Typ eerst uw tekst in het tekstvak hieronder.</li>
+        <li>Voeg onderaan bij "Foto's" een foto toe (maken of kiezen).</li>
+        <li>Klik bij die foto op "In tekst plaatsen" — dan verschijnt <strong>[foto 1]</strong> vanzelf op de cursorpositie in het tekstvak.</li>
+        <li>Zet uw cursor daarna eerst op de gewenste plek in de tekst voordat u een volgende foto plaatst, dan komt die daar te staan.</li>
+      </ol>
+      <p class="uitleg-foto-onder">Voegt u niets toe aan de tekst, dan verschijnen de foto's gewoon automatisch onderaan de mededeling — dat blijft ook gewoon mogelijk.</p>
+    </div>
+
     <form class="meld-formulier" id="form-mededeling" novalidate>
       <div class="veld-groep">
         <label for="mededeling-huisnummer">Huisnummer *</label>
@@ -224,7 +258,7 @@
 
       <div class="veld-groep foto-veld" id="foto-veld">
         <label>Foto's <span style="font-weight:400;color:#555;font-size:0.9rem;">(mag, hoeft niet — maximaal drie)</span></label>
-        <p class="foto-hulp">Bijvoorbeeld een foto van de nieuwe wasruimte, een aankondiging of een uitnodiging. De foto's komen onder de mededeling op de hoofdpagina te staan en zijn voor iedereen zichtbaar.</p>
+        <p class="foto-hulp">Bijvoorbeeld een foto van de nieuwe wasruimte, een aankondiging of een uitnodiging. Zie de uitleg hierboven voor hoe u een foto middenin de tekst plaatst in plaats van onderaan.</p>
         <div class="knop-rij">
           <button type="button" class="knop secundair" id="knop-foto-maken">📷 Foto maken</button>
           <button type="button" class="knop secundair" id="knop-foto-kiezen">🖼️ Foto kiezen</button>
@@ -270,6 +304,29 @@
       if (pincodeVeld && !pincodeVeld.value) pincodeVeld.value = b.pincode;
     } catch (e) {}
   })();
+</script>
+
+<script>
+  // Zet "[foto N]" op een eigen regel in de tekst, op de plek van de
+  // cursor (of aan het einde als er niets geselecteerd is). Op de
+  // hoofdpagina herkent index.html zo'n regel en zet daar de bijbehorende
+  // foto middenin de mededeling neer in plaats van onderaan.
+  function voegFotoPlaceholderIn(volgnummer) {
+    var veld = document.getElementById("mededeling-tekst");
+    if (!veld) return;
+    var placeholder = "[foto " + volgnummer + "]";
+    var start = veld.selectionStart != null ? veld.selectionStart : veld.value.length;
+    var eind = veld.selectionEnd != null ? veld.selectionEnd : veld.value.length;
+    var voor = veld.value.slice(0, start);
+    var na = veld.value.slice(eind);
+    var voorNieuweRegel = (voor && !/\n$/.test(voor)) ? "\n" : "";
+    var naNieuweRegel = (na && !/^\n/.test(na)) ? "\n" : "";
+    var ingevoegd = voorNieuweRegel + placeholder + naNieuweRegel;
+    veld.value = voor + ingevoegd + na;
+    var nieuwePositie = (voor + ingevoegd).length;
+    veld.focus();
+    veld.setSelectionRange(nieuwePositie, nieuwePositie);
+  }
 </script>
 
 <script>
@@ -337,6 +394,15 @@
         tekenFotos();
       });
       kaartje.appendChild(weg);
+
+      var plaatsKnop = document.createElement("button");
+      plaatsKnop.type = "button";
+      plaatsKnop.className = "plaats-in-tekst";
+      plaatsKnop.textContent = "Foto " + (index + 1) + " in tekst plaatsen";
+      plaatsKnop.addEventListener("click", function () {
+        voegFotoPlaceholderIn(index + 1);
+      });
+      kaartje.appendChild(plaatsKnop);
 
       strook.appendChild(kaartje);
     });
