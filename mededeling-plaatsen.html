@@ -116,6 +116,51 @@
 
   .knop-rij { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
 
+  .modus-kiezer { display: flex; gap: 10px; flex-wrap: wrap; }
+  .modus-knop {
+    flex: 1 1 auto;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--rand);
+    background: #fff;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    color: var(--tekst);
+  }
+  .modus-knop.actief {
+    border-color: var(--groen-donker);
+    background: #eef3ef;
+    color: var(--groen-donker);
+  }
+  .modus-knop:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+
+  .veld-groep select {
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 2px solid var(--rand);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--tekst);
+    width: 100%;
+  }
+  .veld-groep select:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 1px;
+    border-color: var(--groen-donker);
+  }
+
+  .bestaande-fotos { display: flex; flex-wrap: wrap; gap: 12px; }
+  .bestaande-foto { width: 110px; text-align: center; }
+  .bestaande-foto img {
+    width: 110px; height: 110px; object-fit: cover;
+    border-radius: 10px; border: 1px solid var(--rand); display: block;
+  }
+  .bestaande-foto .nr { font-size: 0.8rem; color: #666; margin-top: 4px; }
+
   .knop {
     display: inline-block;
     text-decoration: none;
@@ -238,6 +283,11 @@
       <p class="uitleg-foto-onder">Voegt u niets toe aan de tekst, dan verschijnen de foto's gewoon automatisch onderaan de mededeling — dat blijft ook gewoon mogelijk.</p>
     </div>
 
+    <div class="modus-kiezer">
+      <button type="button" class="modus-knop actief" id="modus-nieuw">Nieuwe mededeling</button>
+      <button type="button" class="modus-knop" id="modus-bewerken">Bestaande mededeling bewerken</button>
+    </div>
+
     <form class="meld-formulier" id="form-mededeling" novalidate>
       <div class="veld-groep">
         <label for="mededeling-huisnummer">Huisnummer *</label>
@@ -247,6 +297,15 @@
         <label for="mededeling-pincode">Pincode (4 cijfers) *</label>
         <input type="password" inputmode="numeric" maxlength="4" id="mededeling-pincode" name="pincode" required autocomplete="off">
       </div>
+
+      <div class="veld-groep" id="keuze-veld" hidden>
+        <label for="keuze-mededeling">Welke mededeling wilt u bewerken?</label>
+        <select id="keuze-mededeling">
+          <option value="">— eerst laden —</option>
+        </select>
+        <p class="foto-status" id="keuze-status"></p>
+      </div>
+
       <div class="veld-groep">
         <label for="mededeling-titel">Titel *</label>
         <input type="text" id="mededeling-titel" name="titel" required>
@@ -254,6 +313,12 @@
       <div class="veld-groep">
         <label for="mededeling-tekst">Tekst *</label>
         <textarea id="mededeling-tekst" name="tekst" required></textarea>
+      </div>
+
+      <div class="veld-groep" id="bestaande-fotos-veld" hidden>
+        <label>Foto's die al bij deze mededeling staan</label>
+        <div class="bestaande-fotos" id="bestaande-fotos"></div>
+        <p class="foto-hulp">Deze foto's blijven gewoon staan (ook als u niets doet). Een eventuele nieuwe foto hieronder krijgt automatisch het eerstvolgende nummer.</p>
       </div>
 
       <div class="veld-groep foto-veld" id="foto-veld">
@@ -270,7 +335,7 @@
       </div>
 
       <div class="knop-rij">
-        <button type="submit" class="knop">Mededeling plaatsen</button>
+        <button type="submit" class="knop" id="knop-mededeling-opslaan">Mededeling plaatsen</button>
       </div>
       <p class="form-status" data-status="mededeling" hidden></p>
     </form>
@@ -340,6 +405,7 @@
   // ─────────────────────────────────────────────────────────────────
   var MAX_FOTOS = 3;
   var fotoLijst = [];
+  var bestaandeFotosVanHuidigeKeuze = 0;
 
   function verkleinFoto(bestand, callback) {
     var reader = new FileReader();
@@ -379,15 +445,20 @@
       var kaartje = document.createElement("div");
       kaartje.className = "foto-kaartje";
 
+      // Bij het bewerken van een bestaande mededeling tellen nieuwe foto's
+      // verder vanaf de foto's die er al stonden, zodat [foto N] altijd
+      // naar de juiste foto blijft wijzen.
+      var volgnummer = bestaandeFotosVanHuidigeKeuze + index + 1;
+
       var afbeelding = document.createElement("img");
       afbeelding.src = dataUrl;
-      afbeelding.alt = "Foto " + (index + 1);
+      afbeelding.alt = "Foto " + volgnummer;
       kaartje.appendChild(afbeelding);
 
       var weg = document.createElement("button");
       weg.type = "button";
       weg.className = "verwijder";
-      weg.setAttribute("aria-label", "Foto " + (index + 1) + " verwijderen");
+      weg.setAttribute("aria-label", "Foto " + volgnummer + " verwijderen");
       weg.textContent = "✕";
       weg.addEventListener("click", function () {
         fotoLijst.splice(index, 1);
@@ -398,9 +469,9 @@
       var plaatsKnop = document.createElement("button");
       plaatsKnop.type = "button";
       plaatsKnop.className = "plaats-in-tekst";
-      plaatsKnop.textContent = "Foto " + (index + 1) + " in tekst plaatsen";
+      plaatsKnop.textContent = "Foto " + volgnummer + " in tekst plaatsen";
       plaatsKnop.addEventListener("click", function () {
-        voegFotoPlaceholderIn(index + 1);
+        voegFotoPlaceholderIn(volgnummer);
       });
       kaartje.appendChild(plaatsKnop);
 
@@ -471,6 +542,174 @@
 </script>
 
 <script>
+  // ─────────────────────────────────────────────────────────────────
+  // BESTAANDE MEDEDELING BEWERKEN (bijvoorbeeld om er alsnog een foto
+  // aan toe te voegen). Werkt met dezelfde huisnummer/pincode-velden
+  // als hierboven en haalt de lijst op via verzoekType
+  // "mededelingen-ophalen" (dezelfde route die index.html gebruikt).
+  // ─────────────────────────────────────────────────────────────────
+  var bewerkModus = false;
+  var huidigeRijIndex = null;
+  var bestaandeFotoAdressen = [];
+  var opgehaaldeMededelingen = [];
+
+  function vulKeuzeSelect_(lijst) {
+    var select = document.getElementById("keuze-mededeling");
+    if (!select) return;
+    select.innerHTML = "";
+    var eersteOptie = document.createElement("option");
+    eersteOptie.value = "";
+    eersteOptie.textContent = lijst.length ? "— kies een mededeling —" : "— geen mededelingen gevonden —";
+    select.appendChild(eersteOptie);
+    lijst.forEach(function (m, i) {
+      var optie = document.createElement("option");
+      optie.value = i;
+      optie.textContent = m.titel + " (" + m.datum + ")";
+      select.appendChild(optie);
+    });
+  }
+
+  function wisKeuzeVelden_() {
+    huidigeRijIndex = null;
+    document.getElementById("mededeling-titel").value = "";
+    document.getElementById("mededeling-tekst").value = "";
+    document.getElementById("bestaande-fotos-veld").hidden = true;
+    document.getElementById("bestaande-fotos").innerHTML = "";
+    bestaandeFotosVanHuidigeKeuze = 0;
+    bestaandeFotoAdressen = [];
+    fotoLijst.length = 0;
+    tekenFotos();
+  }
+
+  function pasGekozenMededelingToe_(m) {
+    huidigeRijIndex = m.rijIndex;
+    document.getElementById("mededeling-titel").value = m.titel;
+    document.getElementById("mededeling-tekst").value = m.tekst;
+
+    var fotosVeld = document.getElementById("bestaande-fotos-veld");
+    var fotosDiv = document.getElementById("bestaande-fotos");
+    fotosDiv.innerHTML = "";
+    bestaandeFotoAdressen = (m.fotos || []).slice();
+    bestaandeFotosVanHuidigeKeuze = bestaandeFotoAdressen.length;
+
+    if (bestaandeFotoAdressen.length) {
+      fotosVeld.hidden = false;
+      bestaandeFotoAdressen.forEach(function (adres, i) {
+        var kaart = document.createElement("div");
+        kaart.className = "bestaande-foto";
+        var img = document.createElement("img");
+        img.src = adres;
+        img.alt = "Bestaande foto " + (i + 1);
+        var nr = document.createElement("div");
+        nr.className = "nr";
+        nr.textContent = "[foto " + (i + 1) + "]";
+        kaart.appendChild(img);
+        kaart.appendChild(nr);
+        fotosDiv.appendChild(kaart);
+      });
+    } else {
+      fotosVeld.hidden = true;
+    }
+
+    fotoLijst.length = 0;
+    tekenFotos();
+  }
+
+  function laadMededelingenVoorBewerken_(naSuccesRijIndex) {
+    var keuzeStatus = document.getElementById("keuze-status");
+    var huisnummer = document.getElementById("mededeling-huisnummer").value.trim();
+    var pincode = document.getElementById("mededeling-pincode").value.trim();
+    if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+      if (keuzeStatus) keuzeStatus.textContent = "Vul hierboven eerst uw huisnummer en pincode in.";
+      return;
+    }
+    if (!MEDEDELING_SCRIPT_URL) return;
+    if (keuzeStatus) keuzeStatus.textContent = "Bezig met laden...";
+
+    fetch(MEDEDELING_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ verzoekType: "mededelingen-ophalen", huisnummer: huisnummer, pincode: pincode })
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (json && json.ok) {
+          opgehaaldeMededelingen = json.mededelingen || [];
+          vulKeuzeSelect_(opgehaaldeMededelingen);
+          if (keuzeStatus) {
+            keuzeStatus.textContent = opgehaaldeMededelingen.length
+              ? ""
+              : "Er staan nog geen mededelingen klaar om te bewerken.";
+          }
+          if (naSuccesRijIndex != null) {
+            var gevonden = -1;
+            for (var i = 0; i < opgehaaldeMededelingen.length; i++) {
+              if (opgehaaldeMededelingen[i].rijIndex === naSuccesRijIndex) { gevonden = i; break; }
+            }
+            if (gevonden > -1) {
+              document.getElementById("keuze-mededeling").value = gevonden;
+              pasGekozenMededelingToe_(opgehaaldeMededelingen[gevonden]);
+            }
+          }
+        } else {
+          if (keuzeStatus) keuzeStatus.textContent = (json && json.error) || "Kon de lijst niet laden.";
+        }
+      })
+      .catch(function () {
+        if (keuzeStatus) keuzeStatus.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
+      });
+  }
+
+  (function () {
+    var knopNieuw = document.getElementById("modus-nieuw");
+    var knopBewerken = document.getElementById("modus-bewerken");
+    var keuzeVeld = document.getElementById("keuze-veld");
+    var keuzeSelect = document.getElementById("keuze-mededeling");
+    var opslaanKnop = document.getElementById("knop-mededeling-opslaan");
+
+    knopNieuw.addEventListener("click", function () {
+      bewerkModus = false;
+      knopNieuw.classList.add("actief");
+      knopBewerken.classList.remove("actief");
+      keuzeVeld.hidden = true;
+      keuzeSelect.value = "";
+      wisKeuzeVelden_();
+      if (opslaanKnop) opslaanKnop.textContent = "Mededeling plaatsen";
+    });
+
+    knopBewerken.addEventListener("click", function () {
+      bewerkModus = true;
+      knopBewerken.classList.add("actief");
+      knopNieuw.classList.remove("actief");
+      keuzeVeld.hidden = false;
+      if (opslaanKnop) opslaanKnop.textContent = "Wijzigingen opslaan";
+      laadMededelingenVoorBewerken_();
+    });
+
+    keuzeSelect.addEventListener("change", function () {
+      if (keuzeSelect.value === "") {
+        wisKeuzeVelden_();
+        return;
+      }
+      var m = opgehaaldeMededelingen[parseInt(keuzeSelect.value, 10)];
+      if (m) pasGekozenMededelingToe_(m);
+    });
+
+    // Vult iemand huisnummer/pincode pas ná het kiezen van "bewerken" in
+    // (of past ze aan), dan proberen we de lijst opnieuw op te halen.
+    ["mededeling-huisnummer", "mededeling-pincode"].forEach(function (id) {
+      var veld = document.getElementById(id);
+      if (!veld) return;
+      veld.addEventListener("blur", function () {
+        if (bewerkModus && opgehaaldeMededelingen.length === 0) {
+          laadMededelingenVoorBewerken_();
+        }
+      });
+    });
+  })();
+</script>
+
+<script>
   (function () {
     var form = document.getElementById("form-mededeling");
     var status = document.querySelector('[data-status="mededeling"]');
@@ -500,26 +739,36 @@
         toonStatus("Het formulier is nog niet volledig ingesteld.", "fout");
         return;
       }
+      if (bewerkModus && huidigeRijIndex == null) {
+        toonStatus("Kies hierboven eerst welke mededeling u wilt bewerken.", "fout");
+        return;
+      }
 
+      // Bij bewerken: eerst de bestaande fotoadressen (gewone tekst),
+      // daarna de eventuele nieuwe foto's (als base64) — zo blijft de
+      // volgorde/nummering kloppen met wat er bij "bestaande foto's"
+      // en in het tekstvak als [foto N] te zien is.
+      var nieuweFotos = fotoLijst.map(function (dataUrl) {
+        return { base64: dataUrl, type: "image/jpeg" };
+      });
       var data = {
-        verzoekType: "mededeling",
+        verzoekType: bewerkModus ? "mededeling-bewerken" : "mededeling",
         huisnummer: huisnummer,
         pincode: pincode,
         titel: document.getElementById("mededeling-titel").value,
         tekst: document.getElementById("mededeling-tekst").value,
-        fotos: fotoLijst.map(function (dataUrl) {
-          return { base64: dataUrl, type: "image/jpeg" };
-        })
+        fotos: bewerkModus ? bestaandeFotoAdressen.concat(nieuweFotos) : nieuweFotos
       };
+      if (bewerkModus) data.rijIndex = huidigeRijIndex;
 
       var knop = form.querySelector('button[type="submit"]');
       if (knop) knop.disabled = true;
-      toonStatus("Bezig met plaatsen...", "bezig");
+      toonStatus(bewerkModus ? "Bezig met opslaan..." : "Bezig met plaatsen...", "bezig");
 
       // Let op: hier gebruiken we BEWUST geen "mode: no-cors" (zoals bij
       // de andere formulieren), omdat we de echte serverreactie nodig
       // hebben om te weten of huisnummer + pincode goed waren en of dit
-      // huisnummer mededelingen mag plaatsen.
+      // huisnummer mededelingen mag plaatsen/bewerken.
       fetch(MEDEDELING_SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -528,14 +777,23 @@
         .then(function (response) { return response.json(); })
         .then(function (json) {
           if (json && json.ok) {
-            toonStatus("Geplaatst! De mededeling staat nu op de hoofdpagina.", "gelukt");
-            // Alleen titel, tekst en foto's leegmaken — huisnummer en
-            // pincode laten we staan, zodat een commissielid niet bij elke
-            // volgende mededeling opnieuw hoeft in te loggen.
-            document.getElementById("mededeling-titel").value = "";
-            document.getElementById("mededeling-tekst").value = "";
-            fotoLijst.length = 0;
-            tekenFotos();
+            if (bewerkModus) {
+              toonStatus("Bijgewerkt! De wijzigingen staan nu op de hoofdpagina.", "gelukt");
+              // Lijst + geselecteerde mededeling opnieuw ophalen, zodat de
+              // net toegevoegde foto's meteen met hun echte adres te zien
+              // zijn bij "bestaande foto's" (in plaats van te blijven
+              // staan als "nieuw toegevoegd").
+              laadMededelingenVoorBewerken_(huidigeRijIndex);
+            } else {
+              toonStatus("Geplaatst! De mededeling staat nu op de hoofdpagina.", "gelukt");
+              // Alleen titel, tekst en foto's leegmaken — huisnummer en
+              // pincode laten we staan, zodat een commissielid niet bij elke
+              // volgende mededeling opnieuw hoeft in te loggen.
+              document.getElementById("mededeling-titel").value = "";
+              document.getElementById("mededeling-tekst").value = "";
+              fotoLijst.length = 0;
+              tekenFotos();
+            }
           } else {
             toonStatus((json && json.error) || "Er ging iets mis. Probeer het opnieuw.", "fout");
           }
