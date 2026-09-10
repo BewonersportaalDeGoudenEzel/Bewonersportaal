@@ -803,6 +803,7 @@
       <div class="knop-rij">
         <a class="knop" href="#mededelingen">Mededelingen bekijken</a>
         <a class="knop" href="mededeling-plaatsen.html" id="link-mededeling-plaatsen" hidden>Mededeling plaatsen</a>
+        <a class="knop" href="beheer.html" id="link-beheer" hidden>Beheer</a>
       </div>
     </div>
 
@@ -1209,11 +1210,20 @@
 
   var OPSLAG_SLEUTEL = "gouden-ezel-bewoner";
 
-  // Welke huisnummers de knop "Mededeling plaatsen" te zien krijgen. Dit
-  // is alleen voor het tonen/verbergen van de knop — de echte controle
-  // gebeurt in het Apps Script zelf (COMMISSIE_HUISNUMMERS daar), dus
-  // deze lijst hier is puur voor het gemak en geen beveiliging op zich.
+  // Welk huisnummer de knop "Mededeling plaatsen" te zien krijgt. Dit is
+  // alleen voor het tonen/verbergen van de knop — de echte controle
+  // gebeurt in het Apps Script zelf, tegen de (uitbreidbare)
+  // commissieledenlijst die het hoofdaccount beheert via beheer.html.
+  // Wordt hier een commissielid bijgevoegd, dan ziet dat huisnummer de
+  // knop dus pas als deze lijst ook hier wordt bijgewerkt — de toegang
+  // zelf werkt intussen al wel, ook zonder die knop (gewoon rechtstreeks
+  // naar mededeling-plaatsen.html).
   var COMMISSIE_HUISNUMMERS = ["246"];
+
+  // Het hoofdaccount: alleen dit huisnummer krijgt de knop "Beheer" te
+  // zien. Moet gelijk staan aan HOOFDACCOUNT_HUISNUMMER in het Apps
+  // Script.
+  var HOOFDACCOUNT_HUISNUMMER = "246";
 
   function haalBewonerOp() {
     try {
@@ -1348,6 +1358,11 @@
       var knopMededelingPlaatsen = document.getElementById("link-mededeling-plaatsen");
       if (knopMededelingPlaatsen) {
         knopMededelingPlaatsen.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
+      }
+      // Knop "Beheer" alleen tonen aan het hoofdaccount.
+      var knopBeheer = document.getElementById("link-beheer");
+      if (knopBeheer) {
+        knopBeheer.hidden = String(b.huisnummer || "").trim() !== HOOFDACCOUNT_HUISNUMMER;
       }
     }
 

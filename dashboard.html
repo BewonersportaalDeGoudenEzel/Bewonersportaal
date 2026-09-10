@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#2f6f4f">
 <meta name="robots" content="noindex, nofollow">
 <title>Dashboard — De Gouden Ezel</title>
-<meta name="description" content="Alleen voor de bewonerscommissie: cijfers over reparatieverzoeken en aanmeldingen.">
+<meta name="description" content="Cijfers over reparatieverzoeken en aanmeldingen op het bewonersportaal.">
 <link rel="icon" href="Gouden%20Ezel.png">
 <link rel="apple-touch-icon" href="Gouden%20Ezel.png">
 <style>
@@ -151,35 +151,43 @@
   }
   .db-top h2 { margin: 0; font-size: 1.1rem; font-weight: 600; }
 
-  .switcher {
-    display: inline-flex;
-    background: var(--db-kaart);
-    border: 1px solid var(--db-rand);
-    border-radius: 999px;
-    padding: 4px;
-    gap: 4px;
+  .db-sectie { margin-top: 28px; }
+  .db-sectie:first-of-type { margin-top: 0; }
+  .db-sectie-titel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--db-tekst);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--db-rand);
   }
-  .switcher button {
-    border: none;
-    background: transparent;
-    color: var(--db-tekst-dim);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-  .switcher button.actief {
-    background: linear-gradient(135deg, var(--db-cyaan), #4a7bf2);
-    color: #0c0d1e;
+  .db-sectie-bolletje {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 
-  .db-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* Kaarten worden met JS verdeeld over kolommen (zie verdeelInKolommen_)
+     die elk gewoon van boven naar beneden vullen — dat pakt strakker
+     dan CSS-grid/columns, want er wordt naar de echte, al gerenderde
+     hoogte van elke kaart gekeken i.p.v. blind te balanceren. */
+  .db-grid[hidden] { display: none; }
+
+  .db-kolommen {
+    display: flex;
+    align-items: flex-start;
     gap: 14px;
   }
-  .db-grid[hidden] { display: none; }
+  .db-kolom {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+  }
 
   .db-kaart {
     background: var(--db-kaart);
@@ -189,6 +197,27 @@
     min-height: 120px;
     display: flex;
     flex-direction: column;
+  }
+  .db-kaart.db-wide { margin-top: 14px; }
+
+  .db-kaartgroep { display: flex; flex-direction: column; gap: 14px; }
+
+  .db-kaart.db-alarm {
+    background: rgba(246, 92, 122, 0.12);
+    border-color: rgba(246, 92, 122, 0.45);
+  }
+  .db-alarm-kop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--db-rood);
+  }
+  .db-alarm-tekst {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--db-rood);
   }
   .db-kaart .db-label {
     font-size: 0.75rem;
@@ -218,7 +247,6 @@
 
   .db-leeg { color: var(--db-tekst-dim); font-size: 0.8rem; margin-top: 8px; }
 
-  .db-wide { grid-column: 1 / -1; }
   .db-staafgrafiek {
     display: flex;
     align-items: flex-end;
@@ -246,6 +274,13 @@
   }
   .db-staaf-label { margin-top: 8px; font-size: 0.68rem; color: var(--db-tekst-dim); }
   .db-staaf-getal { font-size: 0.65rem; color: var(--db-tekst-dim); margin-bottom: 3px; }
+
+  .db-taart-svg { display: block; margin: 2px auto 12px; }
+  .db-taart-legenda { display: flex; flex-direction: column; gap: 5px; font-size: 0.72rem; }
+  .db-legenda-item { display: flex; align-items: center; gap: 7px; }
+  .db-legenda-bol { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .db-lijn-svg { display: block; margin-top: 8px; overflow: visible; }
 </style>
 </head>
 <body>
@@ -260,19 +295,37 @@
 <main id="inhoud">
   <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
 
-  <p class="status-tekst" id="laad-status" style="color: var(--tekst);">Bezig met laden...</p>
+  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf.</p>
+
+  <div class="kaart" id="login-kaart">
+    <form id="form-login" novalidate>
+      <div class="veld-groep">
+        <label for="dashboard-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="dashboard-huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="dashboard-pincode">Pincode (4 cijfers) *</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="dashboard-pincode" required autocomplete="off">
+      </div>
+      <button type="submit" class="knop" id="knop-inloggen">Bekijk dashboard</button>
+      <p class="status-tekst" id="login-status"></p>
+    </form>
+  </div>
 
   <div id="dashboard-paneel" hidden>
     <div class="db-top">
       <h2>Polanenflat</h2>
-      <div class="switcher">
-        <button type="button" id="knop-reparatie" class="actief">Reparatieverzoeken</button>
-        <button type="button" id="knop-aanmeldingen">Aanmeldingen</button>
-      </div>
     </div>
 
-    <div class="db-grid" id="grid-reparatie"></div>
-    <div class="db-grid" id="grid-aanmeldingen" hidden></div>
+    <div class="db-sectie">
+      <div class="db-sectie-titel"><span class="db-sectie-bolletje" style="background:var(--db-cyaan)"></span>Reparatieverzoeken</div>
+      <div class="db-grid" id="grid-reparatie"></div>
+    </div>
+
+    <div class="db-sectie">
+      <div class="db-sectie-titel"><span class="db-sectie-bolletje" style="background:var(--db-groen)"></span>Aanmeldingen</div>
+      <div class="db-grid" id="grid-aanmeldingen"></div>
+    </div>
   </div>
 </main>
 
@@ -288,11 +341,32 @@
     return e;
   }
 
-  function kaartGroot_(label, waarde, sub) {
+  // Bundelt een paar kaarten tot één blok dat altijd bij elkaar en
+  // onder elkaar blijft staan, ongeacht hoe verdeelInKolommen_ de rest
+  // over de kolommen verdeelt (die ziet dit gewoon als één geheel).
+  function kaartGroep_(kaarten) {
+    var wrap = el_("div", "db-kaartgroep");
+    kaarten.forEach(function (k) { wrap.appendChild(k); });
+    return wrap;
+  }
+
+  function kaartGroot_(label, waarde, sub, kleur) {
     var kaart = el_("div", "db-kaart");
     kaart.appendChild(el_("div", "db-label", label));
-    kaart.appendChild(el_("div", "db-groot", String(waarde)));
+    var groot = el_("div", "db-groot", String(waarde));
+    if (kleur) groot.style.color = kleur;
+    kaart.appendChild(groot);
     if (sub) kaart.appendChild(el_("div", "db-sub", sub));
+    return kaart;
+  }
+
+  function kaartAlarm_(titel, tekst) {
+    var kaart = el_("div", "db-kaart db-alarm");
+    var kop = el_("div", "db-alarm-kop");
+    kop.appendChild(el_("span", null, "⚠️"));
+    kop.appendChild(el_("span", null, titel));
+    kaart.appendChild(kop);
+    kaart.appendChild(el_("div", "db-alarm-tekst", tekst));
     return kaart;
   }
 
@@ -349,7 +423,6 @@
       var staaf = el_("div", "db-staaf");
       staaf.style.height = Math.max(2, Math.round((punt.aantal / max) * 100)) + "%";
       kolom.appendChild(staaf);
-      // "2026-W35" → "W35"
       var weekLabel = punt.week.indexOf("-W") > -1 ? punt.week.split("-W")[1].replace(/^0/, "W") : punt.week;
       if (weekLabel.charAt(0) !== "W") weekLabel = "W" + weekLabel;
       kolom.appendChild(el_("div", "db-staaf-label", weekLabel));
@@ -359,74 +432,315 @@
     return kaart;
   }
 
+  function svgEl_(tag, attrs) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function kaartTaart_(label, items, kleurenLijst) {
+    var kaart = el_("div", "db-kaart");
+    kaart.appendChild(el_("div", "db-label", label));
+    if (!items.length) {
+      kaart.appendChild(el_("div", "db-leeg", "Nog geen gegevens."));
+      return kaart;
+    }
+    var totaal = items.reduce(function (s, i) { return s + i.aantal; }, 0) || 1;
+    var maat = 120, straal = 44, dikte = 20;
+    var omtrek = 2 * Math.PI * straal;
+    var svg = svgEl_("svg", { viewBox: "0 0 " + maat + " " + maat, width: maat, height: maat, class: "db-taart-svg" });
+    var achtergrond = svgEl_("circle", { cx: maat / 2, cy: maat / 2, r: straal, fill: "none", stroke: "#2a2c54", "stroke-width": dikte });
+    svg.appendChild(achtergrond);
+    var groep = svgEl_("g", { transform: "rotate(-90 " + (maat / 2) + " " + (maat / 2) + ")" });
+    var cumulatief = 0;
+    items.forEach(function (item, i) {
+      var deel = item.aantal / totaal;
+      var lengte = deel * omtrek;
+      groep.appendChild(svgEl_("circle", {
+        cx: maat / 2, cy: maat / 2, r: straal,
+        fill: "none",
+        stroke: kleurenLijst[i % kleurenLijst.length],
+        "stroke-width": dikte,
+        "stroke-dasharray": lengte + " " + (omtrek - lengte),
+        "stroke-dashoffset": -cumulatief
+      }));
+      cumulatief += lengte;
+    });
+    svg.appendChild(groep);
+    kaart.appendChild(svg);
+
+    var legenda = el_("div", "db-taart-legenda");
+    items.forEach(function (item, i) {
+      var rij = el_("div", "db-legenda-item");
+      var bol = el_("span", "db-legenda-bol");
+      bol.style.background = kleurenLijst[i % kleurenLijst.length];
+      rij.appendChild(bol);
+      var pct = Math.round((item.aantal / totaal) * 100);
+      rij.appendChild(el_("span", null, item.label + " — " + item.aantal + " (" + pct + "%)"));
+      legenda.appendChild(rij);
+    });
+    kaart.appendChild(legenda);
+    return kaart;
+  }
+
+  function kaartLijngrafiek_(label, reeks, kleur) {
+    var kaart = el_("div", "db-kaart db-wide");
+    kaart.appendChild(el_("div", "db-label", label));
+    if (!reeks.length) {
+      kaart.appendChild(el_("div", "db-leeg", "Nog geen gegevens."));
+      return kaart;
+    }
+    var breedte = 600, hoogte = 140, padLinks = 14, padRechts = 14, padBoven = 22, padOnder = 24;
+    var max = Math.max.apply(null, reeks.map(function (r) { return r.aantal; })) || 1;
+    var stapX = reeks.length > 1 ? (breedte - padLinks - padRechts) / (reeks.length - 1) : 0;
+    var svg = svgEl_("svg", { viewBox: "0 0 " + breedte + " " + hoogte, width: "100%", height: hoogte, class: "db-lijn-svg" });
+
+    function puntXY(i, waarde) {
+      var x = reeks.length > 1 ? padLinks + i * stapX : breedte / 2;
+      var y = padBoven + (1 - waarde / max) * (hoogte - padBoven - padOnder);
+      return [x, y];
+    }
+
+    var puntenTekst = reeks.map(function (r, i) { var p = puntXY(i, r.aantal); return p[0] + "," + p[1]; }).join(" ");
+
+    var vlakPunten = padLinks + "," + (hoogte - padOnder) + " " + puntenTekst + " " + (breedte - padRechts) + "," + (hoogte - padOnder);
+    svg.appendChild(svgEl_("polygon", { points: vlakPunten, fill: kleur, "fill-opacity": "0.14", stroke: "none" }));
+    svg.appendChild(svgEl_("polyline", { points: puntenTekst, fill: "none", stroke: kleur, "stroke-width": "3", "stroke-linecap": "round", "stroke-linejoin": "round" }));
+
+    reeks.forEach(function (r, i) {
+      var p = puntXY(i, r.aantal);
+      svg.appendChild(svgEl_("circle", { cx: p[0], cy: p[1], r: 4, fill: kleur }));
+      var getal = svgEl_("text", { x: p[0], y: p[1] - 9, "text-anchor": "middle", fill: "#f2f3fa", "font-size": "11" });
+      getal.textContent = String(r.aantal);
+      svg.appendChild(getal);
+      var weekLabel = r.week.indexOf("-W") > -1 ? r.week.split("-W")[1].replace(/^0/, "W") : r.week;
+      if (weekLabel.charAt(0) !== "W") weekLabel = "W" + weekLabel;
+      var labelTekst = svgEl_("text", { x: p[0], y: hoogte - 6, "text-anchor": "middle", fill: "#9294b8", "font-size": "10" });
+      labelTekst.textContent = weekLabel;
+      svg.appendChild(labelTekst);
+    });
+
+    kaart.appendChild(svg);
+    return kaart;
+  }
+
+  function kaartCategorieGrafiek_(label, items, kleur) {
+    var kaart = el_("div", "db-kaart db-wide");
+    kaart.appendChild(el_("div", "db-label", label));
+    if (!items.length) {
+      kaart.appendChild(el_("div", "db-leeg", "Nog geen gegevens."));
+      return kaart;
+    }
+    var stap = 64, padLinks = 18, padRechts = 18, padBoven = 24, padOnder = 74;
+    var breedte = Math.max(320, padLinks + padRechts + items.length * stap);
+    var hoogte = 210;
+    var beschikbareHoogte = hoogte - padBoven - padOnder;
+    var max = Math.max.apply(null, items.map(function (i) { return i.aantal; })) || 1;
+    var svg = svgEl_("svg", { viewBox: "0 0 " + breedte + " " + hoogte, width: "100%", height: hoogte, class: "db-lijn-svg" });
+
+    items.forEach(function (item, i) {
+      var x = padLinks + i * stap;
+      var barBreedte = stap * 0.55;
+      var barHoogte = Math.max(2, (item.aantal / max) * beschikbareHoogte);
+      var y = padBoven + (beschikbareHoogte - barHoogte);
+      svg.appendChild(svgEl_("rect", { x: x, y: y, width: barBreedte, height: barHoogte, rx: 4, fill: kleur }));
+      var getal = svgEl_("text", { x: x + barBreedte / 2, y: y - 6, "text-anchor": "middle", fill: "#f2f3fa", "font-size": "11" });
+      getal.textContent = String(item.aantal);
+      svg.appendChild(getal);
+      var labelY = padBoven + beschikbareHoogte + 14;
+      var labelTekst = svgEl_("text", {
+        x: x + barBreedte / 2, y: labelY,
+        "text-anchor": "end", fill: "#9294b8", "font-size": "10",
+        transform: "rotate(-40 " + (x + barBreedte / 2) + " " + labelY + ")"
+      });
+      var kort = item.label.length > 20 ? item.label.slice(0, 19) + "…" : item.label;
+      labelTekst.textContent = kort;
+      var titel = svgEl_("title", {});
+      titel.textContent = item.volledig || item.label;
+      labelTekst.appendChild(titel);
+      svg.appendChild(labelTekst);
+    });
+
+    kaart.appendChild(svg);
+    return kaart;
+  }
+
+  // "Waar is het probleem" staat in de spreadsheet als bijv.
+  // "Eigen woning - Keuken" of "Algemene ruimte - Lift". Het voorvoegsel
+  // (eigen woning/algemene ruimte) staat al apart in de kaart "Waar"
+  // hierboven, dus in dit staafje laten we alleen het stuk ná het
+  // streepje zien — dat is namelijk de informatie die er nog niet
+  // stond. Is er geen stuk ná het streepje (leeg), dan laten we die
+  // hele kolom gewoon weg in plaats van een lege balk te tonen.
+  function locatieLabelsVoorGrafiek_(items) {
+    return (items || [])
+      .map(function (item) {
+        var origineel = String(item.label || "").trim();
+        var match = origineel.match(/^(eigen woning|algemene ruimte)\s*[-:–—]\s*(.+)$/i);
+        var kort = match ? match[2].trim() : origineel;
+        return { label: kort, volledig: origineel, aantal: item.aantal };
+      })
+      .filter(function (item) { return item.label !== "" && item.aantal > 0; });
+  }
+
+  /**
+   * Verdeelt "normale" kaarten over N nette kolommen (steeds de kaart
+   * naar de op dat moment KORTSTE kolom — een 'bakstenen-muur'-indeling
+   * i.p.v. CSS-grid/columns, die naar rijen resp. verwachte hoogte kijkt
+   * i.p.v. de echte, al gerenderde hoogte). Brede kaarten (grafieken)
+   * komen er los onder, over de volle breedte.
+   */
+  function verdeelInKolommen_(container, normaal, breed) {
+    container.innerHTML = "";
+    var kolommenWrapper = el_("div", "db-kolommen");
+    container.appendChild(kolommenWrapper);
+
+    var breedteContainer = container.clientWidth || 900;
+    var aantalKolommen = Math.max(1, Math.min(4, Math.floor((breedteContainer + 14) / (230 + 14))));
+
+    var kolommen = [];
+    for (var k = 0; k < aantalKolommen; k++) {
+      var kolomEl = el_("div", "db-kolom");
+      kolommenWrapper.appendChild(kolomEl);
+      kolommen.push({ el: kolomEl, hoogte: 0 });
+    }
+
+    normaal.forEach(function (kaart) {
+      var kortste = kolommen[0];
+      for (var i = 1; i < kolommen.length; i++) {
+        if (kolommen[i].hoogte < kortste.hoogte) kortste = kolommen[i];
+      }
+      kortste.el.appendChild(kaart);
+      kortste.hoogte += kaart.offsetHeight + 14;
+    });
+
+    // Laatste stap: de kortste kolommen strekken zodat alle kolommen
+    // onderaan precies gelijk eindigen — de laatste kaart in zo'n
+    // kolom wordt gewoon iets langer, in plaats van dat er onderaan
+    // een lege strook overblijft.
+    var echteHoogtes = kolommen.map(function (k) { return k.el.offsetHeight; });
+    var maxHoogte = Math.max.apply(null, echteHoogtes.concat([0]));
+    kolommen.forEach(function (k) {
+      if (k.el.offsetHeight < maxHoogte - 2 && k.el.lastElementChild) {
+        k.el.style.height = maxHoogte + "px";
+        k.el.lastElementChild.style.flex = "1 1 auto";
+      }
+    });
+
+    breed.forEach(function (kaart) {
+      container.appendChild(kaart);
+    });
+  }
+
+  // Gemiddeld aantal reparatieverzoeken per week, en of de meest
+  // recente week daar boven (rood) of onder (groen) zit.
+  function gemiddeldPerWeek_(reeks) {
+    if (!reeks || !reeks.length) return { gemiddelde: 0, laatste: 0 };
+    var som = reeks.reduce(function (s, r) { return s + r.aantal; }, 0);
+    return { gemiddelde: som / reeks.length, laatste: reeks[reeks.length - 1].aantal };
+  }
+
+  // Types storing die opvallend vaak voorkomen (meer dan 5 keer, over
+  // eigen woning en algemene ruimte samen) — die verdienen een eigen
+  // signaalblok, ongeacht in welke ruimte ze zich voordoen.
+  function opvallendeStoringTypes_(lijstA, lijstB) {
+    var tellingen = {};
+    (lijstA || []).concat(lijstB || []).forEach(function (item) {
+      tellingen[item.label] = (tellingen[item.label] || 0) + item.aantal;
+    });
+    return Object.keys(tellingen)
+      .map(function (naam) { return { label: naam, aantal: tellingen[naam] }; })
+      .filter(function (item) { return item.aantal > 5; })
+      .sort(function (a, b) { return b.aantal - a.aantal; });
+  }
+
   function toonReparatieverzoeken_(d) {
     var grid = document.getElementById("grid-reparatie");
-    grid.innerHTML = "";
-    grid.appendChild(kaartGroot_("Reparatieverzoeken", d.totaal, "totaal ontvangen"));
-    grid.appendChild(kaartTwee_("Waar", d.eigenWoning, "eigen woning", d.algemeneRuimte, "algemene ruimte", kleuren.cyaan, kleuren.groen));
-    grid.appendChild(kaartLijst_("Type storing — eigen woning", d.typeStoringEigenWoning, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
-    grid.appendChild(kaartLijst_("Type storing — algemene ruimte", d.typeStoringAlgemeneRuimte, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
-    grid.appendChild(kaartTwee_("Aangemelde bewoners", d.aangemeldeBewoners, "aangemeld", d.metVerzoek, "met verzoek", kleuren.groen, kleuren.cyaan));
-    grid.appendChild(kaartStaafgrafiek_("Per week — reparatieverzoeken", d.perWeek));
+    var weekCijfers = gemiddeldPerWeek_(d.perWeek);
+    var kleurLaatsteWeek = weekCijfers.laatste > weekCijfers.gemiddelde ? kleuren.rood
+      : weekCijfers.laatste < weekCijfers.gemiddelde ? kleuren.groen
+      : kleuren.amber;
+
+    var typeStoringBlok = opvallendeStoringTypes_(d.typeStoringEigenWoning, d.typeStoringAlgemeneRuimte)
+      .map(function (item) { return kaartAlarm_(item.label, item.aantal + " meldingen — opvallend veel voor één type storing"); });
+    typeStoringBlok.push(kaartTaart_("Type storing — eigen woning", d.typeStoringEigenWoning, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
+    typeStoringBlok.push(kaartTaart_("Type storing — algemene ruimte", d.typeStoringAlgemeneRuimte, [kleuren.cyaan, kleuren.groen, kleuren.amber, kleuren.rood]));
+
+    var normaal = [
+      kaartGroot_("Reparatieverzoeken", d.totaal, "totaal ontvangen"),
+      kaartTwee_("Waar", d.eigenWoning, "eigen woning", d.algemeneRuimte, "algemene ruimte", kleuren.cyaan, kleuren.groen),
+      kaartGroep_(typeStoringBlok),
+      kaartTwee_("Reparatieverzoeken delen", d.gedeeldTotaal, "Hoen + bewonerscommissie", d.nietGedeeldTotaal, "alleen Hoen", kleuren.groen, kleuren.amber),
+      kaartGroot_("Gemiddeld per week", weekCijfers.gemiddelde.toFixed(1)),
+      kaartGroot_("Laatste week", weekCijfers.laatste, "t.o.v. gemiddeld " + weekCijfers.gemiddelde.toFixed(1) + " per week", kleurLaatsteWeek),
+      kaartGroot_("Aangemelde bewoners", d.aangemeldeBewoners),
+      kaartGroot_("Bewoners met minstens 1 reparatieverzoek", d.metVerzoek),
+      kaartGroot_("Aantal zaalreserveringen", d.zaalreserveringen),
+      kaartGroot_("Aantal vragen aan de bewonerscommissie", d.vragen)
+    ];
+
+    var breed = [
+      kaartCategorieGrafiek_("Waar is het probleem", locatieLabelsVoorGrafiek_(d.waarIsHetProbleem), kleuren.cyaan),
+      kaartLijngrafiek_("Per week — reparatieverzoeken", d.perWeek, kleuren.cyaan)
+    ];
+    verdeelInKolommen_(grid, normaal, breed);
   }
 
   function toonAanmeldingen_(d) {
     var grid = document.getElementById("grid-aanmeldingen");
-    grid.innerHTML = "";
     var pct = d.totaalHuisnummers ? Math.round((d.aangemeld / d.totaalHuisnummers) * 100) : 0;
-    grid.appendChild(kaartGroot_("Aangemeld op portaal", d.aangemeld + " / " + d.totaalHuisnummers, pct + "% van alle huisnummers"));
-    grid.appendChild(kaartTwee_("Koop / huur", d.huurwoningen, "huurwoningen", d.koopwoningen, "koopwoningen", kleuren.cyaan, kleuren.groen));
-    grid.appendChild(kaartLijst_("Voortgang huurwoningen", [
-      { label: "Aangemeld", aantal: d.huurAangemeld },
-      { label: "Niet aangemeld", aantal: d.huurNietAangemeld },
-      { label: "Wil niet aanmelden", aantal: d.wilNietAanmelden }
-    ], [kleuren.groen, kleuren.cyaan, kleuren.rood]));
-    grid.appendChild(kaartGroot_("Wil niet aanmelden", d.wilNietAanmelden, "huisnummers"));
-    grid.appendChild(kaartStaafgrafiek_("Per week — nieuwe aanmeldingen", d.perWeek));
+    var normaal = [
+      kaartGroot_("Aangemeld op portaal", d.aangemeld + " / " + d.totaalHuisnummers, pct + "% van alle huisnummers"),
+      kaartTwee_("Koop / huur", d.huurwoningen, "huurwoningen", d.koopwoningen, "koopwoningen", kleuren.cyaan, kleuren.groen),
+      kaartLijst_("Voortgang huurwoningen", [
+        { label: "Aangemeld", aantal: d.huurAangemeld },
+        { label: "Niet aangemeld", aantal: d.huurNietAangemeld },
+        { label: "Wil niet aanmelden", aantal: d.wilNietAanmelden }
+      ], [kleuren.groen, kleuren.cyaan, kleuren.rood]),
+      kaartGroot_("Wil niet aanmelden", d.wilNietAanmelden, "huisnummers")
+    ];
+    var breed = [
+      kaartLijngrafiek_("Per week — nieuwe aanmeldingen", d.perWeek, kleuren.groen)
+    ];
+    verdeelInKolommen_(grid, normaal, breed);
   }
 
-  var knopReparatie = document.getElementById("knop-reparatie");
-  var knopAanmeldingen = document.getElementById("knop-aanmeldingen");
-  var gridReparatie = document.getElementById("grid-reparatie");
-  var gridAanmeldingen = document.getElementById("grid-aanmeldingen");
+  document.getElementById("form-login").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var huisnummer = document.getElementById("dashboard-huisnummer").value.trim();
+    var pincode = document.getElementById("dashboard-pincode").value.trim();
+    var status = document.getElementById("login-status");
+    var knop = document.getElementById("knop-inloggen");
+    if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+      status.textContent = "Vul een huisnummer en 4-cijferige pincode in.";
+      return;
+    }
+    status.textContent = "Bezig met laden...";
+    knop.disabled = true;
 
-  knopReparatie.addEventListener("click", function () {
-    knopReparatie.classList.add("actief");
-    knopAanmeldingen.classList.remove("actief");
-    gridReparatie.hidden = false;
-    gridAanmeldingen.hidden = true;
-  });
-  knopAanmeldingen.addEventListener("click", function () {
-    knopAanmeldingen.classList.add("actief");
-    knopReparatie.classList.remove("actief");
-    gridAanmeldingen.hidden = false;
-    gridReparatie.hidden = true;
-  });
-
-  function laadDashboard_() {
-    var status = document.getElementById("laad-status");
     fetch(DASHBOARD_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ verzoekType: "dashboard-gegevens" })
+      body: JSON.stringify({ verzoekType: "dashboard-gegevens", huisnummer: huisnummer, pincode: pincode })
     })
       .then(function (response) { return response.json(); })
       .then(function (json) {
+        knop.disabled = false;
         if (json && json.ok) {
-          status.hidden = true;
+          status.textContent = "";
+          document.getElementById("login-kaart").hidden = true;
           document.getElementById("dashboard-paneel").hidden = false;
           toonReparatieverzoeken_(json.reparatieverzoeken);
           toonAanmeldingen_(json.aanmeldingen);
         } else {
-          status.textContent = (json && json.error) || "Kon de gegevens niet laden.";
+          status.textContent = (json && json.error) || "Kon niet inloggen.";
         }
       })
       .catch(function () {
+        knop.disabled = false;
         status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
       });
-  }
-
-  laadDashboard_();
+  });
 </script>
 
 </body>

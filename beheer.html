@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<meta name="robots" content="noindex, nofollow">
+<title>Beheer — De Gouden Ezel</title>
+<meta name="description" content="Alleen voor het hoofdaccount van de bewonerscommissie: commissieleden, huurder-toegang en oude meldingen beheren.">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --oranje: #b3540f;
+    --rood: #a33;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+
+  .let-op {
+    background: #fff4e6;
+    border: 1px solid #e8c398;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .kaart h2 { margin: 0 0 6px 0; font-size: 1.1rem; }
+  .kaart .uitleg { font-size: 0.85rem; color: #555; margin: 0 0 14px 0; }
+
+  .veld-groep { margin-bottom: 14px; }
+  .veld-groep label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.92rem;
+  }
+  .veld-groep input, .veld-groep select, .veld-groep textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--rand);
+    border-radius: 8px;
+    font-family: inherit;
+  }
+  .veld-rij { display: flex; gap: 12px; flex-wrap: wrap; }
+  .veld-rij .veld-groep { flex: 1 1 160px; }
+
+  button.knop {
+    background: var(--groen);
+    color: #fff;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.knop:disabled { opacity: 0.6; cursor: default; }
+  button.knop.knop-rood { background: var(--rood); }
+  button.knop.knop-secundair { background: #fff; color: var(--groen-donker); border: 2px solid var(--groen-donker); padding: 9px 18px; }
+
+  .status-tekst { margin-top: 10px; font-size: 0.9rem; color: var(--rood); }
+  .status-tekst.status-ok { color: var(--groen-donker); }
+
+  .lijst { list-style: none; margin: 0 0 14px 0; padding: 0; }
+  .lijst li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--rand);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.92rem;
+  }
+  .lijst li button { flex-shrink: 0; }
+  .lijst .leeg { color: #777; font-size: 0.88rem; padding: 4px 0; }
+
+  .toevoeg-rij { display: flex; gap: 10px; margin-top: 6px; }
+  .toevoeg-rij input { flex: 1; }
+
+  .code-tonen {
+    background: #eef3ef;
+    border: 1px solid var(--groen);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    margin-top: 12px;
+  }
+  .code-tonen strong { font-size: 1.15rem; letter-spacing: 1px; }
+
+  .totp-geheim {
+    display: block;
+    font-family: "Courier New", monospace;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    background: #eef3ef;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    word-break: break-all;
+  }
+
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Ga direct naar de inhoud</a>
+
+<header>
+  <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="100" height="100">
+  <h1>Beheer</h1>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
+
+  <p class="let-op">Deze pagina is alleen voor het hoofdaccount van de bewonerscommissie. Log hieronder in met uw eigen huisnummer en pincode.</p>
+
+  <div class="kaart" id="login-kaart">
+    <form id="form-login" novalidate>
+      <div class="veld-groep">
+        <label for="beheer-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="beheer-huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="beheer-pincode">Pincode (4 cijfers) *</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="beheer-pincode" required autocomplete="off">
+      </div>
+      <div class="veld-groep" id="veld-totp" hidden>
+        <label for="beheer-totp">Code uit Google Authenticator *</label>
+        <input type="text" inputmode="numeric" maxlength="6" id="beheer-totp" autocomplete="off">
+      </div>
+      <button type="submit" class="knop" id="knop-inloggen">Inloggen</button>
+      <p class="status-tekst" id="login-status"></p>
+    </form>
+  </div>
+
+  <div id="beheer-inhoud" hidden>
+
+    <div class="kaart">
+      <h2>Commissieleden</h2>
+      <p class="uitleg">Deze huisnummers mogen (naast uzelf) inloggen op het dashboard en mededelingen plaatsen.</p>
+      <ul class="lijst" id="lijst-commissieleden"></ul>
+      <div class="toevoeg-rij">
+        <input type="text" inputmode="numeric" id="nieuw-commissielid" placeholder="Huisnummer">
+        <button type="button" class="knop" id="knop-commissielid-toevoegen">Toevoegen</button>
+      </div>
+      <p class="status-tekst" id="status-commissieleden"></p>
+    </div>
+
+    <div class="kaart">
+      <h2>Huurder-toegang tot het portaal</h2>
+      <p class="uitleg">Toegang geven zet een nieuwe aanmeldcode klaar voor dat huisnummer (net als op een kaartje) — geef die code aan de bewoner door. Toegang intrekken wist de pincode én aanmeldcode, waarna diegene niet meer kan inloggen totdat er opnieuw toegang gegeven wordt.</p>
+      <div class="veld-rij">
+        <div class="veld-groep">
+          <label for="toegang-huisnummer">Huisnummer</label>
+          <input type="text" inputmode="numeric" id="toegang-huisnummer">
+        </div>
+      </div>
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-toegang-toevoegen">Toegang geven</button>
+        <button type="button" class="knop knop-rood" id="knop-toegang-intrekken">Toegang intrekken</button>
+      </div>
+      <p class="status-tekst" id="status-toegang"></p>
+      <div class="code-tonen" id="code-tonen" hidden></div>
+    </div>
+
+    <div class="kaart">
+      <h2>Oude melding namens een bewoner</h2>
+      <p class="uitleg">Voor reparatieverzoeken die destijds niet goed zijn binnengekomen. De bewoner krijgt eerst een e-mail en moet op een link klikken voordat de melding echt wordt toegevoegd.</p>
+
+      <form id="form-oude-melding" novalidate>
+        <div class="veld-rij">
+          <div class="veld-groep">
+            <label for="om-huisnummer">Huisnummer *</label>
+            <input type="text" inputmode="numeric" id="om-huisnummer" required>
+          </div>
+          <div class="veld-groep">
+            <label for="om-email">E-mailadres bewoner *</label>
+            <input type="email" id="om-email" required>
+          </div>
+        </div>
+        <div class="veld-rij">
+          <div class="veld-groep">
+            <label for="om-voornaam">Voornaam</label>
+            <input type="text" id="om-voornaam">
+          </div>
+          <div class="veld-groep">
+            <label for="om-achternaam">Achternaam</label>
+            <input type="text" id="om-achternaam">
+          </div>
+        </div>
+        <div class="veld-rij">
+          <div class="veld-groep">
+            <label for="om-telefoon">Telefoonnummer</label>
+            <input type="text" id="om-telefoon">
+          </div>
+          <div class="veld-groep">
+            <label for="om-straatnaam">Straatnaam</label>
+            <input type="text" id="om-straatnaam">
+          </div>
+        </div>
+        <div class="veld-rij">
+          <div class="veld-groep">
+            <label for="om-postcode">Postcode</label>
+            <input type="text" id="om-postcode">
+          </div>
+          <div class="veld-groep">
+            <label for="om-plaats">Woonplaats</label>
+            <input type="text" id="om-plaats">
+          </div>
+        </div>
+        <div class="veld-rij">
+          <div class="veld-groep">
+            <label for="om-soort">Soort *</label>
+            <select id="om-soort" required>
+              <option value="">— Kies —</option>
+              <option value="Eigen woning">Eigen woning</option>
+              <option value="Algemene ruimte">Algemene ruimte</option>
+            </select>
+          </div>
+          <div class="veld-groep">
+            <label for="om-typestoring">Type storing</label>
+            <input type="text" id="om-typestoring" placeholder="Bijv. Water &amp; Sanitair">
+          </div>
+        </div>
+        <div class="veld-groep">
+          <label for="om-waarprobleem">Waar is het probleem</label>
+          <input type="text" id="om-waarprobleem" placeholder="Bijv. Eigen woning - Keuken">
+        </div>
+        <div class="veld-groep">
+          <label for="om-watprobleem">Wat is het probleem *</label>
+          <textarea id="om-watprobleem" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="knop" id="knop-oude-melding">Versturen ter goedkeuring</button>
+        <p class="status-tekst" id="status-oude-melding"></p>
+      </form>
+
+      <h2 style="margin-top:22px;">Wachtend op akkoord</h2>
+      <ul class="lijst" id="lijst-oude-meldingen"></ul>
+    </div>
+
+    <div class="kaart">
+      <h2>Tweestapsverificatie (Google Authenticator)</h2>
+      <p class="uitleg" id="totp-uitleg">Status wordt geladen...</p>
+
+      <div id="totp-uit" hidden>
+        <button type="button" class="knop" id="knop-totp-start">Instellen</button>
+      </div>
+
+      <div id="totp-instellen" hidden>
+        <p>Voeg in Google Authenticator een account toe via "sleutel handmatig invoeren" (tijdgebaseerd) met deze code:</p>
+        <span class="totp-geheim" id="totp-geheim-tekst"></span>
+        <div class="veld-groep">
+          <label for="totp-bevestig-code">Voer de code uit de app in ter bevestiging</label>
+          <input type="text" inputmode="numeric" maxlength="6" id="totp-bevestig-code">
+        </div>
+        <button type="button" class="knop" id="knop-totp-bevestigen">Bevestigen</button>
+        <p class="status-tekst" id="status-totp"></p>
+      </div>
+
+      <div id="totp-aan" hidden>
+        <p>Tweestapsverificatie staat aan.</p>
+        <button type="button" class="knop knop-rood" id="knop-totp-uit">Uitschakelen</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  var BEHEER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  function huidigeInloggegevens_() {
+    return {
+      huisnummer: document.getElementById("beheer-huisnummer").value.trim(),
+      pincode: document.getElementById("beheer-pincode").value.trim(),
+      totpCode: document.getElementById("beheer-totp").value.trim()
+    };
+  }
+
+  // Centrale aanroep voor elke beheer-actie. Stuurt automatisch de
+  // huidige login-gegevens mee, en vraagt (via het "tweestapsVereist"
+  // veld dat de server teruggeeft) vanzelf om de authenticator-code
+  // zodra dat nodig is — de aanroeper hoeft daar niets voor te doen.
+  function beheerFetch_(actie, extra, callback) {
+    var login = huidigeInloggegevens_();
+    var body = Object.assign({
+      verzoekType: "beheer",
+      beheerActie: actie,
+      huisnummer: login.huisnummer,
+      pincode: login.pincode,
+      totpCode: login.totpCode
+    }, extra || {});
+
+    fetch(BEHEER_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(body)
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (json && json.tweestapsVereist) {
+          document.getElementById("veld-totp").hidden = false;
+        }
+        callback(json);
+      })
+      .catch(function () {
+        callback({ ok: false, error: "Kon geen verbinding maken. Controleer uw internetverbinding." });
+      });
+  }
+
+  function toonStatus_(elementId, tekst, ok) {
+    var el = document.getElementById(elementId);
+    el.textContent = tekst || "";
+    el.classList.toggle("status-ok", !!ok);
+  }
+
+  // ── Commissieleden ──
+  function toonCommissieleden_(lijst) {
+    var ul = document.getElementById("lijst-commissieleden");
+    ul.innerHTML = "";
+    if (!lijst || !lijst.length) {
+      var li = document.createElement("li");
+      li.className = "leeg";
+      li.textContent = "Nog geen extra commissieleden.";
+      ul.appendChild(li);
+      return;
+    }
+    lijst.forEach(function (h) {
+      var li = document.createElement("li");
+      var span = document.createElement("span");
+      span.textContent = "Huisnummer " + h;
+      var knop = document.createElement("button");
+      knop.type = "button";
+      knop.className = "knop knop-rood";
+      knop.textContent = "Verwijderen";
+      knop.addEventListener("click", function () {
+        beheerFetch_("commissielid-verwijderen", { doelHuisnummer: h }, function (json) {
+          if (json && json.ok) {
+            toonCommissieleden_(json.commissieleden);
+            toonStatus_("status-commissieleden", "", false);
+          } else {
+            toonStatus_("status-commissieleden", (json && json.error) || "Kon niet verwijderen.", false);
+          }
+        });
+      });
+      li.appendChild(span);
+      li.appendChild(knop);
+      ul.appendChild(li);
+    });
+  }
+
+  document.getElementById("knop-commissielid-toevoegen").addEventListener("click", function () {
+    var input = document.getElementById("nieuw-commissielid");
+    var h = input.value.trim();
+    if (!h) return;
+    beheerFetch_("commissielid-toevoegen", { doelHuisnummer: h }, function (json) {
+      if (json && json.ok) {
+        input.value = "";
+        toonCommissieleden_(json.commissieleden);
+        toonStatus_("status-commissieleden", "", false);
+      } else {
+        toonStatus_("status-commissieleden", (json && json.error) || "Kon niet toevoegen.", false);
+      }
+    });
+  });
+
+  // ── Huurder-toegang ──
+  document.getElementById("knop-toegang-toevoegen").addEventListener("click", function () {
+    var h = document.getElementById("toegang-huisnummer").value.trim();
+    if (!h) { toonStatus_("status-toegang", "Vul een huisnummer in.", false); return; }
+    beheerFetch_("toegang-toevoegen", { doelHuisnummer: h }, function (json) {
+      var codeDiv = document.getElementById("code-tonen");
+      if (json && json.ok) {
+        toonStatus_("status-toegang", "", false);
+        codeDiv.hidden = false;
+        codeDiv.innerHTML = "Aanmeldcode voor huisnummer " + h + ": <strong>" + json.aanmeldcode + "</strong> — geef deze aan de bewoner door.";
+      } else {
+        codeDiv.hidden = true;
+        toonStatus_("status-toegang", (json && json.error) || "Kon geen toegang geven.", false);
+      }
+    });
+  });
+
+  document.getElementById("knop-toegang-intrekken").addEventListener("click", function () {
+    var h = document.getElementById("toegang-huisnummer").value.trim();
+    if (!h) { toonStatus_("status-toegang", "Vul een huisnummer in.", false); return; }
+    if (!confirm("Weet u zeker dat u de toegang van huisnummer " + h + " wilt intrekken?")) return;
+    beheerFetch_("toegang-intrekken", { doelHuisnummer: h }, function (json) {
+      document.getElementById("code-tonen").hidden = true;
+      if (json && json.ok) {
+        toonStatus_("status-toegang", "Toegang van huisnummer " + h + " is ingetrokken.", true);
+      } else {
+        toonStatus_("status-toegang", (json && json.error) || "Kon de toegang niet intrekken.", false);
+      }
+    });
+  });
+
+  // ── Oude melding namens bewoner ──
+  function toonOudeMeldingen_(lijst) {
+    var ul = document.getElementById("lijst-oude-meldingen");
+    ul.innerHTML = "";
+    if (!lijst || !lijst.length) {
+      var li = document.createElement("li");
+      li.className = "leeg";
+      li.textContent = "Geen openstaande oude meldingen.";
+      ul.appendChild(li);
+      return;
+    }
+    lijst.forEach(function (item) {
+      var li = document.createElement("li");
+      var span = document.createElement("span");
+      span.textContent = item.datum + " — huisnummer " + item.huisnummer + (item.naam ? " (" + item.naam + ")" : "") + ": " + item.watIsHetProbleem;
+      var statusSpan = document.createElement("span");
+      statusSpan.textContent = item.status;
+      statusSpan.style.color = item.status.indexOf("Akkoord") === 0 ? "#2f6f4f" : "#b3540f";
+      statusSpan.style.fontWeight = "600";
+      li.appendChild(span);
+      li.appendChild(statusSpan);
+      ul.appendChild(li);
+    });
+  }
+
+  document.getElementById("form-oude-melding").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var knop = document.getElementById("knop-oude-melding");
+    var huisnummer = document.getElementById("om-huisnummer").value.trim();
+    var email = document.getElementById("om-email").value.trim();
+    var soort = document.getElementById("om-soort").value;
+    var watProbleem = document.getElementById("om-watprobleem").value.trim();
+    if (!huisnummer || !email || !soort || !watProbleem) {
+      toonStatus_("status-oude-melding", "Vul minstens huisnummer, e-mailadres, soort en 'wat is het probleem' in.", false);
+      return;
+    }
+    knop.disabled = true;
+    beheerFetch_("oude-melding-indienen", {
+      doelHuisnummer: huisnummer,
+      emailBewoner: email,
+      voornaam: document.getElementById("om-voornaam").value.trim(),
+      achternaam: document.getElementById("om-achternaam").value.trim(),
+      telefoon: document.getElementById("om-telefoon").value.trim(),
+      straatnaam: document.getElementById("om-straatnaam").value.trim(),
+      postcode: document.getElementById("om-postcode").value.trim(),
+      plaats: document.getElementById("om-plaats").value.trim(),
+      soort: soort,
+      typeStoring: document.getElementById("om-typestoring").value.trim(),
+      waarProbleem: document.getElementById("om-waarprobleem").value.trim(),
+      watIsHetProbleem: watProbleem
+    }, function (json) {
+      knop.disabled = false;
+      if (json && json.ok) {
+        toonStatus_("status-oude-melding", "Verstuurd — de bewoner heeft een e-mail gekregen met een link om te bevestigen.", true);
+        document.getElementById("form-oude-melding").reset();
+        laadOverzicht_();
+      } else {
+        toonStatus_("status-oude-melding", (json && json.error) || "Kon de melding niet versturen.", false);
+      }
+    });
+  });
+
+  // ── Tweestapsverificatie ──
+  function toonTotpStatus_(ingeschakeld) {
+    document.getElementById("totp-uit").hidden = ingeschakeld;
+    document.getElementById("totp-aan").hidden = !ingeschakeld;
+    document.getElementById("totp-instellen").hidden = true;
+    document.getElementById("totp-uitleg").textContent = ingeschakeld
+      ? "Tweestapsverificatie staat aan voor dit account."
+      : "Tweestapsverificatie staat nu uit. Met een authenticator-app erbij is inloggen op deze beheerpagina niet meer mogelijk met alleen de pincode.";
+  }
+
+  document.getElementById("knop-totp-start").addEventListener("click", function () {
+    beheerFetch_("2fa-start", {}, function (json) {
+      if (json && json.ok) {
+        document.getElementById("totp-instellen").hidden = false;
+        document.getElementById("totp-geheim-tekst").textContent = json.geheim.match(/.{1,4}/g).join(" ");
+        toonStatus_("status-totp", "", false);
+      } else {
+        toonStatus_("status-totp", (json && json.error) || "Kon niet starten.", false);
+      }
+    });
+  });
+
+  document.getElementById("knop-totp-bevestigen").addEventListener("click", function () {
+    var code = document.getElementById("totp-bevestig-code").value.trim();
+    // De bevestigingscode wordt hier bewust als totpCode meegestuurd
+    // (de gewone 2FA-code bestaat voor dit account immers nog niet).
+    var oud = document.getElementById("beheer-totp").value;
+    document.getElementById("beheer-totp").value = code;
+    beheerFetch_("2fa-bevestigen", {}, function (json) {
+      if (json && json.ok) {
+        toonStatus_("status-totp", "Tweestapsverificatie is ingeschakeld.", true);
+        toonTotpStatus_(true);
+      } else {
+        document.getElementById("beheer-totp").value = oud;
+        toonStatus_("status-totp", (json && json.error) || "Code klopt niet.", false);
+      }
+    });
+  });
+
+  document.getElementById("knop-totp-uit").addEventListener("click", function () {
+    if (!confirm("Tweestapsverificatie uitschakelen?")) return;
+    beheerFetch_("2fa-uitschakelen", {}, function (json) {
+      if (json && json.ok) {
+        toonTotpStatus_(false);
+      } else {
+        toonStatus_("status-totp", (json && json.error) || "Kon niet uitschakelen.", false);
+      }
+    });
+  });
+
+  // ── Overzicht laden (commissieleden + oude meldingen + 2FA-status) ──
+  function laadOverzicht_() {
+    beheerFetch_("overzicht", {}, function (json) {
+      if (json && json.ok) {
+        toonCommissieleden_(json.commissieleden);
+        toonOudeMeldingen_(json.oudeMeldingen);
+      }
+    });
+    beheerFetch_("2fa-status", {}, function (json) {
+      if (json && json.ok) toonTotpStatus_(json.ingeschakeld);
+    });
+  }
+
+  // ── Inloggen ──
+  document.getElementById("form-login").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var knop = document.getElementById("knop-inloggen");
+    knop.disabled = true;
+    toonStatus_("login-status", "Bezig met inloggen...", false);
+    beheerFetch_("overzicht", {}, function (json) {
+      knop.disabled = false;
+      if (json && json.ok) {
+        toonStatus_("login-status", "", false);
+        document.getElementById("login-kaart").hidden = true;
+        document.getElementById("beheer-inhoud").hidden = false;
+        toonCommissieleden_(json.commissieleden);
+        toonOudeMeldingen_(json.oudeMeldingen);
+        beheerFetch_("2fa-status", {}, function (statusJson) {
+          if (statusJson && statusJson.ok) toonTotpStatus_(statusJson.ingeschakeld);
+        });
+      } else {
+        toonStatus_("login-status", (json && json.error) || "Inloggen mislukt.", false);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
