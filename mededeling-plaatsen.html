@@ -199,15 +199,19 @@
 <main id="inhoud">
   <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
 
-  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Bewoners zien hier nergens een link naartoe op de website. Vul het wachtwoord in dat de commissie onderling afgesproken heeft — zonder het juiste wachtwoord wordt er niets geplaatst.</p>
+  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Bewoners zien hier nergens een link naartoe op de website. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf. Alleen huisnummers die de commissie daarvoor heeft vrijgegeven, kunnen hier iets plaatsen.</p>
 
   <div class="kaart">
     <p class="intro-tekst">Wat u hier invult, verschijnt direct op de hoofdpagina bij "Mededelingen" — er hoeft niets naar GitHub geüpload te worden.</p>
 
     <form class="meld-formulier" id="form-mededeling" novalidate>
       <div class="veld-groep">
-        <label for="mededeling-wachtwoord">Wachtwoord *</label>
-        <input type="password" id="mededeling-wachtwoord" name="wachtwoord" required autocomplete="off">
+        <label for="mededeling-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="mededeling-huisnummer" name="huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="mededeling-pincode">Pincode (4 cijfers) *</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="mededeling-pincode" name="pincode" required autocomplete="off">
       </div>
       <div class="veld-groep">
         <label for="mededeling-titel">Titel *</label>
@@ -242,9 +246,30 @@
 <script>
   // Zelfde Apps Script-koppeling als de andere formulieren — hetzelfde
   // script verwerkt ook mededelingen (te herkennen aan
-  // verzoekType: "mededeling" hieronder), maar controleert daarbij
-  // eerst het wachtwoord.
+  // verzoekType: "mededeling" hieronder), maar controleert daarbij eerst
+  // huisnummer + pincode (net als inloggen) én of dat huisnummer op de
+  // commissielijst (COMMISSIE_HUISNUMMERS) in het script staat.
   var MEDEDELING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+</script>
+
+<script>
+  // Gemak: is dit toestel al ingelogd op het portaal zelf (index.html),
+  // dan vullen we huisnummer en pincode hier vast in — een commissielid
+  // hoeft ze dan niet steeds opnieuw te typen. Puur voor het gemak; de
+  // echte controle gebeurt hierboven in het Apps Script, dus dit is geen
+  // beveiliging op zich.
+  (function () {
+    try {
+      var ruw = localStorage.getItem("gouden-ezel-bewoner");
+      if (!ruw) return;
+      var b = JSON.parse(ruw);
+      if (!b || !b.huisnummer || !b.pincode) return;
+      var huisnummerVeld = document.getElementById("mededeling-huisnummer");
+      var pincodeVeld = document.getElementById("mededeling-pincode");
+      if (huisnummerVeld && !huisnummerVeld.value) huisnummerVeld.value = b.huisnummer;
+      if (pincodeVeld && !pincodeVeld.value) pincodeVeld.value = b.pincode;
+    } catch (e) {}
+  })();
 </script>
 
 <script>
@@ -399,6 +424,12 @@
         form.reportValidity();
         return;
       }
+      var huisnummer = document.getElementById("mededeling-huisnummer").value.trim();
+      var pincode = document.getElementById("mededeling-pincode").value.trim();
+      if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+        toonStatus("Vul uw huisnummer in en een pincode van 4 cijfers.", "fout");
+        return;
+      }
       if (!MEDEDELING_SCRIPT_URL) {
         toonStatus("Het formulier is nog niet volledig ingesteld.", "fout");
         return;
@@ -406,7 +437,8 @@
 
       var data = {
         verzoekType: "mededeling",
-        wachtwoord: document.getElementById("mededeling-wachtwoord").value,
+        huisnummer: huisnummer,
+        pincode: pincode,
         titel: document.getElementById("mededeling-titel").value,
         tekst: document.getElementById("mededeling-tekst").value,
         fotos: fotoLijst.map(function (dataUrl) {
@@ -420,7 +452,8 @@
 
       // Let op: hier gebruiken we BEWUST geen "mode: no-cors" (zoals bij
       // de andere formulieren), omdat we de echte serverreactie nodig
-      // hebben om te weten of het wachtwoord goed was.
+      // hebben om te weten of huisnummer + pincode goed waren en of dit
+      // huisnummer mededelingen mag plaatsen.
       fetch(MEDEDELING_SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -430,7 +463,11 @@
         .then(function (json) {
           if (json && json.ok) {
             toonStatus("Geplaatst! De mededeling staat nu op de hoofdpagina.", "gelukt");
-            form.reset();
+            // Alleen titel, tekst en foto's leegmaken — huisnummer en
+            // pincode laten we staan, zodat een commissielid niet bij elke
+            // volgende mededeling opnieuw hoeft in te loggen.
+            document.getElementById("mededeling-titel").value = "";
+            document.getElementById("mededeling-tekst").value = "";
             fotoLijst.length = 0;
             tekenFotos();
           } else {

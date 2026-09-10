@@ -728,6 +728,7 @@
       <p>Het laatste nieuws en aankondigingen van de bewonerscommissie.</p>
       <div class="knop-rij">
         <a class="knop" href="#mededelingen">Mededelingen bekijken</a>
+        <a class="knop" href="mededeling-plaatsen.html" id="link-mededeling-plaatsen" hidden>Mededeling plaatsen</a>
       </div>
     </div>
 
@@ -987,6 +988,12 @@
 
   var OPSLAG_SLEUTEL = "gouden-ezel-bewoner";
 
+  // Welke huisnummers de knop "Mededeling plaatsen" te zien krijgen. Dit
+  // is alleen voor het tonen/verbergen van de knop — de echte controle
+  // gebeurt in het Apps Script zelf (COMMISSIE_HUISNUMMERS daar), dus
+  // deze lijst hier is puur voor het gemak en geen beveiliging op zich.
+  var COMMISSIE_HUISNUMMERS = ["246"];
+
   function haalBewonerOp() {
     try {
       var ruw = localStorage.getItem(OPSLAG_SLEUTEL);
@@ -1115,6 +1122,12 @@
         ingelogdBalk.hidden = false;
       }
       werkFormulierLinksBij(b);
+
+      // Knop "Mededeling plaatsen" alleen tonen aan commissie-huisnummers.
+      var knopMededelingPlaatsen = document.getElementById("link-mededeling-plaatsen");
+      if (knopMededelingPlaatsen) {
+        knopMededelingPlaatsen.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
+      }
     }
 
     function toonKeuze() {
