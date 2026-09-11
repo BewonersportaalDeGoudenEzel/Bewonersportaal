@@ -816,22 +816,25 @@
       </div>
     </div>
 
-<!-- AGENDA SECTIE -->
+<!-- AGENDA & BEZETTING RECREATIEZAAL -->
 <div id="agenda-sectie" style="margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #ffffff;">
-  <h2>Agenda & Recreatiezaal</h2>
+  <h2 style="margin-top: 0;">Agenda & Bezetting Recreatiezaal</h2>
+  <p style="color: #555;">Hieronder vindt u de geplande werkzaamheden, activiteiten en bezetting van de recreatiezaal.</p>
   
-  <!-- WEERGAVE GECOMBINEERDE AGENDA (Voor iedereen zichtbaar) -->
-  <div id="agenda-overzicht" style="margin-bottom: 20px;">
-    <p><em>Agenda-items laden...</em></p>
+  <!-- WEERGAVE VOOR IEDEREEN -->
+  <div id="agenda-overzicht" style="margin-top: 15px;">
+    <p><em>Agenda laden...</em></p>
   </div>
 
-  <!-- INVOERFORMULIER (Alleen zichtbaar voor commissieleden en beheerder) -->
-  <div id="agenda-invoer-sectie" style="display: none; background: #f9f9f9; padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-top: 15px;">
-    <h3>Nieuw Agendapunt Toevoegen</h3>
+  <!-- INVOERFORMULIER (Alleen zichtbaar voor Bewonerscommissie en Beheerder) -->
+  <div id="commissie-agenda-blok" style="display: none; margin-top: 25px; padding: 15px; background-color: #f0f4f8; border: 1px solid #b8daff; border-radius: 6px;">
+    <h3 style="margin-top: 0; color: #004085;">Bewonerscommissie: Werkzaamheden / Bericht toevoegen</h3>
+    <p style="font-size: 0.9em; color: #555;">Vul dit formulier in om werkzaamheden of agendapunten door te geven aan alle bewoners.</p>
+    
     <form id="agenda-form">
       <div style="margin-bottom: 10px;">
-        <label for="agenda-titel"><strong>Titel:</strong></label><br>
-        <input type="text" id="agenda-titel" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <label for="agenda-titel"><strong>Onderwerp / Werkzaamheid:</strong></label><br>
+        <input type="text" id="agenda-titel" placeholder="bijv. Onderhoud lift of Commissievergadering" required style="width: 100%; padding: 8px; box-sizing: border-box;">
       </div>
 
       <div style="display: flex; gap: 10px; margin-bottom: 10px;">
@@ -857,11 +860,11 @@
       </div>
 
       <div style="margin-bottom: 10px;">
-        <label for="agenda-omschrijving"><strong>Omschrijving:</strong></label><br>
-        <textarea id="agenda-omschrijving" rows="3" style="width: 100%; padding: 8px; box-sizing: border-box;"></textarea>
+        <label for="agenda-omschrijving"><strong>Toelichting voor bewoners:</strong></label><br>
+        <textarea id="agenda-omschrijving" rows="3" placeholder="bijv. De lift is tussen 09:00 en 12:00 uur buiten gebruik wegens onderhoud." style="width: 100%; padding: 8px; box-sizing: border-box;"></textarea>
       </div>
 
-      <button type="submit" style="background-color: #0056b3; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Agendapunt Opslaan</button>
+      <button type="submit" style="background-color: #0056b3; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Plaats op de Agenda</button>
     </form>
     <div id="agenda-melding" style="margin-top: 10px; font-weight: bold;"></div>
   </div>
