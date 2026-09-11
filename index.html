@@ -816,6 +816,57 @@
       </div>
     </div>
 
+<!-- AGENDA SECTIE -->
+<div id="agenda-sectie" style="margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #ffffff;">
+  <h2>Agenda & Recreatiezaal</h2>
+  
+  <!-- WEERGAVE GECOMBINEERDE AGENDA (Voor iedereen zichtbaar) -->
+  <div id="agenda-overzicht" style="margin-bottom: 20px;">
+    <p><em>Agenda-items laden...</em></p>
+  </div>
+
+  <!-- INVOERFORMULIER (Alleen zichtbaar voor commissieleden en beheerder) -->
+  <div id="agenda-invoer-sectie" style="display: none; background: #f9f9f9; padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-top: 15px;">
+    <h3>Nieuw Agendapunt Toevoegen</h3>
+    <form id="agenda-form">
+      <div style="margin-bottom: 10px;">
+        <label for="agenda-titel"><strong>Titel:</strong></label><br>
+        <input type="text" id="agenda-titel" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+          <label for="agenda-datum-begin"><strong>Datum begin:</strong></label><br>
+          <input type="date" id="agenda-datum-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+        <div style="flex: 1;">
+          <label for="agenda-datum-eind"><strong>Datum eind:</strong></label><br>
+          <input type="date" id="agenda-datum-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+          <label for="agenda-tijd-begin"><strong>Begintijd:</strong></label><br>
+          <input type="time" id="agenda-tijd-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+        <div style="flex: 1;">
+          <label for="agenda-tijd-eind"><strong>Eindtijd:</strong></label><br>
+          <input type="time" id="agenda-tijd-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="agenda-omschrijving"><strong>Omschrijving:</strong></label><br>
+        <textarea id="agenda-omschrijving" rows="3" style="width: 100%; padding: 8px; box-sizing: border-box;"></textarea>
+      </div>
+
+      <button type="submit" style="background-color: #0056b3; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Agendapunt Opslaan</button>
+    </form>
+    <div id="agenda-melding" style="margin-top: 10px; font-weight: bold;"></div>
+  </div>
+</div>
+    
     <div class="kaart">
       <div class="kaart-icoon icoon-schoonmaak" aria-hidden="true">🧹</div>
       <h2>Schoonmaak</h2>
