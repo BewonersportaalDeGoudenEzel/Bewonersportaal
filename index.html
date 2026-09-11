@@ -146,8 +146,6 @@
     font-family: inherit;
     font-size: 1.1rem;
     font-weight: 600;
-    /* Zonder deze regel worden <button>-knoppen lager dan <a>-knoppen:
-       een button erft de regelafstand van de pagina niet vanzelf. */
     line-height: 1.6;
     padding: 16px 24px;
     border-radius: 10px;
@@ -248,7 +246,6 @@
     outline-offset: 1px;
     border-color: var(--groen-donker);
   }
-  /* alleen de code-achtige velden krijgen ruime letterafstand */
   #login-pincode, #aanmeld-pincode, #aanmeld-pincode-herhaal, #aanmeld-code {
     letter-spacing: 0.15em;
   }
@@ -413,9 +410,6 @@
     text-decoration: underline;
   }
 
-  /* Oudere mededelingen: compacte rij, foto (of leeg vakje) links, titel
-     en een stukje tekst rechts, met een knop om 'm alsnog helemaal te
-     lezen. Alleen de nieuwste mededeling staat standaard volledig. */
   .oudere-label {
     font-weight: 700;
     text-transform: uppercase;
@@ -467,7 +461,6 @@
     text-decoration: underline;
   }
 
-  /* Vergroot weergeven: hele scherm, klik of Esc om te sluiten */
   .foto-groot {
     position: fixed;
     inset: 0;
@@ -636,11 +629,6 @@
       </div>
       <div class="veld-groep">
         <label for="aanmeld-code">Aanmeldcode van uw kaartje *</label>
-        <!-- autocapitalize/autocorrect uit: op een iPhone maakt Safari
-             anders een "woord" van de code (AL5J → Al5j of erger). De
-             code wordt in het script toch hoofdletterongevoelig
-             vergeleken, maar zo ziet de bewoner meteen wat er op zijn
-             kaartje staat. -->
         <input type="text" id="aanmeld-code" required autocomplete="off" maxlength="8"
                autocapitalize="characters" autocorrect="off" spellcheck="false">
       </div>
@@ -816,59 +804,59 @@
       </div>
     </div>
 
-<!-- AGENDA & BEZETTING RECREATIEZAAL -->
-<div id="agenda-sectie" style="margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #ffffff;">
-  <h2 style="margin-top: 0;">Agenda & Bezetting Recreatiezaal</h2>
-  <p style="color: #555;">Hieronder vindt u de geplande werkzaamheden, activiteiten en bezetting van de recreatiezaal.</p>
-  
-  <!-- WEERGAVE VOOR IEDEREEN -->
-  <div id="agenda-overzicht" style="margin-top: 15px;">
-    <p><em>Agenda laden...</em></p>
-  </div>
-
-  <!-- INVOERFORMULIER (Alleen zichtbaar voor Bewonerscommissie en Beheerder) -->
-  <div id="commissie-agenda-blok" style="display: none; margin-top: 25px; padding: 15px; background-color: #f0f4f8; border: 1px solid #b8daff; border-radius: 6px;">
-    <h3 style="margin-top: 0; color: #004085;">Bewonerscommissie: Werkzaamheden / Bericht toevoegen</h3>
-    <p style="font-size: 0.9em; color: #555;">Vul dit formulier in om werkzaamheden of agendapunten door te geven aan alle bewoners.</p>
-    
-    <form id="agenda-form">
-      <div style="margin-bottom: 10px;">
-        <label for="agenda-titel"><strong>Onderwerp / Werkzaamheid:</strong></label><br>
-        <input type="text" id="agenda-titel" placeholder="bijv. Onderhoud lift of Commissievergadering" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+    <!-- AGENDA & BEZETTING RECREATIEZAAL -->
+    <div id="agenda-sectie" style="margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #ffffff;">
+      <h2 style="margin-top: 0;">Agenda & Bezetting Recreatiezaal</h2>
+      <p style="color: #555;">Hieronder vindt u de geplande werkzaamheden, activiteiten en bezetting van de recreatiezaal.</p>
+      
+      <!-- WEERGAVE VOOR IEDEREEN -->
+      <div id="agenda-overzicht" style="margin-top: 15px;">
+        <p><em>Agenda laden...</em></p>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <div style="flex: 1;">
-          <label for="agenda-datum-begin"><strong>Datum begin:</strong></label><br>
-          <input type="date" id="agenda-datum-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
-        </div>
-        <div style="flex: 1;">
-          <label for="agenda-datum-eind"><strong>Datum eind:</strong></label><br>
-          <input type="date" id="agenda-datum-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
-        </div>
-      </div>
+      <!-- INVOERFORMULIER (Alleen zichtbaar voor Bewonerscommissie en Beheerder) -->
+      <div id="commissie-agenda-blok" style="display: none; margin-top: 25px; padding: 15px; background-color: #f0f4f8; border: 1px solid #b8daff; border-radius: 6px;">
+        <h3 style="margin-top: 0; color: #004085;">Bewonerscommissie: Werkzaamheden / Bericht toevoegen</h3>
+        <p style="font-size: 0.9em; color: #555;">Vul dit formulier in om werkzaamheden of agendapunten door te geven aan alle bewoners.</p>
+        
+        <form id="agenda-form">
+          <div style="margin-bottom: 10px;">
+            <label for="agenda-titel"><strong>Onderwerp / Werkzaamheid:</strong></label><br>
+            <input type="text" id="agenda-titel" placeholder="bijv. Onderhoud lift of Commissievergadering" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+          </div>
 
-      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <div style="flex: 1;">
-          <label for="agenda-tijd-begin"><strong>Begintijd:</strong></label><br>
-          <input type="time" id="agenda-tijd-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
-        </div>
-        <div style="flex: 1;">
-          <label for="agenda-tijd-eind"><strong>Eindtijd:</strong></label><br>
-          <input type="time" id="agenda-tijd-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
-        </div>
-      </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+              <label for="agenda-datum-begin"><strong>Datum begin:</strong></label><br>
+              <input type="date" id="agenda-datum-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+              <label for="agenda-datum-eind"><strong>Datum eind:</strong></label><br>
+              <input type="date" id="agenda-datum-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+          </div>
 
-      <div style="margin-bottom: 10px;">
-        <label for="agenda-omschrijving"><strong>Toelichting voor bewoners:</strong></label><br>
-        <textarea id="agenda-omschrijving" rows="3" placeholder="bijv. De lift is tussen 09:00 en 12:00 uur buiten gebruik wegens onderhoud." style="width: 100%; padding: 8px; box-sizing: border-box;"></textarea>
-      </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+              <label for="agenda-tijd-begin"><strong>Begintijd:</strong></label><br>
+              <input type="time" id="agenda-tijd-begin" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+              <label for="agenda-tijd-eind"><strong>Eindtijd:</strong></label><br>
+              <input type="time" id="agenda-tijd-eind" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+          </div>
 
-      <button type="submit" style="background-color: #0056b3; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Plaats op de Agenda</button>
-    </form>
-    <div id="agenda-melding" style="margin-top: 10px; font-weight: bold;"></div>
-  </div>
-</div>
+          <div style="margin-bottom: 10px;">
+            <label for="agenda-omschrijving"><strong>Toelichting voor bewoners:</strong></label><br>
+            <textarea id="agenda-omschrijving" rows="3" placeholder="bijv. De lift is tussen 09:00 en 12:00 uur buiten gebruik wegens onderhoud." style="width: 100%; padding: 8px; box-sizing: border-box;"></textarea>
+          </div>
+
+          <button type="submit" style="background-color: #0056b3; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Plaats op de Agenda</button>
+        </form>
+        <div id="agenda-melding" style="margin-top: 10px; font-weight: bold;"></div>
+      </div>
+    </div>
     
     <div class="kaart">
       <div class="kaart-icoon icoon-schoonmaak" aria-hidden="true">🧹</div>
@@ -919,11 +907,6 @@
   <p>Bewonerscommissie Polanenflat</p>
 </footer>
 
-<!-- Het oude "persoonlijke manifest" is verwijderd: dat dwong de
-     pagina in app-modus, waardoor Android een minipakketje bouwde en
-     Play Protect dat blokkeerde. Het portaal opent nu gewoon in de
-     browser. -->
-
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
@@ -933,11 +916,6 @@
 </script>
 
 <script>
-  // Plak hier de "Openbare URL voor deze agenda" van de Google Agenda
-  // "Recreatiezaal De Gouden Ezel" (zie apps-script-reparatieverzoek.gs.txt
-  // bovenaan voor de stappen om die op te halen). Zolang dit leeg is,
-  // wordt de "Agenda openen"-knop verborgen en tonen we een tekstje dat
-  // de agenda nog niet gekoppeld is.
   var AGENDA_URL = "https://calendar.google.com/calendar/embed?src=91e09238e1c76985b29e58ccfcbe0b08fbffb2123462d78c5e04352e187bd1f3%40group.calendar.google.com&ctz=Europe%2FAmsterdam";
 
   (function () {
@@ -948,9 +926,6 @@
     var nogNiet = document.getElementById("agenda-nog-niet");
 
     if (AGENDA_URL) {
-      // De agenda staat in de pagina zelf, zodat bewoners de bezetting
-      // meteen zien zonder eerst weg te klikken. De losse link blijft
-      // eronder staan voor kleine schermen, waar zo'n venster krap is.
       if (iframe) iframe.src = AGENDA_URL;
       if (venster) venster.hidden = false;
       if (link) link.href = AGENDA_URL;
@@ -965,15 +940,8 @@
 </script>
 
 <script>
-  // Mededelingen worden live opgehaald bij hetzelfde Apps Script als de
-  // andere formulieren (?actie=mededelingen) — geplaatst via het
-  // niet-openbare mededeling-plaatsen.html. Lukt het ophalen niet
-  // (bijv. geen internet), dan blijft gewoon de tekst hieronder in de
-  // pagina staan als terugvaloptie.
   var MEDEDELINGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
-  // Een foto op ware grootte tonen. Bewoners tikken van nature op een
-  // afbeelding om 'm groter te zien; zonder dit gebeurde er niets.
   function toonGroot(adres, beschrijving) {
     var laag = document.createElement("div");
     laag.className = "foto-groot";
@@ -1006,11 +974,6 @@
     sluitKnop.focus();
   }
 
-  // De mededelingen worden NIET meer openbaar opgehaald. Het script geeft
-  // ze alleen vrij aan wie huisnummer en pincode meestuurt, zodat er ook
-  // via de achterdeur niets te lezen valt zonder aanmelding. Daarom een
-  // POST en geen adres met gegevens erin — een pincode hoort niet in een
-  // webadres, want die blijft in geschiedenis en logboeken staan.
   function laadMededelingen(bewoner) {
     var lijst = document.getElementById("mededelingen-lijst");
     if (!MEDEDELINGEN_SCRIPT_URL || !lijst) return;
@@ -1038,8 +1001,6 @@
           return;
         }
 
-        // Bouwt één klikbare (uit te vergroten) foto-afbeelding, zowel
-        // voor een foto middenin de tekst als voor de strook onderaan.
         function maakFotoElement(adres, volgnummer, titelTekst) {
           var afbeelding = document.createElement("img");
           afbeelding.src = adres;
@@ -1057,12 +1018,6 @@
           return afbeelding;
         }
 
-        // Bouwt de volledige weergave van één mededeling: titel, datum,
-        // en de tekst met kopjes en eventuele foto's middenin ("[foto N]"
-        // op een eigen regel) of, voor niet zo geplaatste foto's, in een
-        // strook onderaan. Wordt gebruikt voor de nieuwste mededeling
-        // (die staat altijd volledig) én voor elke oudere mededeling die
-        // via "Lees hele bericht" wordt opengeklapt.
         function maakVolledigeMededeling(m) {
           var blok = document.createElement("div");
           blok.className = "mededeling";
@@ -1077,20 +1032,6 @@
           var fotos = Array.isArray(m.fotos) ? m.fotos : [];
           var gebruikteFotos = {};
 
-          // Elke regel van de mededeling wordt een eigen alinea (dus een
-          // regeleinde in de tekst wordt ook echt een regeleinde op het
-          // scherm). Begint een regel met "Iets, iets: ..." (een woord
-          // of korte omschrijving gevolgd door een dubbele punt, zoals
-          // "Parkeerplaatsen: ..."), dan wordt dat stukje vetgedrukt
-          // weergegeven — dat is het "kopje" van dat onderwerp. Staat er
-          // op een eigen regel iets als "[foto 1]", dan komt daar de
-          // eerste foto middenin de tekst te staan (zie mededeling-
-          // plaatsen.html voor de uitleg die de commissie hierover te
-          // zien krijgt). Er wordt hier bewust NIET met innerHTML
-          // gewerkt (dus geen opgemaakte tekst uit een tekstverwerker
-          // kan hier iets ongewenst doen): alles blijft gewone, veilige
-          // tekst, alleen de plek van de dubbele punt en het
-          // "[foto N]"-patroon bepalen de opmaak.
           var tekstBlok = document.createElement("div");
           tekstBlok.className = "mededeling-tekst";
           (m.tekst || "").split("\n").forEach(function (regel) {
@@ -1123,8 +1064,6 @@
           blok.appendChild(titel);
           blok.appendChild(tekstBlok);
 
-          // Foto's die niet met "[foto N]" in de tekst zijn geplaatst,
-          // verschijnen zoals voorheen gewoon onderaan.
           var overigeFotos = fotos.filter(function (_, index) { return !gebruikteFotos[index]; });
           if (overigeFotos.length) {
             var strook = document.createElement("div");
@@ -1139,10 +1078,6 @@
           return blok;
         }
 
-        // Haalt de eerste maximaal "aantal" woorden uit de tekst, voor
-        // het korte stukje bij een compacte, oudere mededeling. De
-        // "[foto N]"-regels tellen daarbij niet mee, zodat zo'n
-        // technische regel nooit in het stukje tekst verschijnt.
         function maxWoorden(tekst, aantal) {
           var zonderFotoRegels = (tekst || "")
             .split("\n")
@@ -1153,9 +1088,6 @@
           return woorden.slice(0, aantal).join(" ") + "…";
         }
 
-        // Bouwt de compacte rij voor een oudere mededeling: eerste foto
-        // (of een leeg vakje) links, titel + korte tekst rechts, met een
-        // knop om de hele mededeling alsnog te lezen.
         function maakCompacteRij(m) {
           var rij = document.createElement("div");
           rij.className = "mededeling-compact";
@@ -1212,9 +1144,6 @@
           return rij;
         }
 
-        // De nieuwste mededeling staat altijd volledig. Is er meer dan
-        // één, dan komen de oudere mededelingen daaronder compact te
-        // staan, elk met een knop om 'm alsnog helemaal te lezen.
         lijst.appendChild(maakVolledigeMededeling(json.mededelingen[0]));
 
         if (json.mededelingen.length > 1) {
@@ -1228,55 +1157,17 @@
           });
         }
       })
-      .catch(function () {
-        // geen internet of script niet bereikbaar: laat de bestaande tekst staan
-      });
+      .catch(function () {});
   }
 </script>
 
 <script>
-  // ─────────────────────────────────────────────────────────────────
-  // AANMELDEN EN INLOGGEN
-  //
-  // De QR-code in het gebouw is voor iedereen dezelfde. Wat deze pagina
-  // persoonlijk maakt, is de eenmalige aanmelding: de bewoner vult zelf
-  // naam, adres en contactgegevens in, samen met de AANMELDCODE van het
-  // eigen kaartje (die code zorgt dat niemand zich kan aanmelden voor
-  // het huisnummer van een ander), en kiest een eigen pincode.
-  //
-  // Daarna worden de gegevens op dit toestel onthouden (localStorage) en
-  // automatisch meegegeven aan de formulieren. Een partner logt op zijn
-  // of haar eigen telefoon in met hetzelfde huisnummer en dezelfde
-  // pincode — aanmelden hoeft maar één keer per huishouden.
-  //
-  // De pincode wordt versleuteld (gehasht) opgeslagen bij de commissie,
-  // die kan 'm dus nooit aflezen.
-  // ─────────────────────────────────────────────────────────────────
   var BEWONER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
-  // Standaardwaarden voor het aanmeldformulier — straat en plaats zijn
-  // voor iedereen hetzelfde, dus die vullen we alvast in. De POSTCODE
-  // NIET: die verschilt per blok huisnummers, en een voorgevulde postcode
-  // die niet klopt wordt zelden gecorrigeerd. Dan staat er straks bij
-  // tachtig bewoners hetzelfde onjuiste adres in de administratie.
   var STANDAARD_STRAATNAAM = "Jan van Polanenstraat";
   var STANDAARD_PLAATS = "Heemskerk";
-
   var OPSLAG_SLEUTEL = "gouden-ezel-bewoner";
-
-  // Welk huisnummer de knop "Mededeling plaatsen" te zien krijgt. Dit is
-  // alleen voor het tonen/verbergen van de knop — de echte controle
-  // gebeurt in het Apps Script zelf, tegen de (uitbreidbare)
-  // commissieledenlijst die het hoofdaccount beheert via beheer.html.
-  // Wordt hier een commissielid bijgevoegd, dan ziet dat huisnummer de
-  // knop dus pas als deze lijst ook hier wordt bijgewerkt — de toegang
-  // zelf werkt intussen al wel, ook zonder die knop (gewoon rechtstreeks
-  // naar mededeling-plaatsen.html).
   var COMMISSIE_HUISNUMMERS = ["246"];
-
-  // Het hoofdaccount: alleen dit huisnummer krijgt de knop "Beheer" te
-  // zien. Moet gelijk staan aan HOOFDACCOUNT_HUISNUMMER in het Apps
-  // Script.
   var HOOFDACCOUNT_HUISNUMMER = "246";
 
   function haalBewonerOp() {
@@ -1316,16 +1207,77 @@
     return tekst ? "?" + tekst : "";
   }
 
-  // De knoppen naar de formulieren krijgen de gegevens van de ingelogde
-  // bewoner mee, zodat die pagina's alles vast invullen. Staat er niets
-  // opgeslagen, dan vallen we terug op de linkparameters van de pagina
-  // zelf (zodat oude persoonlijke links blijven werken).
   function werkFormulierLinksBij(b) {
     var achtervoegsel = b ? bewonerLinkParams(b) : window.location.search;
     ["link-reparatie", "link-vraag", "link-zaal"].forEach(function (id) {
       var link = document.getElementById(id);
       if (link) link.href = link.getAttribute("href").split("?")[0] + achtervoegsel;
     });
+  }
+
+  function laadAgenda(bewoner) {
+    var overzicht = document.getElementById("agenda-overzicht");
+    if (!BEWONER_SCRIPT_URL || !overzicht) return;
+    if (!bewoner || !bewoner.huisnummer || !bewoner.pincode) {
+      overzicht.innerHTML = "<p>Meld u aan om de agenda te bekijken.</p>";
+      return;
+    }
+
+    fetch(BEWONER_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        verzoekType: "agenda-ophalen",
+        huisnummer: bewoner.huisnummer,
+        pincode: bewoner.pincode
+      })
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (!json || !json.ok || !Array.isArray(json.items)) {
+          overzicht.innerHTML = "<p>Er zijn momenteel geen geplande werkzaamheden of agendapunten.</p>";
+          return;
+        }
+
+        overzicht.innerHTML = "";
+
+        if (json.items.length === 0) {
+          overzicht.innerHTML = "<p>Er zijn momenteel geen geplande werkzaamheden of agendapunten.</p>";
+          return;
+        }
+
+        json.items.forEach(function (item) {
+          var kaart = document.createElement("div");
+          kaart.style.cssText = "border: 1px solid #d8dcd6; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; background: #fafafa;";
+
+          var titel = document.createElement("h4");
+          titel.style.cssText = "margin: 0 0 6px 0; color: #234f38; font-size: 1.1rem;";
+          titel.textContent = item.titel || "Onderwerp";
+
+          var datumTijd = document.createElement("p");
+          datumTijd.style.cssText = "margin: 0 0 6px 0; font-weight: 600; font-size: 0.95rem; color: #555;";
+          var dTekst = "Datum: " + (item.datumBegin || "") + (item.datumEind && item.datumEind !== item.datumBegin ? " t/m " + item.datumEind : "");
+          if (item.tijdBegin) {
+            dTekst += " | Tijd: " + item.tijdBegin + (item.tijdEind ? " - " + item.tijdEind : "");
+          }
+          datumTijd.textContent = dTekst;
+
+          kaart.appendChild(titel);
+          kaart.appendChild(datumTijd);
+
+          if (item.omschrijving) {
+            var desc = document.createElement("p");
+            desc.style.cssText = "margin: 0; color: #333; font-size: 0.95rem;";
+            desc.textContent = item.omschrijving;
+            kaart.appendChild(desc);
+          }
+
+          overzicht.appendChild(kaart);
+        });
+      })
+      .catch(function () {
+        overzicht.innerHTML = "<p>Er zijn momenteel geen geplande werkzaamheden of agendapunten.</p>";
+      });
   }
 
   (function () {
@@ -1349,12 +1301,6 @@
       if (status) status.hidden = true;
     }
 
-    // De gegevens staan op twee plekken: in de spreadsheet van de
-    // bewonerscommissie én op de telefoon van de bewoner. Corrigeert de
-    // commissie een straatnaam, telefoonnummer of e-mailadres, dan zou de
-    // telefoon anders de oude versie blijven meesturen bij elke melding.
-    // Daarom halen we bij het openen stilletjes de actuele gegevens op en
-    // werken we de opgeslagen versie bij. De bewoner merkt hier niets van.
     function ververGegevens(b) {
       if (!BEWONER_SCRIPT_URL || !b || !b.huisnummer || !b.pincode) return;
 
@@ -1376,15 +1322,10 @@
               }
             }
           } else if (json && json.ok === false) {
-            // Het script zegt uitdrukkelijk dat deze combinatie niet meer
-            // klopt — bijvoorbeeld omdat de commissie de pincode heeft
-            // gewist. Dan is doorgaan met oude gegevens verkeerd.
             try { localStorage.removeItem(OPSLAG_SLEUTEL); } catch (e) {}
           }
         })
-        .catch(function () {
-          // geen internet: gewoon verder met wat er al stond
-        });
+        .catch(function () {});
     }
 
     var inhoud = document.getElementById("portaal-inhoud");
@@ -1395,8 +1336,7 @@
       if (inhoud) inhoud.hidden = false;
       if (afgeschermdUitleg) afgeschermdUitleg.hidden = true;
       laadMededelingen(b);
-      // Even uitstellen: dit stukje staat in een eerder scriptblok dan
-      // toonBeginschermTip, dus die functie bestaat op dit moment nog niet.
+      laadAgenda(b);
       setTimeout(function () {
         if (typeof toonBeginschermTip === "function") toonBeginschermTip();
       }, 0);
@@ -1408,15 +1348,17 @@
       }
       werkFormulierLinksBij(b);
 
-      // Knop "Mededeling plaatsen" alleen tonen aan commissie-huisnummers.
       var knopMededelingPlaatsen = document.getElementById("link-mededeling-plaatsen");
       if (knopMededelingPlaatsen) {
         knopMededelingPlaatsen.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
       }
-      // Knop "Beheer" alleen tonen aan het hoofdaccount.
       var knopBeheer = document.getElementById("link-beheer");
       if (knopBeheer) {
         knopBeheer.hidden = String(b.huisnummer || "").trim() !== HOOFDACCOUNT_HUISNUMMER;
+      }
+      var commissieAgendaBlok = document.getElementById("commissie-agenda-blok");
+      if (commissieAgendaBlok) {
+        commissieAgendaBlok.style.display = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) !== -1 ? "block" : "none";
       }
     }
 
@@ -1426,6 +1368,8 @@
       formAanmelden.hidden = true;
       if (keuze) keuze.hidden = false;
       if (intro) intro.hidden = false;
+      var commissieAgendaBlok = document.getElementById("commissie-agenda-blok");
+      if (commissieAgendaBlok) commissieAgendaBlok.style.display = "none";
     }
 
     function toonFormulier(welke) {
@@ -1454,7 +1398,6 @@
       knop.addEventListener("click", toonKeuze);
     });
 
-    // adresvelden alvast invullen — scheelt typewerk, blijft aanpasbaar
     var zetStandaard = function (id, waarde) {
       var el = document.getElementById(id);
       if (el && !el.value) el.value = waarde;
@@ -1470,6 +1413,8 @@
         balk.hidden = false;
         toonKeuze();
         werkFormulierLinksBij(null);
+        var commissieAgendaBlok = document.getElementById("commissie-agenda-blok");
+        if (commissieAgendaBlok) commissieAgendaBlok.style.display = "none";
       });
     }
 
@@ -1563,28 +1508,91 @@
       });
     });
   })();
+
+  (function () {
+    var form = document.getElementById("agenda-form");
+    var melding = document.getElementById("agenda-melding");
+    if (!form) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var bewoner = haalBewonerOp();
+      if (!bewoner || !bewoner.huisnummer || !bewoner.pincode) {
+        if (melding) {
+          melding.style.color = "#b3540f";
+          melding.textContent = "U moet ingelogd zijn om agendapunten toe te voegen.";
+        }
+        return;
+      }
+
+      var titel = document.getElementById("agenda-titel").value.trim();
+      var datumBegin = document.getElementById("agenda-datum-begin").value;
+      var datumEind = document.getElementById("agenda-datum-eind").value;
+      var tijdBegin = document.getElementById("agenda-tijd-begin").value;
+      var tijdEind = document.getElementById("agenda-tijd-eind").value;
+      var omschrijving = document.getElementById("agenda-omschrijving").value.trim();
+
+      if (!titel || !datumBegin || !datumEind || !tijdBegin || !tijdEind) {
+        if (melding) {
+          melding.style.color = "#b3540f";
+          melding.textContent = "Vul alle verplichte velden in.";
+        }
+        return;
+      }
+
+      var knop = form.querySelector('button[type="submit"]');
+      if (knop) knop.disabled = true;
+      if (melding) {
+        melding.style.color = "#444";
+        melding.textContent = "Bezig met plaatsen op de agenda...";
+      }
+
+      var payload = {
+        verzoekType: "agenda-toevoegen",
+        huisnummer: bewoner.huisnummer,
+        pincode: bewoner.pincode,
+        titel: titel,
+        datumBegin: datumBegin,
+        datumEind: datumEind,
+        tijdBegin: tijdBegin,
+        tijdEind: tijdEind,
+        omschrijving: omschrijving
+      };
+
+      fetch(BEWONER_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (json) {
+          if (json && json.ok) {
+            if (melding) {
+              melding.style.color = "#234f38";
+              melding.textContent = "Agendapunt is succesvol geplaatst!";
+            }
+            form.reset();
+            laadAgenda(bewoner);
+          } else {
+            if (melding) {
+              melding.style.color = "#b3540f";
+              melding.textContent = (json && json.error) || "Er ging iets mis met het plaatsen op de agenda.";
+            }
+          }
+          if (knop) knop.disabled = false;
+        })
+        .catch(function () {
+          if (melding) {
+            melding.style.color = "#b3540f";
+            melding.textContent = "Fout bij de verbinding met de server.";
+          }
+          if (knop) knop.disabled = false;
+        });
+    });
+  })();
 </script>
 
 <script>
-  // ─────────────────────────────────────────────────────────────────
-  // TIP-BALK: OP HET BEGINSCHERM ZETTEN
-  //
-  // We gebruiken hier BEWUST geen automatische installatie meer
-  // ("beforeinstallprompt"). Android bouwde daarbij zelf een klein
-  // pakketje van deze website, en Google Play Protect blokkeerde dat
-  // met de melding "Onveilige app geblokkeerd" — schrikbarend voor
-  // bewoners, terwijl er niets mis is. Nu tonen we alleen een tip met
-  // de handmatige stap. Dat maakt een gewone snelkoppeling, zonder
-  // enige waarschuwing, op elke telefoon.
-  // ─────────────────────────────────────────────────────────────────
-  // De tip verschijnt pas NA het aanmelden. Iemand die voor het eerst
-  // binnenkomt heeft er nog niets aan: eerst aanmelden, dan pas op het
-  // beginscherm zetten. Wordt aangeroepen vanuit toonIngelogd hieronder.
-  // Elke browser verstopt "toevoegen aan startscherm" ergens anders: bij
-  // Samsung Internet zit het menu rechtsonder, bij Chrome rechtsboven, bij
-  // Firefox weer elders, en op een iPhone kan het alleen in Safari. Een
-  // algemene tekst als "open het menu van uw browser" helpt dan niemand.
-  // Daarom kijken we welke browser het is en tonen we alleen die stappen.
   function bepaalBrowser() {
     var ua = window.navigator.userAgent;
     var isIos = /iPhone|iPad|iPod/i.test(ua) ||
@@ -1617,9 +1625,6 @@
     "ios-anders": "<strong>Tip:</strong> op een iPhone lukt dit alleen in <strong>Safari</strong>. Open deze pagina daar, tik onderin op het deelicoon (vierkantje met pijltje omhoog) en kies <strong>Zet op beginscherm</strong>."
   };
 
-  // De tip verschijnt pas NA het aanmelden. Iemand die voor het eerst
-  // binnenkomt heeft er nog niets aan: eerst aanmelden, dan pas op het
-  // beginscherm zetten. Wordt aangeroepen vanuit toonIngelogd hieronder.
   function toonBeginschermTip() {
     var balk = document.getElementById("install-balk");
     var tekstVak = document.getElementById("install-tekst");
@@ -1631,13 +1636,12 @@
       if (window.localStorage && localStorage.getItem(SLEUTEL) === "ja") return;
     } catch (e) {}
 
-    // Al vanaf het beginscherm geopend? Dan is de tip overbodig.
     try {
       if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) return;
     } catch (e) {}
 
     var tekst = TIPTEKSTEN[bepaalBrowser()];
-    if (!tekst) return; // op een computer heeft dit geen zin
+    if (!tekst) return;
 
     tekstVak.innerHTML = tekst;
     tekstVak.hidden = false;
@@ -1656,15 +1660,6 @@
 
 <script src="schoonmaakschema.js"></script>
 <script>
-  // ─────────────────────────────────────────────────────────────────
-  // SCHOONMAAKAGENDA
-  //
-  // SCHOONMAAK_SCHEMA (uit schoonmaakschema.js) bevat het hele jaar,
-  // per taak een lijst weeknummers waarin die wordt uitgevoerd. Dit
-  // stukje bepaalt gewoon het huidige ISO-weeknummer en toont alleen
-  // de taken die deze week aan de beurt zijn — dus geen jaarlijkse
-  // handmatige update nodig, dat gaat vanzelf mee met de datum.
-  // ─────────────────────────────────────────────────────────────────
   (function () {
     var knopZaalTonen = document.getElementById("knop-zaal-tonen");
     var zaalInhoud = document.getElementById("zaal-inhoud");
@@ -1692,11 +1687,6 @@
   })();
 
   (function () {
-    // ─────────────────────────────────────────────────────────────────
-    // SCHOONMAAK — drie knoppen (week/maand/jaar) delen dezelfde
-    // #schoonmaak-inhoud. Klikken op een knop toont dat overzicht;
-    // nogmaals klikken op de actieve knop verbergt alles weer.
-    // ─────────────────────────────────────────────────────────────────
     var knopWeek = document.getElementById("knop-schoonmaak-week");
     var knopMaand = document.getElementById("knop-schoonmaak-maand");
     var knopJaar = document.getElementById("knop-schoonmaak-jaar");
