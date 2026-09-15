@@ -108,6 +108,7 @@
     border-radius: 8px;
     font-family: inherit;
   }
+  .veld-groep select:disabled { background: #f1f3f0; color: #777; }
   .veld-rij { display: flex; gap: 12px; flex-wrap: wrap; }
   .veld-rij .veld-groep { flex: 1 1 160px; }
 
@@ -145,6 +146,17 @@
 
   .toevoeg-rij { display: flex; gap: 10px; margin-top: 6px; }
   .toevoeg-rij input { flex: 1; }
+
+  .totp-balk {
+    border-left: 4px solid var(--oranje);
+  }
+  .totp-balk .toevoeg-rij input {
+    max-width: 10rem;
+    font-size: 1.25rem;
+    letter-spacing: 0.22em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
 
   .code-tonen {
     background: #eef3ef;
@@ -205,6 +217,15 @@
   </div>
 
   <div id="beheer-inhoud" hidden>
+
+    <div class="kaart totp-balk" id="totp-balk" hidden>
+      <h2>Code uit Google Authenticator</h2>
+      <p class="uitleg">U heeft tweestapsverificatie aanstaan. Typ hier de code die nu in de app staat; daarmee kunt u een half uur doorwerken zonder hem opnieuw in te voeren. Daarna vraagt de pagina er vanzelf weer om.</p>
+      <div class="toevoeg-rij">
+        <input type="text" inputmode="numeric" maxlength="6" id="beheer-totp-actief" placeholder="6 cijfers" autocomplete="one-time-code">
+      </div>
+      <p class="status-tekst" id="status-totp-balk"></p>
+    </div>
 
     <div class="kaart">
       <h2>Beheerders</h2>
@@ -301,7 +322,9 @@
           </div>
           <div class="veld-groep">
             <label for="om-typestoring">Type storing</label>
-            <input type="text" id="om-typestoring" placeholder="Bijv. Water &amp; Sanitair">
+            <select id="om-typestoring" disabled>
+              <option value="">— Kies eerst een soort —</option>
+            </select>
           </div>
         </div>
         <div class="veld-groep">
@@ -356,11 +379,28 @@
 <script>
   var BEHEER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
+  // Het sleuteltje dat de server teruggeeft nadat er één keer een goede
+  // authenticator-code is ingevoerd. Daarmee hoeft die code een half uur
+  // niet opnieuw. Staat alleen in het geheugen van deze pagina.
+  var beheerSessie = "";
+
+  // Vóór het inloggen staat het codeveld in het inlogblok; daarna in de
+  // balk bovenaan de beheerpagina. Hier wordt gepakt wat op dat moment
+  // in beeld is.
+  function huidigeTotpCode_() {
+    var balk = document.getElementById("totp-balk");
+    var actief = document.getElementById("beheer-totp-actief");
+    if (balk && !balk.hidden && actief && actief.value.trim()) {
+      return actief.value.trim();
+    }
+    return document.getElementById("beheer-totp").value.trim();
+  }
+
   function huidigeInloggegevens_() {
     return {
       huisnummer: document.getElementById("beheer-huisnummer").value.trim(),
       pincode: document.getElementById("beheer-pincode").value.trim(),
-      totpCode: document.getElementById("beheer-totp").value.trim()
+      totpCode: huidigeTotpCode_()
     };
   }
 
@@ -375,7 +415,8 @@
       beheerActie: actie,
       huisnummer: login.huisnummer,
       pincode: login.pincode,
-      totpCode: login.totpCode
+      totpCode: login.totpCode,
+      sessie: beheerSessie
     }, extra || {});
 
     fetch(BEHEER_SCRIPT_URL, {
@@ -385,8 +426,24 @@
     })
       .then(function (response) { return response.json(); })
       .then(function (json) {
+        if (json && json.sessie) beheerSessie = json.sessie;
+
         if (json && json.tweestapsVereist) {
-          document.getElementById("veld-totp").hidden = false;
+          // Vóór het inloggen: het veld in het inlogblok. Daarna: de
+          // balk bovenaan, want het inlogblok is dan weg — dáár ging het
+          // eerder mis.
+          if (document.getElementById("beheer-inhoud").hidden) {
+            document.getElementById("veld-totp").hidden = false;
+            document.getElementById("beheer-totp").focus();
+          } else {
+            var balk = document.getElementById("totp-balk");
+            balk.hidden = false;
+            var veld = document.getElementById("beheer-totp-actief");
+            veld.value = "";
+            toonStatus_("status-totp-balk", "Vul de code in die nu in Google Authenticator staat en probeer het opnieuw.", false);
+            balk.scrollIntoView({ behavior: "smooth", block: "start" });
+            veld.focus();
+          }
         }
         callback(json);
       })
@@ -579,6 +636,52 @@
     });
   }
 
+  // De keuzelijst "Type storing" bevat exact dezelfde categorieën als
+  // het reparatieformulier op het portaal. Dat moet ook wel: het
+  // dashboard telt de meldingen per categorie, en een zelfbedachte
+  // naam zou daar als een apart taartpuntje verschijnen.
+  var TYPES_EIGEN_WONING = [
+    "Verwarming & Warm water", "Water & Sanitair", "Lekkage", "Verstoppingen",
+    "Riolering", "Verlichting & Elektra", "Huishoudelijke apparaten (Witgoed)",
+    "Ongediertebestrijding", "Schimmel", "Intercom/Deurbel",
+    "Deuren, ramen & houtwerk", "Sleutels", "Overig"
+  ];
+  var TYPES_ALGEMENE_RUIMTE = [
+    "Liftstoring", "CV (blokverwarming)", "Centrale toegangsdeur",
+    "Intercom (buitenpaneel)", "Verlichting & Elektra", "Lekkage", "Riolering",
+    "Verstoppingen", "Schoonmaak", "Parkeren", "Ongediertebestrijding",
+    "Schimmel", "Deuren, ramen & houtwerk", "Overig"
+  ];
+
+  function vulTypeStoring_() {
+    var soort = document.getElementById("om-soort").value;
+    var keuzelijst = document.getElementById("om-typestoring");
+    var vorige = keuzelijst.value;
+    var types = soort === "Eigen woning" ? TYPES_EIGEN_WONING
+      : soort === "Algemene ruimte" ? TYPES_ALGEMENE_RUIMTE
+      : [];
+
+    keuzelijst.innerHTML = "";
+    var leeg = document.createElement("option");
+    leeg.value = "";
+    leeg.textContent = types.length ? "— Kies —" : "— Kies eerst een soort —";
+    keuzelijst.appendChild(leeg);
+
+    types.forEach(function (type) {
+      var optie = document.createElement("option");
+      optie.value = type;
+      optie.textContent = type;
+      keuzelijst.appendChild(optie);
+    });
+
+    keuzelijst.disabled = types.length === 0;
+    // Staat dezelfde categorie ook in de nieuwe lijst, dan blijft de
+    // keuze staan — anders begint u gewoon opnieuw.
+    if (vorige && types.indexOf(vorige) !== -1) keuzelijst.value = vorige;
+  }
+
+  document.getElementById("om-soort").addEventListener("change", vulTypeStoring_);
+
   // Foto's worden eerst verkleind tot maximaal 1600 pixels en als JPEG
   // meegestuurd — anders duurt het versturen op een telefoon veel te
   // lang en wordt het bericht aan de server te groot.
@@ -677,6 +780,7 @@
           toonStatus_("status-oude-melding", "Verstuurd — de bewoner heeft een e-mail gekregen met een link om te bevestigen." + extra, true);
           document.getElementById("form-oude-melding").reset();
           document.getElementById("om-foto-status").textContent = "";
+          vulTypeStoring_();
           laadOverzicht_();
         } else {
           toonStatus_("status-oude-melding", (json && json.error) || "Kon de melding niet versturen.", false);
@@ -690,6 +794,13 @@
     document.getElementById("totp-uit").hidden = ingeschakeld;
     document.getElementById("totp-aan").hidden = !ingeschakeld;
     document.getElementById("totp-instellen").hidden = true;
+    // Staat tweestapsverificatie aan, dan hoort het codeveld meteen in
+    // beeld te staan — niet pas als er iets misgaat.
+    var balk = document.getElementById("totp-balk");
+    if (balk) {
+      balk.hidden = !ingeschakeld;
+      if (!ingeschakeld) toonStatus_("status-totp-balk", "", false);
+    }
     document.getElementById("totp-uitleg").textContent = ingeschakeld
       ? "Tweestapsverificatie staat aan voor dit account."
       : "Tweestapsverificatie staat nu uit. Met een authenticator-app erbij is inloggen op deze beheerpagina niet meer mogelijk met alleen de pincode.";
@@ -724,8 +835,13 @@
     });
   });
 
+  // Zodra er zes cijfers staan, mag de waarschuwing weg.
+  document.getElementById("beheer-totp-actief").addEventListener("input", function () {
+    if (/^\d{6}$/.test(this.value.trim())) toonStatus_("status-totp-balk", "", false);
+  });
+
   document.getElementById("knop-totp-uit").addEventListener("click", function () {
-    if (!confirm("Tweestapsverificatie uitschakelen?")) return;
+    if (!confirm("Tweestapsverificatie uitschakelen? Vul eerst bovenaan de actuele code uit de app in.")) return;
     beheerFetch_("2fa-uitschakelen", {}, function (json) {
       if (json && json.ok) {
         toonTotpStatus_(false);
