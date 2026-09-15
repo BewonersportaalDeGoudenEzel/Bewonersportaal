@@ -1,4 +1,4 @@
-const CACHE_NAAM = "gouden-ezel-v94";
+const CACHE_NAAM = "gouden-ezel-v96";
 const BESTANDEN = [
   "./",
   "./index.html",
