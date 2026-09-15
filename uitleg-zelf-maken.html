@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#234f38">
+<title>Zonder code gebouwd — De Gouden Ezel</title>
+<meta name="description" content="Hoe de bewonerscommissie van de Polanenflat haar eigen bewonersportaal bouwde zonder te kunnen programmeren, en hoe u dat ook kunt.">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
+  :root {
+    --ground: #f5f6f4;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-zacht: #4d554f;
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --goud: #9d7a2e;
+    --rand: #d8dcd6;
+    --rand-zacht: #e6e9e4;
+
+    --sans: "Segoe UI", Arial, Helvetica, sans-serif;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #14180f;
+      --surface: #1c221b;
+      --ink: #eef1ea;
+      --ink-zacht: #a8b3a6;
+      --groen: #7fc49b;
+      --groen-donker: #a9d7bd;
+      --goud: #d6b463;
+      --rand: #2f3a2e;
+      --rand-zacht: #273126;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #14180f;
+    --surface: #1c221b;
+    --ink: #eef1ea;
+    --ink-zacht: #a8b3a6;
+    --groen: #7fc49b;
+    --groen-donker: #a9d7bd;
+    --goud: #d6b463;
+    --rand: #2f3a2e;
+    --rand-zacht: #273126;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .blad {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 56px;
+  }
+
+  /* ── Kop ── */
+  .kop {
+    background: var(--groen-donker);
+    color: #f3f7f4;
+    padding-block: 44px 40px;
+    margin-bottom: 40px;
+  }
+  :root[data-theme="dark"] .kop,
+  :root:not([data-theme="light"]) .kop { color: #0f140e; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .kop { color: #f3f7f4; }
+  }
+  .kop-binnen {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding-inline: 20px;
+  }
+  .eyebrow {
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.82;
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 2.9rem);
+    line-height: 1.12;
+    text-wrap: balance;
+    margin: 0 0 16px;
+  }
+  .lead {
+    font-size: 1.08rem;
+    margin: 0;
+    max-width: 34rem;
+    opacity: 0.94;
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    text-wrap: balance;
+    color: var(--groen-donker);
+    margin: 44px 0 12px;
+  }
+
+  p { margin: 0 0 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  a { color: var(--groen); }
+
+  /* ── De drie onderdelen ── */
+  .onderdelen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 16px;
+    margin: 24px 0 8px;
+  }
+  .onderdeel {
+    background: var(--surface);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .onderdeel h3 {
+    font-family: var(--serif);
+    font-size: 1.12rem;
+    margin: 0 0 4px;
+    color: var(--groen-donker);
+  }
+  .onderdeel .rol {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--goud);
+    margin: 0 0 10px;
+  }
+  .onderdeel p { font-size: 0.95rem; color: var(--ink-zacht); }
+
+  /* ── De stappen: dit is een echte volgorde ── */
+  .stappen {
+    list-style: none;
+    counter-reset: stap;
+    margin: 24px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .stappen li {
+    counter-increment: stap;
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .stappen li::before {
+    content: counter(stap);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--goud);
+    line-height: 1.3;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .stappen h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .stappen p { font-size: 0.97rem; color: var(--ink-zacht); margin-bottom: 0; }
+
+  /* ── Uitgelicht kader ── */
+  .kader {
+    background: var(--surface);
+    border-left: 4px solid var(--groen);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 22px;
+    margin: 28px 0;
+  }
+  .kader h3 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    margin: 0 0 8px;
+    color: var(--groen-donker);
+  }
+  .kader p { font-size: 0.97rem; }
+
+  .afsluiting {
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rand);
+    font-size: 0.95rem;
+    color: var(--ink-zacht);
+  }
+</style>
+</head>
+<body>
+<div class="kop">
+  <div class="kop-binnen">
+    <p class="eyebrow">Bewonerscommissie Polanenflat</p>
+    <h1>Zonder code gebouwd</h1>
+    <p class="lead">Het bewonersportaal waar u reparatieverzoeken indient, de recreatiezaal aanvraagt en de mededelingen leest, is door mij gemaakt. Ik kan niet programmeren. Hieronder staat precies hoe het toch gelukt is, zodat u het ook kunt.</p>
+  </div>
+</div>
+
+<div class="blad">
+
+  <h2>Waarom ik eraan begon</h2>
+  <p>Er gingen meldingen verloren. Iemand belde over een lekkage, kreeg te horen dat het genoteerd was, en hoorde daarna maanden niets meer. Wilden we de verhuurder aanspreken op achterstallig onderhoud, dan hadden we niets in handen: geen aantallen, geen data, geen bewijs dat dezelfde lift al de vierde keer stilstond. Iedereen wist dat er veel misging, maar niemand kon het laten zien.</p>
+  <p>Wat ik wilde was eigenlijk simpel. Een plek waar een bewoner in twee minuten een reparatieverzoek doet, waar dat verzoek automatisch naar de verhuurder gaat, en waar wij als commissie zien wat er speelt in het gebouw. Zoiets laten bouwen kost al gauw duizenden euro's. Dus ben ik het zelf gaan proberen.</p>
+
+  <h2>Wat ik ervan wist: niets</h2>
+  <p>Ik heb geen technische opleiding. Ik wist niet wat een server is, ik had nog nooit een regel code geschreven en ik heb dat ook nu niet geleerd. Ik heb geen enkele keer zelf bedacht hoe iets geprogrammeerd moest worden.</p>
+  <p>Wat ik wel deed, is in gewone taal opschrijven wat ik wilde, en dat aan een AI-assistent vragen. Die schrijft de code. Ik kopieer hem, plak hem op de goede plek en kijk of het werkt. Werkt het niet, dan vertel ik wat er misging, en dan komt er een verbeterde versie. Dat is het hele kunstje. Het lijkt op samenwerken met een vakman die alles kan maken maar nooit in het gebouw is geweest: u moet vertellen wat u nodig heeft, en controleren of wat terugkomt klopt.</p>
+
+  <h2>Waar zo'n portaal uit bestaat</h2>
+  <p>Het lijkt één geheel, maar het zijn drie losse dingen die met elkaar praten. Alle drie gratis, alle drie van een bestaand bedrijf, geen van drieën iets dat u zelf moet onderhouden.</p>
+
+  <div class="onderdelen">
+    <div class="onderdeel">
+      <p class="rol">De archiefkast</p>
+      <h3>Google Spreadsheet</h3>
+      <p>Elk reparatieverzoek, elke vraag en elke zaalaanvraag komt als regel in een spreadsheet. Precies hetzelfde soort bestand waarin u een boodschappenlijst of de kas bijhoudt.</p>
+    </div>
+    <div class="onderdeel">
+      <p class="rol">De loopjongen</p>
+      <h3>Apps Script</h3>
+      <p>Zit gratis in diezelfde spreadsheet, onder Extensies. Dit vangt de formulieren op, zet ze in de kast, stuurt de mails naar de verhuurder en houdt de agenda bij.</p>
+    </div>
+    <div class="onderdeel">
+      <p class="rol">De etalage</p>
+      <h3>GitHub Pages</h3>
+      <p>Gratis plek om een website neer te zetten. U sleept er bestanden naartoe en een minuut later staat de pagina online, met een eigen adres.</p>
+    </div>
+  </div>
+
+  <h2>Hoe het in de praktijk gaat</h2>
+  <p>Niet in één keer. Het portaal is in kleine stukjes ontstaan, en zo zou ik het u ook aanraden.</p>
+
+  <ol class="stappen">
+    <li>
+      <div>
+        <h3>Begin bij het probleem, niet bij de oplossing</h3>
+        <p>Schrijf op wat er misgaat en voor wie. Niet "ik wil een database met een formulier", maar "bewoners weten niet waar ze een lekkage moeten melden en wij zien nooit hoeveel er zijn". De rest volgt daaruit.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Vraag eerst een voorbeeld</h3>
+        <p>Laat altijd eerst een proefversie maken die u kunt bekijken voordat er iets echt verandert. Dan ziet u meteen of het is wat u bedoelde, en kost een misverstand u vijf minuten in plaats van een avond.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Kopiëren, plakken, opslaan</h3>
+        <p>Meer hoeft u met de code niet te doen. De ene helft gaat in de scripteditor van de spreadsheet, de andere helft sleept u naar GitHub. Vraag er gerust bij waar iets precies geplakt moet worden — dat is geen domme vraag.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Test met een nepadres</h3>
+        <p>In ons portaal bestaan drie huisnummers die er niet echt zijn. Wie daarmee oefent, stuurt niets naar de verhuurder. Zorg dat u zoiets heeft voordat u anderen laat meedoen.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Zeg het gewoon als iets niet goed is</h3>
+        <p>"Dit staat scheef", "hier snap ik niets van", "dit was niet wat ik bedoelde" — daar kunt u prima mee aankomen. Krijgt u een foutmelding op uw scherm, plak die dan letterlijk terug. Daar staat vaak precies in wat er mis is.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Eén ding tegelijk</h3>
+        <p>Een knop erbij, kijken of het werkt, dan de volgende. Verandert u tien dingen tegelijk en gaat er iets stuk, dan weet u niet meer waardoor.</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="kader">
+    <h3>Wat het kost</h3>
+    <p>Het portaal zelf kost niets. Een Google-account en een GitHub-account zijn gratis, en bij de aantallen van een flat als de onze blijft alles ruim binnen wat je gratis mag gebruiken. Voor de AI-assistent bestaat een gratis versie; wie er veel mee werkt, betaalt een abonnement van een paar tientjes per maand. Verder kost het vooral avonden.</p>
+  </div>
+
+  <h2>Wat er misgaat, want dat hoort erbij</h2>
+  <p>Van de tien dingen die ik probeerde, werkte er ongeveer één meteen. De rest ging stuk, zag er lelijk uit of deed net iets anders dan ik bedoelde. Soms lag het aan mij, omdat ik niet goed had uitgelegd wat ik wilde. Soms zat er gewoon een fout in de code die ik kreeg — dat gebeurt, ook een AI vergist zich, en dan plakt u de foutmelding terug en komt er een nieuwe versie.</p>
+  <p>Het lastigste is niet de techniek maar het geduld. U bouwt iets waarvan u de binnenkant niet begrijpt. Dat voelt ongemakkelijk. Daar staat tegenover dat u het wel altijd kunt controleren aan de buitenkant: doet de knop wat hij moet doen, komt de mail aan, staat de melding in de lijst. Als dat klopt, klopt het.</p>
+
+  <h2>Het gaat over gegevens van uw buren</h2>
+  <p>Dit is het enige punt waarop ik echt streng zou zijn. Zodra u namen, adressen en klachten van anderen opslaat, draagt u daar verantwoordelijkheid voor. Denk van tevoren na over wie erbij kan, wat u wel en niet bewaart, en wat er gebeurt als iemand liever niet heeft dat u zijn melding meeleest.</p>
+  <p>Bij ons kiest de bewoner daarom zelf of de commissie de gegevens mag gebruiken. Kiest iemand ervoor dat alleen de verhuurder het ziet, dan houden wij niets over behalve dát er een melding was en wanneer. En de pincodes waarmee bewoners inloggen kan ik zelf niet uitlezen: die staan versleuteld opgeslagen, ook voor mij. Vraag zulke dingen expliciet; ze komen er niet vanzelf in.</p>
+
+  <h2>Waar u zou kunnen beginnen</h2>
+  <p>Niet bij een heel portaal. Begin met één formulier dat een mailtje naar uzelf stuurt en een regel in een spreadsheet zet. Dat is in een avond te doen, en het is precies hetzelfde mechanisme als alles wat er daarna bij komt — een dashboard, een agenda, een inlog. De rest is herhaling van dat ene kunstje.</p>
+  <p>En bedenk waarvoor u het maakt. Niet omdat het kan, maar omdat er iets misgaat dat u wilt oplossen. Dat portaal is uiteindelijk maar een middel: het echte doel was dat een melding niet meer verdwijnt, en dat wij aan tafel kunnen laten zien wat er in dit gebouw gebeurt.</p>
+
+  <div class="kader">
+    <h3>Wilt u het proberen?</h3>
+    <p>Kom gerust langs of mail naar polanenflat@gmail.com. Ik laat graag zien hoe het er van binnen uitziet, en ik help u op weg met uw eerste formulier — of het nu voor de flat is of voor iets heel anders.</p>
+  </div>
+
+  <p class="afsluiting">Mats Ruck, voorzitter bewonerscommissie Jan van Polanenflat, Heemskerk.</p>
+
+</div>
+</body>
+</html>

@@ -183,7 +183,7 @@
 <main id="inhoud">
   <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
 
-  <p class="let-op">Deze pagina is alleen voor het hoofdaccount van de bewonerscommissie. Log hieronder in met uw eigen huisnummer en pincode.</p>
+  <p class="let-op">Deze pagina is alleen voor de beheerders van het portaal. Log hieronder in met uw eigen huisnummer en pincode.</p>
 
   <div class="kaart" id="login-kaart">
     <form id="form-login" novalidate>
@@ -205,6 +205,17 @@
   </div>
 
   <div id="beheer-inhoud" hidden>
+
+    <div class="kaart">
+      <h2>Beheerders</h2>
+      <p class="uitleg">Een beheerder kan alles wat u hier kunt: commissieleden beheren, bewoners toegang geven of intrekken, en oude meldingen invoeren. Het hoofdaccount staat vast en kan door niemand verwijderd worden — ook niet door een andere beheerder.</p>
+      <ul class="lijst" id="lijst-beheerders"></ul>
+      <div class="toevoeg-rij">
+        <input type="text" inputmode="numeric" id="nieuwe-beheerder" placeholder="Huisnummer">
+        <button type="button" class="knop" id="knop-beheerder-toevoegen">Toevoegen</button>
+      </div>
+      <p class="status-tekst" id="status-beheerders"></p>
+    </div>
 
     <div class="kaart">
       <h2>Commissieleden</h2>
@@ -389,6 +400,78 @@
     el.textContent = tekst || "";
     el.classList.toggle("status-ok", !!ok);
   }
+
+  // ── Beheerders ──
+  var hoofdaccount = "";
+
+  function toonBeheerders_(lijst) {
+    var ul = document.getElementById("lijst-beheerders");
+    ul.innerHTML = "";
+
+    // Het hoofdaccount staat bovenaan, zonder verwijderknop — die kan
+    // er per slot van rekening niet uit.
+    if (hoofdaccount) {
+      var liHoofd = document.createElement("li");
+      var spanHoofd = document.createElement("span");
+      spanHoofd.textContent = "Huisnummer " + hoofdaccount + " — hoofdaccount";
+      var slot = document.createElement("span");
+      slot.textContent = "vast";
+      slot.style.color = "#555";
+      slot.style.fontSize = "0.82rem";
+      liHoofd.appendChild(spanHoofd);
+      liHoofd.appendChild(slot);
+      ul.appendChild(liHoofd);
+    }
+
+    (lijst || []).forEach(function (h) {
+      var li = document.createElement("li");
+      var span = document.createElement("span");
+      span.textContent = "Huisnummer " + h;
+      var knop = document.createElement("button");
+      knop.type = "button";
+      knop.className = "knop knop-rood";
+      knop.textContent = "Verwijderen";
+      knop.addEventListener("click", function () {
+        if (!confirm("Beheerder " + h + " verwijderen? Diegene kan daarna niet meer bij deze pagina.")) return;
+        beheerFetch_("beheerder-verwijderen", { doelHuisnummer: h }, function (json) {
+          if (json && json.ok) {
+            toonBeheerders_(json.beheerders);
+            toonStatus_("status-beheerders", "", false);
+            laadOverzicht_();
+          } else {
+            toonStatus_("status-beheerders", (json && json.error) || "Kon niet verwijderen.", false);
+          }
+        });
+      });
+      li.appendChild(span);
+      li.appendChild(knop);
+      ul.appendChild(li);
+    });
+
+    if (!hoofdaccount && (!lijst || !lijst.length)) {
+      var leeg = document.createElement("li");
+      leeg.className = "leeg";
+      leeg.textContent = "Nog geen beheerders.";
+      ul.appendChild(leeg);
+    }
+  }
+
+  document.getElementById("knop-beheerder-toevoegen").addEventListener("click", function () {
+    var input = document.getElementById("nieuwe-beheerder");
+    var h = input.value.trim();
+    if (!h) return;
+    if (!confirm("Huisnummer " + h + " beheerder maken? Diegene kan daarna alles wat u hier kunt.")) return;
+    beheerFetch_("beheerder-toevoegen", { doelHuisnummer: h }, function (json) {
+      if (json && json.ok) {
+        input.value = "";
+        toonBeheerders_(json.beheerders);
+        toonStatus_("status-beheerders", "", false);
+        laadOverzicht_();
+      } else {
+        toonStatus_("status-beheerders", (json && json.error) || "Kon niet toevoegen.", false);
+      }
+    });
+  });
 
   // ── Commissieleden ──
   function toonCommissieleden_(lijst) {
@@ -656,6 +739,8 @@
   function laadOverzicht_() {
     beheerFetch_("overzicht", {}, function (json) {
       if (json && json.ok) {
+        hoofdaccount = json.hoofdaccount || "";
+        toonBeheerders_(json.beheerders);
         toonCommissieleden_(json.commissieleden);
         toonOudeMeldingen_(json.oudeMeldingen);
       }
@@ -677,6 +762,8 @@
         toonStatus_("login-status", "", false);
         document.getElementById("login-kaart").hidden = true;
         document.getElementById("beheer-inhoud").hidden = false;
+        hoofdaccount = json.hoofdaccount || "";
+        toonBeheerders_(json.beheerders);
         toonCommissieleden_(json.commissieleden);
         toonOudeMeldingen_(json.oudeMeldingen);
         beheerFetch_("2fa-status", {}, function (statusJson) {

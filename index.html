@@ -1378,21 +1378,46 @@
       }
       werkFormulierLinksBij(b);
 
-      // Knop "Mededeling plaatsen" alleen tonen aan commissie-huisnummers.
-      var knopMededelingPlaatsen = document.getElementById("link-mededeling-plaatsen");
-      if (knopMededelingPlaatsen) {
-        knopMededelingPlaatsen.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
-      }
-      // Idem voor "Agendapunt plaatsen" — alleen commissie-huisnummers.
+      werkCommissieknoppenBij(b.huisnummer);
+    }
+
+    /**
+     * Welke commissieknoppen krijgt dit huisnummer te zien? Dat vraagt
+     * de pagina aan het script zelf, zodat een commissielid of beheerder
+     * die er later bij komt de knoppen meteen ziet — zonder dat deze
+     * website daarvoor aangepast hoeft te worden.
+     *
+     * Het is puur tonen/verbergen: wie een pagina toch rechtstreeks
+     * opent, komt er nog steeds niet in, want daar wordt opnieuw op
+     * huisnummer én pincode gecontroleerd.
+     */
+    function werkCommissieknoppenBij(huisnummer) {
+      var knopMededeling = document.getElementById("link-mededeling-plaatsen");
       var knopAgendapunt = document.getElementById("link-agendapunt-plaatsen");
-      if (knopAgendapunt) {
-        knopAgendapunt.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
-      }
-      // Het hele blok "Beheer" alleen tonen aan het hoofdaccount.
       var kaartBeheer = document.getElementById("kaart-beheer");
-      if (kaartBeheer) {
-        kaartBeheer.hidden = String(b.huisnummer || "").trim() !== HOOFDACCOUNT_HUISNUMMER;
+
+      function zet(commissielid, beheerder) {
+        if (knopMededeling) knopMededeling.hidden = !commissielid;
+        if (knopAgendapunt) knopAgendapunt.hidden = !commissielid;
+        if (kaartBeheer) kaartBeheer.hidden = !beheerder;
       }
+
+      var nummer = String(huisnummer || "").trim();
+      if (!nummer) { zet(false, false); return; }
+
+      // Zolang het antwoord er nog niet is: tonen op basis van het
+      // lijstje hieronder, zodat er niets staat te knipperen.
+      var bekend = COMMISSIE_HUISNUMMERS.indexOf(nummer) !== -1;
+      zet(bekend, nummer === HOOFDACCOUNT_HUISNUMMER);
+
+      fetch(BEWONER_SCRIPT_URL + "?actie=rollen&huisnummer=" + encodeURIComponent(nummer))
+        .then(function (r) { return r.json(); })
+        .then(function (json) {
+          if (json && json.ok) zet(!!json.commissielid, !!json.beheerder);
+        })
+        .catch(function () {
+          // geen internet: laat staan wat er al stond
+        });
     }
 
     function toonKeuze() {
