@@ -124,6 +124,7 @@
   .icoon-schoonmaak { background: var(--cyaan); }
   .icoon-privacy { background: #4a5a52; }
   .icoon-beheer { background: #6b4e9c; }
+  .icoon-agenda { background: #b3540f; }
 
   .kaart h2 {
     margin: 0;
@@ -808,6 +809,16 @@
     </div>
 
     <div class="kaart">
+      <div class="kaart-icoon icoon-agenda" aria-hidden="true">📅</div>
+      <h2>Agenda</h2>
+      <p>Wat er op de rol staat bij de bewonerscommissie, en welke dagen de recreatiezaal bezet is.</p>
+      <div class="knop-rij">
+        <a class="knop" href="#agenda">Agenda bekijken</a>
+        <a class="knop" href="agendapunt-plaatsen.html" id="link-agendapunt-plaatsen" hidden>Agendapunt plaatsen</a>
+      </div>
+    </div>
+
+    <div class="kaart">
       <div class="kaart-icoon icoon-privacy" aria-hidden="true">🔒</div>
       <h2>Privacyverklaring</h2>
       <p>Welke gegevens wij bewaren, waarvoor, wie erbij kan en hoe lang. In gewone taal.</p>
@@ -1372,6 +1383,11 @@
       if (knopMededelingPlaatsen) {
         knopMededelingPlaatsen.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
       }
+      // Idem voor "Agendapunt plaatsen" — alleen commissie-huisnummers.
+      var knopAgendapunt = document.getElementById("link-agendapunt-plaatsen");
+      if (knopAgendapunt) {
+        knopAgendapunt.hidden = COMMISSIE_HUISNUMMERS.indexOf(String(b.huisnummer || "").trim()) === -1;
+      }
       // Het hele blok "Beheer" alleen tonen aan het hoofdaccount.
       var kaartBeheer = document.getElementById("kaart-beheer");
       if (kaartBeheer) {
@@ -1433,6 +1449,8 @@
         // afmelden op het scherm staan tot de pagina herladen wordt.
         var knopMededelingPlaatsenAf = document.getElementById("link-mededeling-plaatsen");
         if (knopMededelingPlaatsenAf) knopMededelingPlaatsenAf.hidden = true;
+        var knopAgendapuntAf = document.getElementById("link-agendapunt-plaatsen");
+        if (knopAgendapuntAf) knopAgendapuntAf.hidden = true;
         var kaartBeheerAf = document.getElementById("kaart-beheer");
         if (kaartBeheerAf) kaartBeheerAf.hidden = true;
       });

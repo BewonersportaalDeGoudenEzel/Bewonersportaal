@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6f4f">
+<meta name="robots" content="noindex, nofollow">
+<title>Agendapunt plaatsen — De Gouden Ezel</title>
+<meta name="description" content="Alleen voor de bewonerscommissie: een agendapunt op de agenda van het bewonersportaal zetten.">
+<link rel="icon" href="Gouden%20Ezel.png">
+<link rel="apple-touch-icon" href="Gouden%20Ezel.png">
+<style>
+  :root {
+    --groen: #2f6f4f;
+    --groen-donker: #234f38;
+    --blauw: #2b5faa;
+    --oranje: #b3540f;
+    --rood: #a33;
+    --tekst: #1a1a1a;
+    --achtergrond: #f5f6f4;
+    --kaart: #ffffff;
+    --rand: #d8dcd6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  a { color: var(--blauw); }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 12px 18px;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+
+  header {
+    background: var(--groen-donker);
+    color: #fff;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  header .logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  .terug-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    margin-right: 18px;
+    font-size: 0.95rem;
+  }
+
+  .let-op {
+    background: #fff4e6;
+    border: 1px solid #e8c398;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .kaart {
+    background: var(--kaart);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .kaart h2 { margin: 0 0 6px 0; font-size: 1.1rem; }
+  .kaart .uitleg { font-size: 0.85rem; color: #555; margin: 0 0 14px 0; }
+
+  .veld-groep { margin-bottom: 16px; }
+  .veld-groep label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+  .veld-groep input, .veld-groep textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--rand);
+    border-radius: 8px;
+    font-family: inherit;
+  }
+  .veld-rij { display: flex; gap: 12px; flex-wrap: wrap; }
+  .veld-rij .veld-groep { flex: 1 1 180px; }
+
+  button.knop {
+    background: var(--groen);
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.knop:disabled { opacity: 0.6; cursor: default; }
+
+  .status-tekst { margin-top: 12px; font-size: 0.92rem; color: var(--rood); }
+  .status-tekst.status-ok { color: var(--groen-donker); }
+
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhoud">Ga direct naar de inhoud</a>
+
+<header>
+  <img class="logo" src="logo-ezel.png" alt="De Gouden Ezel — logo" width="100" height="100">
+  <h1>Agendapunt plaatsen</h1>
+</header>
+
+<main id="inhoud">
+  <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
+  <a class="terug-link" href="index.html#agenda">📅 Naar de agenda</a>
+
+  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf.</p>
+
+  <div class="kaart" id="login-kaart">
+    <form id="form-login" novalidate>
+      <div class="veld-groep">
+        <label for="agenda-huisnummer">Huisnummer *</label>
+        <input type="text" inputmode="numeric" id="agenda-huisnummer" required autocomplete="off">
+      </div>
+      <div class="veld-groep">
+        <label for="agenda-pincode">Pincode (4 cijfers) *</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="agenda-pincode" required autocomplete="off">
+      </div>
+      <button type="submit" class="knop" id="knop-inloggen">Verder</button>
+      <p class="status-tekst" id="login-status"></p>
+    </form>
+  </div>
+
+  <div class="kaart" id="agenda-kaart" hidden>
+    <h2>Nieuw agendapunt</h2>
+    <p class="uitleg">Het agendapunt komt in de agenda onderaan het portaal te staan, tussen de zaalreserveringen, in een eigen kleur. Vult u geen tijden in, dan wordt het een agendapunt voor de hele dag.</p>
+
+    <form id="form-agendapunt" novalidate>
+      <div class="veld-groep">
+        <label for="ap-titel">Titel *</label>
+        <input type="text" id="ap-titel" required placeholder="Bijv. Bewonersvergadering">
+      </div>
+
+      <div class="veld-rij">
+        <div class="veld-groep">
+          <label for="ap-datum-begin">Datum *</label>
+          <input type="date" id="ap-datum-begin" required>
+        </div>
+        <div class="veld-groep">
+          <label for="ap-datum-eind">Einddatum (alleen bij meerdere dagen)</label>
+          <input type="date" id="ap-datum-eind">
+        </div>
+      </div>
+
+      <div class="veld-rij">
+        <div class="veld-groep">
+          <label for="ap-tijd-begin">Begintijd</label>
+          <input type="time" id="ap-tijd-begin">
+        </div>
+        <div class="veld-groep">
+          <label for="ap-tijd-eind">Eindtijd</label>
+          <input type="time" id="ap-tijd-eind">
+        </div>
+      </div>
+
+      <div class="veld-groep">
+        <label for="ap-omschrijving">Omschrijving</label>
+        <textarea id="ap-omschrijving" rows="4" placeholder="Waar gaat het over? Waar is het?"></textarea>
+      </div>
+
+      <button type="submit" class="knop" id="knop-plaatsen">Agendapunt plaatsen</button>
+      <p class="status-tekst" id="agenda-status"></p>
+    </form>
+  </div>
+</main>
+
+<script>
+  var AGENDA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  function toonStatus_(elementId, tekst, ok) {
+    var el = document.getElementById(elementId);
+    el.textContent = tekst || "";
+    el.classList.toggle("status-ok", !!ok);
+  }
+
+  // Het portaal stuurt overal huisnummer + pincode mee; de server
+  // controleert daarna zelf of dat huisnummer op de commissieledenlijst
+  // staat. Hier wordt dus niets "geopend" dat niet ook op de server
+  // dichtzit — het scheelt de commissie alleen een mislukte poging.
+  document.getElementById("form-login").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var huisnummer = document.getElementById("agenda-huisnummer").value.trim();
+    var pincode = document.getElementById("agenda-pincode").value.trim();
+    if (!huisnummer || !/^\d{4}$/.test(pincode)) {
+      toonStatus_("login-status", "Vul een huisnummer en 4-cijferige pincode in.", false);
+      return;
+    }
+    toonStatus_("login-status", "", false);
+    document.getElementById("login-kaart").hidden = true;
+    document.getElementById("agenda-kaart").hidden = false;
+  });
+
+  document.getElementById("form-agendapunt").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var knop = document.getElementById("knop-plaatsen");
+    var titel = document.getElementById("ap-titel").value.trim();
+    var datumBegin = document.getElementById("ap-datum-begin").value;
+    var datumEind = document.getElementById("ap-datum-eind").value;
+    var tijdBegin = document.getElementById("ap-tijd-begin").value;
+    var tijdEind = document.getElementById("ap-tijd-eind").value;
+
+    if (!titel || !datumBegin) {
+      toonStatus_("agenda-status", "Vul minstens een titel en een datum in.", false);
+      return;
+    }
+    if ((tijdBegin && !tijdEind) || (!tijdBegin && tijdEind)) {
+      toonStatus_("agenda-status", "Vul begin- én eindtijd in, of laat ze allebei leeg voor een hele dag.", false);
+      return;
+    }
+    if (datumEind && datumEind < datumBegin) {
+      toonStatus_("agenda-status", "De einddatum ligt vóór de begindatum.", false);
+      return;
+    }
+
+    knop.disabled = true;
+    toonStatus_("agenda-status", "Bezig met plaatsen...", true);
+
+    fetch(AGENDA_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        verzoekType: "agenda-toevoegen",
+        huisnummer: document.getElementById("agenda-huisnummer").value.trim(),
+        pincode: document.getElementById("agenda-pincode").value.trim(),
+        titel: titel,
+        datumBegin: datumBegin,
+        datumEind: datumEind || datumBegin,
+        tijdBegin: tijdBegin,
+        tijdEind: tijdEind,
+        omschrijving: document.getElementById("ap-omschrijving").value.trim()
+      })
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        knop.disabled = false;
+        // De agenda antwoordt met {result: "success"}; de pincode- en
+        // commissiecontrole antwoorden in de vorm {ok: false, error}.
+        if (json && (json.result === "success" || json.ok === true)) {
+          toonStatus_("agenda-status", "Geplaatst — het staat nu in de agenda op het portaal.", true);
+          document.getElementById("form-agendapunt").reset();
+        } else {
+          toonStatus_("agenda-status", (json && (json.message || json.error)) || "Kon het agendapunt niet plaatsen.", false);
+        }
+      })
+      .catch(function () {
+        knop.disabled = false;
+        toonStatus_("agenda-status", "Kon geen verbinding maken. Controleer uw internetverbinding.", false);
+      });
+  });
+</script>
+
+</body>
+</html>

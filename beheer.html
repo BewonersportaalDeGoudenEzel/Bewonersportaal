@@ -301,6 +301,11 @@
           <label for="om-watprobleem">Wat is het probleem *</label>
           <textarea id="om-watprobleem" rows="3" required></textarea>
         </div>
+        <div class="veld-groep">
+          <label for="om-fotos">Foto's (maximaal 3, bijvoorbeeld een schermafbeelding van de oude mail)</label>
+          <input type="file" id="om-fotos" accept="image/*" multiple>
+          <p class="uitleg" id="om-foto-status" style="margin:8px 0 0 0;"></p>
+        </div>
         <button type="submit" class="knop" id="knop-oude-melding">Versturen ter goedkeuring</button>
         <p class="status-tekst" id="status-oude-melding"></p>
       </form>
@@ -491,6 +496,64 @@
     });
   }
 
+  // Foto's worden eerst verkleind tot maximaal 1600 pixels en als JPEG
+  // meegestuurd — anders duurt het versturen op een telefoon veel te
+  // lang en wordt het bericht aan de server te groot.
+  var MAX_FOTOS_OUDE_MELDING = 3;
+
+  function verkleinFoto_(bestand, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var MAX = 1600;
+        var w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w >= h) { h = Math.round(h * (MAX / w)); w = MAX; }
+          else { w = Math.round(w * (MAX / h)); h = MAX; }
+        }
+        var canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { callback(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { callback(null); };
+    reader.readAsDataURL(bestand);
+  }
+
+  // Leest alle gekozen bestanden in en roept daarna pas de callback aan,
+  // met de lijst foto's erbij.
+  function leesFotos_(bestanden, callback) {
+    var lijst = [];
+    var teDoen = Math.min(bestanden.length, MAX_FOTOS_OUDE_MELDING);
+    if (!teDoen) { callback(lijst); return; }
+
+    var klaar = 0;
+    for (var i = 0; i < teDoen; i++) {
+      verkleinFoto_(bestanden[i], function (dataUrl) {
+        if (dataUrl) lijst.push({ base64: dataUrl, type: "image/jpeg" });
+        klaar++;
+        if (klaar === teDoen) callback(lijst);
+      });
+    }
+  }
+
+  document.getElementById("om-fotos").addEventListener("change", function () {
+    var aantal = this.files ? this.files.length : 0;
+    var tekst = "";
+    if (aantal > MAX_FOTOS_OUDE_MELDING) {
+      tekst = "Er worden maximaal " + MAX_FOTOS_OUDE_MELDING + " foto's meegestuurd; de rest laat ik weg.";
+    } else if (aantal === 1) {
+      tekst = "1 foto gekozen.";
+    } else if (aantal > 1) {
+      tekst = aantal + " foto's gekozen.";
+    }
+    document.getElementById("om-foto-status").textContent = tekst;
+  });
+
   document.getElementById("form-oude-melding").addEventListener("submit", function (event) {
     event.preventDefault();
     var knop = document.getElementById("knop-oude-melding");
@@ -503,28 +566,39 @@
       return;
     }
     knop.disabled = true;
-    beheerFetch_("oude-melding-indienen", {
-      doelHuisnummer: huisnummer,
-      emailBewoner: email,
-      voornaam: document.getElementById("om-voornaam").value.trim(),
-      achternaam: document.getElementById("om-achternaam").value.trim(),
-      telefoon: document.getElementById("om-telefoon").value.trim(),
-      straatnaam: document.getElementById("om-straatnaam").value.trim(),
-      postcode: document.getElementById("om-postcode").value.trim(),
-      plaats: document.getElementById("om-plaats").value.trim(),
-      soort: soort,
-      typeStoring: document.getElementById("om-typestoring").value.trim(),
-      waarProbleem: document.getElementById("om-waarprobleem").value.trim(),
-      watIsHetProbleem: watProbleem
-    }, function (json) {
-      knop.disabled = false;
-      if (json && json.ok) {
-        toonStatus_("status-oude-melding", "Verstuurd — de bewoner heeft een e-mail gekregen met een link om te bevestigen.", true);
-        document.getElementById("form-oude-melding").reset();
-        laadOverzicht_();
-      } else {
-        toonStatus_("status-oude-melding", (json && json.error) || "Kon de melding niet versturen.", false);
-      }
+
+    var bestanden = document.getElementById("om-fotos").files || [];
+    if (bestanden.length) {
+      toonStatus_("status-oude-melding", "Foto's worden klaargemaakt...", true);
+    }
+
+    leesFotos_(bestanden, function (fotos) {
+      beheerFetch_("oude-melding-indienen", {
+        doelHuisnummer: huisnummer,
+        emailBewoner: email,
+        voornaam: document.getElementById("om-voornaam").value.trim(),
+        achternaam: document.getElementById("om-achternaam").value.trim(),
+        telefoon: document.getElementById("om-telefoon").value.trim(),
+        straatnaam: document.getElementById("om-straatnaam").value.trim(),
+        postcode: document.getElementById("om-postcode").value.trim(),
+        plaats: document.getElementById("om-plaats").value.trim(),
+        soort: soort,
+        typeStoring: document.getElementById("om-typestoring").value.trim(),
+        waarProbleem: document.getElementById("om-waarprobleem").value.trim(),
+        watIsHetProbleem: watProbleem,
+        fotos: fotos
+      }, function (json) {
+        knop.disabled = false;
+        if (json && json.ok) {
+          var extra = json.fotos ? " De foto's zijn bewaard." : "";
+          toonStatus_("status-oude-melding", "Verstuurd — de bewoner heeft een e-mail gekregen met een link om te bevestigen." + extra, true);
+          document.getElementById("form-oude-melding").reset();
+          document.getElementById("om-foto-status").textContent = "";
+          laadOverzicht_();
+        } else {
+          toonStatus_("status-oude-melding", (json && json.error) || "Kon de melding niet versturen.", false);
+        }
+      });
     });
   });
 
