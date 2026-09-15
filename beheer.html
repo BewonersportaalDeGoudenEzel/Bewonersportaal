@@ -109,6 +109,20 @@
     font-family: inherit;
   }
   .veld-groep select:disabled { background: #f1f3f0; color: #777; }
+  .vinkje-groep label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .vinkje-groep input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0 0;
+    flex-shrink: 0;
+  }
   .veld-rij { display: flex; gap: 12px; flex-wrap: wrap; }
   .veld-rij .veld-groep { flex: 1 1 160px; }
 
@@ -334,6 +348,13 @@
         <div class="veld-groep">
           <label for="om-watprobleem">Wat is het probleem *</label>
           <textarea id="om-watprobleem" rows="3" required></textarea>
+        </div>
+        <div class="veld-groep vinkje-groep">
+          <label for="om-naar-hoen">
+            <input type="checkbox" id="om-naar-hoen" checked>
+            Na akkoord van de bewoner ook doorsturen naar Hoen Vastgoedbeheer
+          </label>
+          <p class="uitleg" style="margin:6px 0 0 28px;">Laat dit aan staan als het probleem nog speelt. Zet het uit bij iets dat allang verholpen is — dan blijft de melding alleen in onze eigen administratie staan.</p>
         </div>
         <div class="veld-groep">
           <label for="om-fotos">Foto's (maximaal 3, bijvoorbeeld een schermafbeelding van de oude mail)</label>
@@ -772,11 +793,15 @@
         typeStoring: document.getElementById("om-typestoring").value.trim(),
         waarProbleem: document.getElementById("om-waarprobleem").value.trim(),
         watIsHetProbleem: watProbleem,
+        naarHoen: document.getElementById("om-naar-hoen").checked,
         fotos: fotos
       }, function (json) {
         knop.disabled = false;
         if (json && json.ok) {
-          var extra = json.fotos ? " De foto's zijn bewaard." : "";
+          var extra = json.naarHoen
+            ? " Zodra hij bevestigt, gaat de melding ook naar Hoen."
+            : " Hij blijft alleen in onze eigen administratie.";
+          if (json.fotos) extra += " De foto's zijn bewaard.";
           toonStatus_("status-oude-melding", "Verstuurd — de bewoner heeft een e-mail gekregen met een link om te bevestigen." + extra, true);
           document.getElementById("form-oude-melding").reset();
           document.getElementById("om-foto-status").textContent = "";
