@@ -150,6 +150,16 @@
     margin-bottom: 16px;
   }
   .db-top h2 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+  .db-maandkiezer {
+    background: var(--db-kaart);
+    border: 1px solid var(--db-rand);
+    color: var(--db-tekst);
+    font-size: 0.85rem;
+    font-family: inherit;
+    padding: 7px 10px;
+    border-radius: 8px;
+  }
+  .db-maandkiezer:disabled { opacity: 0.6; }
 
   .db-sectie { margin-top: 28px; }
   .db-sectie:first-of-type { margin-top: 0; }
@@ -295,7 +305,7 @@
 <main id="inhoud">
   <a class="terug-link" href="index.html">← Terug naar het bewonersportaal</a>
 
-  <p class="let-op">Deze pagina is alleen voor de bewonerscommissie. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf.</p>
+  <p class="let-op">Dit dashboard is er voor alle bewoners. Log hieronder in met uw eigen huisnummer en pincode — dezelfde combinatie als op het portaal zelf. Er zijn alleen samengevatte aantallen te zien, nooit namen, adressen of individuele huisnummers.</p>
 
   <div class="kaart" id="login-kaart">
     <form id="form-login" novalidate>
@@ -315,6 +325,9 @@
   <div id="dashboard-paneel" hidden>
     <div class="db-top">
       <h2>Polanenflat</h2>
+      <select class="db-maandkiezer" id="dashboard-maand" aria-label="Periode">
+        <option value="">Alle maanden</option>
+      </select>
     </div>
 
     <div class="db-sectie">
@@ -333,6 +346,75 @@
   var DASHBOARD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
 
   var kleuren = { cyaan: "#2bd4f0", groen: "#3ddc97", amber: "#f6b94d", rood: "#f65c7a" };
+
+  // Bewaard na een geldige login, zodat de maandkiezer opnieuw kan
+  // ophalen zonder dat de bewoner steeds opnieuw moet inloggen.
+  var dashboardHuisnummer = "";
+  var dashboardPincode = "";
+
+  var MAAND_NAMEN = ["januari", "februari", "maart", "april", "mei", "juni",
+    "juli", "augustus", "september", "oktober", "november", "december"];
+
+  function maandLabel_(maandSleutel) {
+    var delen = String(maandSleutel).split("-");
+    var maandNr = parseInt(delen[1], 10);
+    return MAAND_NAMEN[maandNr - 1] + " " + delen[0];
+  }
+
+  // Vult de maandkiezer met de maanden waar daadwerkelijk meldingen
+  // over bestaan (van de server), en zet de huidig gekozen maand terug.
+  function vulMaandkiezer_(beschikbareMaanden, huidigeMaand) {
+    var select = document.getElementById("dashboard-maand");
+    if (!select) return;
+    select.innerHTML = "";
+    var optieAlles = el_("option", null, "Alle maanden");
+    optieAlles.value = "";
+    select.appendChild(optieAlles);
+    (beschikbareMaanden || []).forEach(function (m) {
+      var optie = el_("option", null, maandLabel_(m));
+      optie.value = m;
+      select.appendChild(optie);
+    });
+    select.value = huidigeMaand || "";
+  }
+
+  // Haalt de cijfers op (voor de ingelogde bewoner) en tekent ze. Wordt
+  // zowel gebruikt na het inloggen als bij het wisselen van maand.
+  function laadDashboard_(maand) {
+    var status = document.getElementById("login-status");
+    var maandSelect = document.getElementById("dashboard-maand");
+    if (maandSelect) maandSelect.disabled = true;
+
+    return fetch(DASHBOARD_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        verzoekType: "dashboard-gegevens",
+        huisnummer: dashboardHuisnummer,
+        pincode: dashboardPincode,
+        maand: maand || ""
+      })
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (json) {
+        if (maandSelect) maandSelect.disabled = false;
+        if (json && json.ok) {
+          if (status) status.textContent = "";
+          document.getElementById("login-kaart").hidden = true;
+          document.getElementById("dashboard-paneel").hidden = false;
+          vulMaandkiezer_(json.beschikbareMaanden, json.maand);
+          toonReparatieverzoeken_(json.reparatieverzoeken);
+          toonAanmeldingen_(json.aanmeldingen);
+        } else if (status) {
+          status.textContent = (json && json.error) || "Kon niet laden.";
+        }
+        return json;
+      })
+      .catch(function () {
+        if (maandSelect) maandSelect.disabled = false;
+        if (status) status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
+      });
+  }
 
   function el_(tag, klasse, tekst) {
     var e = document.createElement(tag);
@@ -715,31 +797,18 @@
       status.textContent = "Vul een huisnummer en 4-cijferige pincode in.";
       return;
     }
+    dashboardHuisnummer = huisnummer;
+    dashboardPincode = pincode;
     status.textContent = "Bezig met laden...";
     knop.disabled = true;
 
-    fetch(DASHBOARD_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ verzoekType: "dashboard-gegevens", huisnummer: huisnummer, pincode: pincode })
-    })
-      .then(function (response) { return response.json(); })
-      .then(function (json) {
-        knop.disabled = false;
-        if (json && json.ok) {
-          status.textContent = "";
-          document.getElementById("login-kaart").hidden = true;
-          document.getElementById("dashboard-paneel").hidden = false;
-          toonReparatieverzoeken_(json.reparatieverzoeken);
-          toonAanmeldingen_(json.aanmeldingen);
-        } else {
-          status.textContent = (json && json.error) || "Kon niet inloggen.";
-        }
-      })
-      .catch(function () {
-        knop.disabled = false;
-        status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
-      });
+    laadDashboard_("").then(function () {
+      knop.disabled = false;
+    });
+  });
+
+  document.getElementById("dashboard-maand").addEventListener("change", function () {
+    laadDashboard_(this.value);
   });
 </script>
 
