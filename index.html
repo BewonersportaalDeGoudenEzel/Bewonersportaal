@@ -191,6 +191,30 @@
   .kopen-blok p { margin: 0 0 12px 0; font-size: 0.97rem; color: #3a2f05; }
   .kopen-blok p:last-of-type { margin-bottom: 0; }
 
+  .muizen-info {
+    background: #eef3ef;
+    border: 1px solid #bcd3c4;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 4px;
+  }
+  .muizen-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.05rem;
+    color: var(--groen-donker);
+  }
+  .muizen-info p { margin: 0 0 10px 0; font-size: 0.95rem; color: #2a3a30; }
+  .muizen-info p:last-of-type { margin-bottom: 0; }
+  .muizen-info ul { margin: 0 0 10px 0; padding-left: 20px; font-size: 0.95rem; color: #2a3a30; }
+  .muizen-info li { margin-bottom: 4px; }
+  .muizen-info img {
+    display: block;
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #bcd3c4;
+  }
+
   .kopen-vink {
     display: flex;
     align-items: flex-start;
@@ -762,6 +786,23 @@
       <div class="kaart-icoon icoon-muizen" aria-hidden="true">🐭</div>
       <h2>Muizen</h2>
       <p>Muizen gezien in uw woning of in het gebouw? Meld dit hieronder.</p>
+
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-muizen-info-tonen" aria-expanded="false" aria-controls="muizen-info-inhoud">Hoe weet ik of ik muizen heb?</button>
+      </div>
+
+      <div class="muizen-info" id="muizen-info-inhoud" hidden>
+        <p>Niet altijd ziet u de muis zelf. Let ook op deze signalen:</p>
+        <ul>
+          <li><strong>Muizenkeutels (uitwerpselen):</strong> kleine, donkere korreltjes ter grootte van een rijstkorrel, vaak bij voedsel, in kastjes of achter apparatuur.</li>
+          <li><strong>Knaagsporen</strong> aan verpakkingen, houtwerk of kabels.</li>
+          <li><strong>Krabbel- of ritselgeluiden</strong> in de muur, onder de vloer of boven het plafond, vooral 's avonds en 's nachts.</li>
+          <li><strong>Een vettige, donkere veeg</strong> langs plinten of muren, waar muizen vaak dezelfde route lopen.</li>
+        </ul>
+        <p><!-- [AANPASSEN] vul hier eventueel nog iets aan over wat bewoners verder kunnen doen --></p>
+        <img src="muizenkeutels.jpg" alt="Voorbeeld van muizenkeutels (uitwerpselen)" loading="lazy" onerror="this.remove()">
+      </div>
+
       <div class="knop-rij">
         <a class="knop" id="link-muizen" href="reparatieverzoek.html">Muizenmelding starten</a>
       </div>
@@ -1930,6 +1971,18 @@
         knopVoorwaardenTonen.setAttribute("aria-expanded", toonNu ? "true" : "false");
         knopVoorwaardenTonen.textContent = toonNu ? "Verbergen" : "Voorwaarden recreatiezaal bekijken";
         if (toonNu) voorwaardenInhoud.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    }
+
+    var knopMuizenInfoTonen = document.getElementById("knop-muizen-info-tonen");
+    var muizenInfoInhoud = document.getElementById("muizen-info-inhoud");
+    if (knopMuizenInfoTonen && muizenInfoInhoud) {
+      knopMuizenInfoTonen.addEventListener("click", function () {
+        var toonNu = muizenInfoInhoud.hidden;
+        muizenInfoInhoud.hidden = !toonNu;
+        knopMuizenInfoTonen.setAttribute("aria-expanded", toonNu ? "true" : "false");
+        knopMuizenInfoTonen.textContent = toonNu ? "Verbergen" : "Hoe weet ik of ik muizen heb?";
+        if (toonNu) muizenInfoInhoud.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
     }
   })();
