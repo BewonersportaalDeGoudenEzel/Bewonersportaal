@@ -17,6 +17,8 @@
     --oranje: #b3540f;
     --roze: #a6296b;
     --cyaan: #0f6a75;
+    --bruin: #6b4423;
+    --goud: #a9790c;
     --tekst: #1a1a1a;
     --achtergrond: #f5f6f4;
     --kaart: #ffffff;
@@ -91,7 +93,7 @@
     grid-template-columns: 1fr;
     gap: 20px;
     margin-top: 8px;
-    align-items: start;
+    align-items: stretch;
   }
   @media (min-width: 640px) {
     .kaarten { grid-template-columns: 1fr 1fr; }
@@ -125,6 +127,9 @@
   .icoon-privacy { background: #4a5a52; }
   .icoon-beheer { background: #6b4e9c; }
   .icoon-agenda { background: #b3540f; }
+  .icoon-korting { background: #c0392b; }
+  .icoon-muizen { background: var(--bruin); }
+  .icoon-kopen { background: var(--goud); }
 
   .kaart h2 {
     margin: 0;
@@ -139,7 +144,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 4px;
+    margin-top: auto;
+    padding-top: 4px;
   }
 
   .knop {
@@ -167,6 +173,39 @@
     border: 2px solid var(--groen-donker);
   }
   .knop.secundair:hover, .knop.secundair:focus { background: #eef3ef; }
+  .knop.goud { background: var(--goud); }
+  .knop.goud:hover, .knop.goud:focus { background: #8a6209; }
+
+  .kopen-blok {
+    background: #fdf8ec;
+    border: 1px solid #e7c767;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 4px;
+  }
+  .kopen-blok p { margin: 0 0 12px 0; font-size: 0.97rem; color: #3a2f05; }
+  .kopen-blok p:last-of-type { margin-bottom: 0; }
+
+  .kopen-vink {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin: 14px 0 4px 0;
+  }
+  .kopen-vink input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .knop:disabled, .knop.goud:disabled {
+    background: #b9bdb6;
+    color: #fff;
+    cursor: not-allowed;
+  }
 
   a.knop:focus, button.knop:focus {
     outline: 3px solid #ffbf47;
@@ -715,6 +754,15 @@
     </div>
 
     <div class="kaart">
+      <div class="kaart-icoon icoon-muizen" aria-hidden="true">🐭</div>
+      <h2>Muizen</h2>
+      <p>Muizen gezien in uw woning of in het gebouw? Meld dit hieronder.</p>
+      <div class="knop-rij">
+        <a class="knop" id="link-muizen" href="reparatieverzoek.html">Muizenmelding starten</a>
+      </div>
+    </div>
+
+    <div class="kaart">
       <div class="kaart-icoon icoon-zaal" aria-hidden="true">📅</div>
       <h2>Recreatiezaal</h2>
       <p>Wilt u de recreatiezaal gebruiken, bijvoorbeeld voor een verjaardag? Bekijk hieronder hoe u reserveert en aan welke voorwaarden dat verbonden is.</p>
@@ -839,6 +887,41 @@
       <div id="schoonmaak-inhoud" hidden>
         <p class="schoonmaak-intro" id="schoonmaak-intro-tekst"></p>
         <div id="schoonmaak-lijst"></div>
+      </div>
+    </div>
+
+    <div class="kaart">
+      <div class="kaart-icoon icoon-korting" aria-hidden="true">🍕</div>
+      <h2>Pizzakorting</h2>
+      <p>Bewoners van de flat krijgen eenmalig 30% korting bij New York Pizza. Vraag hieronder uw code aan — u wordt direct doorgestuurd naar de bestelpagina.</p>
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-korting-aanvragen">Code aanvragen</button>
+      </div>
+      <p class="form-status" id="korting-status" hidden></p>
+    </div>
+
+    <div class="kaart">
+      <div class="kaart-icoon icoon-kopen" aria-hidden="true">🏠</div>
+      <h2>Woning kopen</h2>
+      <p>Overweegt u om uw huurwoning te kopen? Laat het ons weten — misschien kunnen we samen een betere prijs bedingen.</p>
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-kopen-tonen" aria-expanded="false" aria-controls="kopen-inhoud">Meer informatie</button>
+      </div>
+
+      <div id="kopen-inhoud" hidden>
+        <div class="kopen-blok">
+          <p>Thijmen wil in kaart brengen welke huurders hun woning zouden willen kopen, om te onderzoeken of we als collectief een betere aankoopprijs kunnen krijgen dan wanneer iedereen dit los van elkaar regelt.</p>
+          <p>Hij wil hierover graag in gesprek met alleen de bewoners die daadwerkelijk interesse hebben.</p>
+          <p>Door op de knop hieronder te klikken, geeft u aan dat u uw woning zou willen kopen.</p>
+        </div>
+        <label class="kopen-vink">
+          <input type="checkbox" id="kopen-akkoord-vink">
+          <span>Ik geef toestemming dat mijn naam en contactgegevens (telefoonnummer en e-mailadres) worden gedeeld met Thijmen, zodat hij hierover contact met mij kan opnemen.</span>
+        </label>
+        <div class="knop-rij">
+          <button type="button" class="knop goud" id="knop-kopen-akkoord" disabled>Ja, ik wil mijn woning kopen</button>
+        </div>
+        <p class="form-status" id="kopen-status" hidden></p>
       </div>
     </div>
 
@@ -1292,9 +1375,17 @@
   // zelf (zodat oude persoonlijke links blijven werken).
   function werkFormulierLinksBij(b) {
     var achtervoegsel = b ? bewonerLinkParams(b) : window.location.search;
-    ["link-reparatie", "link-vraag", "link-zaal"].forEach(function (id) {
+    // De muizenlink wijst naar hetzelfde reparatieverzoek, maar met een
+    // extra merkteken (?via=muizen) waarmee dat formulier het type
+    // storing alvast op "Ongediertebestrijding" zet.
+    var extraPerLink = { "link-muizen": "via=muizen" };
+    ["link-reparatie", "link-vraag", "link-zaal", "link-muizen"].forEach(function (id) {
       var link = document.getElementById(id);
-      if (link) link.href = link.getAttribute("href").split("?")[0] + achtervoegsel;
+      if (!link) return;
+      var href = link.getAttribute("href").split("?")[0] + achtervoegsel;
+      var extra = extraPerLink[id];
+      if (extra) href += (achtervoegsel ? "&" : "?") + extra;
+      link.href = href;
     });
   }
 
@@ -1379,6 +1470,156 @@
       werkFormulierLinksBij(b);
 
       werkCommissieknoppenBij(b.huisnummer);
+      werkKortingKnopBij(b);
+      werkKopenKnopBij(b);
+    }
+
+    /**
+     * Koppelt de knop "Code aanvragen" (Pizzakorting) aan het huisnummer
+     * en de pincode van de ingelogde bewoner. De kortingscode zelf komt
+     * nooit los in beeld: bij een geldige aanvraag stuurt het script een
+     * kant-en-klare bestel-URL terug en wordt de bewoner daar meteen
+     * naartoe gestuurd (zie kortingscodeAanvragen_ in het Apps Script).
+     */
+    function werkKortingKnopBij(b) {
+      var knop = document.getElementById("knop-korting-aanvragen");
+      var status = document.getElementById("korting-status");
+      if (!knop) return;
+
+      // Eerder gebonden handler eerst weghalen, anders luistert de knop
+      // na een tweede keer inloggen dubbel.
+      var nieuweKnop = knop.cloneNode(true);
+      knop.parentNode.replaceChild(nieuweKnop, knop);
+      knop = nieuweKnop;
+
+      knop.addEventListener("click", function () {
+        if (status) {
+          status.hidden = true;
+          status.className = "form-status";
+        }
+        knop.disabled = true;
+        var oorspronkelijkeTekst = knop.textContent;
+        knop.textContent = "Bezig...";
+
+        fetch(BEWONER_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ verzoekType: "kortingscode-aanvragen", huisnummer: b.huisnummer, pincode: b.pincode })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (json) {
+            knop.disabled = false;
+            knop.textContent = oorspronkelijkeTekst;
+            if (json && json.ok && json.bestelUrl) {
+              if (status) {
+                status.textContent = "Gelukt! U wordt doorgestuurd naar New York Pizza...";
+                status.className = "form-status gelukt";
+                status.hidden = false;
+              }
+              window.location.href = json.bestelUrl;
+            } else if (status) {
+              status.textContent = (json && json.error) || "Er ging iets mis. Probeer het later opnieuw.";
+              status.className = "form-status fout";
+              status.hidden = false;
+            }
+          })
+          .catch(function () {
+            knop.disabled = false;
+            knop.textContent = oorspronkelijkeTekst;
+            if (status) {
+              status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
+              status.className = "form-status fout";
+              status.hidden = false;
+            }
+          });
+      });
+    }
+
+    /**
+     * "Woning kopen": klapt de toelichting van Thijmen open/dicht, en
+     * stuurt bij akkoord het huisnummer + contactgegevens door (zie
+     * woningKopenAanvragen_ in het Apps Script) — Thijmen krijgt daar
+     * direct een mail van, en benadert alleen wie hier akkoord geeft.
+     */
+    function werkKopenKnopBij(b) {
+      var knopTonen = document.getElementById("knop-kopen-tonen");
+      var kopenInhoud = document.getElementById("kopen-inhoud");
+      if (knopTonen && kopenInhoud) {
+        var nieuweKnopTonen = knopTonen.cloneNode(true);
+        knopTonen.parentNode.replaceChild(nieuweKnopTonen, knopTonen);
+        knopTonen = nieuweKnopTonen;
+        knopTonen.addEventListener("click", function () {
+          var open = !kopenInhoud.hidden;
+          kopenInhoud.hidden = open;
+          knopTonen.setAttribute("aria-expanded", String(!open));
+        });
+      }
+
+      var knop = document.getElementById("knop-kopen-akkoord");
+      var status = document.getElementById("kopen-status");
+      var vink = document.getElementById("kopen-akkoord-vink");
+      if (!knop) return;
+
+      var nieuweKnop = knop.cloneNode(true);
+      knop.parentNode.replaceChild(nieuweKnop, knop);
+      knop = nieuweKnop;
+
+      // De knop blijft uit tot het toestemmingsvinkje is aangevinkt —
+      // zonder toestemming mogen we de gegevens niet met Thijmen delen.
+      if (vink) {
+        var nieuweVink = vink.cloneNode(true);
+        vink.parentNode.replaceChild(nieuweVink, vink);
+        vink = nieuweVink;
+        knop.disabled = !vink.checked;
+        vink.addEventListener("change", function () {
+          knop.disabled = !vink.checked;
+        });
+      }
+
+      knop.addEventListener("click", function () {
+        if (vink && !vink.checked) return;
+        if (status) {
+          status.hidden = true;
+          status.className = "form-status";
+        }
+        knop.disabled = true;
+        var oorspronkelijkeTekst = knop.textContent;
+        knop.textContent = "Bezig...";
+
+        fetch(BEWONER_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ verzoekType: "woning-kopen-aanvragen", huisnummer: b.huisnummer, pincode: b.pincode, akkoordDelen: true })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (json) {
+            if (json && json.ok) {
+              knop.textContent = "Bedankt — aangemeld";
+              if (status) {
+                status.textContent = "Bedankt! Thijmen weet dat u interesse heeft en neemt hierover contact met u op.";
+                status.className = "form-status gelukt";
+                status.hidden = false;
+              }
+            } else {
+              knop.disabled = false;
+              knop.textContent = oorspronkelijkeTekst;
+              if (status) {
+                status.textContent = (json && json.error) || "Er ging iets mis. Probeer het later opnieuw.";
+                status.className = "form-status fout";
+                status.hidden = false;
+              }
+            }
+          })
+          .catch(function () {
+            knop.disabled = false;
+            knop.textContent = oorspronkelijkeTekst;
+            if (status) {
+              status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
+              status.className = "form-status fout";
+              status.hidden = false;
+            }
+          });
+      });
     }
 
     /**
