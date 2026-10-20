@@ -108,6 +108,11 @@
     flex-direction: column;
     gap: 12px;
   }
+  /* Zonder deze regel wint "display: flex" hierboven het van het
+     hidden-attribuut (gelijke CSS-specificiteit), en blijft een kaart
+     met hidden gewoon zichtbaar — zo bleef bijvoorbeeld de Beheer-kaart
+     voor iedereen in beeld staan, ook voor wie geen hoofdaccount is. */
+  .kaart[hidden] { display: none; }
 
   .kaart-icoon {
     width: 56px;

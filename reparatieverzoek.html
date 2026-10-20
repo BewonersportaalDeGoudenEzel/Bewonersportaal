@@ -97,6 +97,10 @@
     gap: 12px;
     margin-bottom: 20px;
   }
+  /* Zonder deze regel wint "display: flex" hierboven het van het
+     hidden-attribuut (gelijke CSS-specificiteit), en blijft een kaart
+     met hidden gewoon zichtbaar. */
+  .kaart[hidden] { display: none; }
 
   .knop-rij {
     display: flex;
@@ -482,6 +486,11 @@
 
   <a class="terug-link" id="link-terug" href="index.html">← Terug naar het bewonersportaal</a>
 
+  <div id="muizen-banner" hidden style="background:#fff8e6;border:2px dashed #d8a419;border-radius:12px;padding:14px 18px;margin:0 0 18px 0;font-size:0.95rem;color:#5c4a06;">
+    <strong style="display:block;margin-bottom:4px;">🐭 Muizenmelding</strong>
+    U komt via het blok "Muizen" op de hoofdpagina. Het type storing is daarom automatisch op <strong>Ongediertebestrijding</strong> gezet. De rest van het formulier werkt precies zoals bij een gewoon reparatieverzoek.
+  </div>
+
   <p class="intro-tekst">Betreft dit uw <strong>eigen woning</strong>, of een <strong>gemeenschappelijke ruimte</strong> (zoals de hal, lift of recreatiezaal)? Kies hieronder.</p>
 
   <div class="kaart">
@@ -563,7 +572,7 @@
         </fieldset>
 
         <div class="veld-groep">
-          <label for="eigen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
+          <label for="eigen-type-storing">Type storing *</label>
           <select id="eigen-type-storing" name="typeStoring" required>
             <option value="">Kies een categorie</option>
             <option>Verwarming & Warm water</option>
@@ -717,7 +726,7 @@
         </fieldset>
 
         <div class="veld-groep">
-          <label for="algemeen-type-storing">Type storing * <span class="veld-hulp">(voor onze rapportage aan de commissie)</span></label>
+          <label for="algemeen-type-storing">Type storing *</label>
           <select id="algemeen-type-storing" name="typeStoring" required>
             <option value="">Kies een categorie</option>
             <option>Liftstoring</option>
@@ -1148,6 +1157,68 @@
       zet("woonplaats", gegevens.plaats);
       zet("pincode", gegevens.pincode);
     });
+  })();
+</script>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────
+  // MUIZENMELDING — komt de bewoner via het blok "Muizen" op de
+  // hoofdpagina (?via=muizen), dan vullen we het "Type storing"-veld
+  // in beide secties alvast in op "Ongediertebestrijding" en zetten we
+  // dat veld op slot, zodat de bewoner 'm niet per ongeluk wijzigt.
+  // De rest van het formulier (locatie, omschrijving, foto, akkoord)
+  // werkt verder precies zoals bij een gewoon reparatieverzoek.
+  // ─────────────────────────────────────────────────────────────────
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("via") !== "muizen") return;
+
+    var banner = document.getElementById("muizen-banner");
+    if (banner) banner.hidden = false;
+
+    function vulTypeIn(selectId) {
+      var select = document.getElementById(selectId);
+      if (!select) return;
+      select.value = "Ongediertebestrijding";
+      select.disabled = true;
+      // disabled velden worden niet meegestuurd bij het versturen van het
+      // formulier — daarom ook een verborgen veld met dezelfde naam.
+      var verborgen = document.createElement("input");
+      verborgen.type = "hidden";
+      verborgen.name = select.name;
+      verborgen.value = "Ongediertebestrijding";
+      select.insertAdjacentElement("afterend", verborgen);
+
+      var label = document.querySelector('label[for="' + selectId + '"]');
+      if (label) {
+        var hint = document.createElement("span");
+        hint.style.cssText = "display:block;font-weight:600;color:#8a6209;font-size:0.85rem;margin-top:2px;";
+        hint.textContent = "🐭 Automatisch ingevuld via de muizenmelding";
+        label.insertAdjacentElement("afterend", hint);
+      }
+    }
+    vulTypeIn("eigen-type-storing");
+    vulTypeIn("algemeen-type-storing");
+
+    // Bij een muizenmelding is alleen de keuze "Eigen woning" of
+    // "Algemene ruimte" relevant — de overige kaarten (Spoedreparatie,
+    // Dashboard, Ingediende/Openstaande reparatieverzoeken, Melding van
+    // vóór het portaal) verbergen we, zodat de bewoner niet hoeft te
+    // zoeken tussen onderdelen die hier niet van toepassing zijn.
+    ["keuze-spoed", "keuze-geschiedenis", "keuze-openstaand", "keuze-oud"].forEach(function (id) {
+      var knop = document.getElementById(id);
+      var kaart = knop && knop.closest(".kaart");
+      if (kaart) kaart.hidden = true;
+    });
+    var dashboardLink = document.querySelector('a.keuze-knop[href="dashboard.html"]');
+    var dashboardKaart = dashboardLink && dashboardLink.closest(".kaart");
+    if (dashboardKaart) dashboardKaart.hidden = true;
+
+    // Open de sectie "Eigen woning" alvast — de meest voorkomende plek
+    // voor een muizenmelding. Kiest de bewoner toch "Algemene ruimte",
+    // dan staat het type daar ook al klaar.
+    var knopEigenWoning = document.getElementById("keuze-eigen-woning");
+    if (knopEigenWoning) knopEigenWoning.click();
   })();
 </script>
 
