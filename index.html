@@ -108,11 +108,6 @@
     flex-direction: column;
     gap: 12px;
   }
-  /* Zonder deze regel wint "display: flex" hierboven het van het
-     hidden-attribuut (gelijke CSS-specificiteit), en blijft een kaart
-     met hidden gewoon zichtbaar — zo bleef bijvoorbeeld de Beheer-kaart
-     voor iedereen in beeld staan, ook voor wie geen hoofdaccount is. */
-  .kaart[hidden] { display: none; }
 
   .kaart-icoon {
     width: 56px;
@@ -190,30 +185,6 @@
   }
   .kopen-blok p { margin: 0 0 12px 0; font-size: 0.97rem; color: #3a2f05; }
   .kopen-blok p:last-of-type { margin-bottom: 0; }
-
-  .muizen-info {
-    background: #eef3ef;
-    border: 1px solid #bcd3c4;
-    border-radius: 12px;
-    padding: 16px 18px;
-    margin-top: 4px;
-  }
-  .muizen-info h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.05rem;
-    color: var(--groen-donker);
-  }
-  .muizen-info p { margin: 0 0 10px 0; font-size: 0.95rem; color: #2a3a30; }
-  .muizen-info p:last-of-type { margin-bottom: 0; }
-  .muizen-info ul { margin: 0 0 10px 0; padding-left: 20px; font-size: 0.95rem; color: #2a3a30; }
-  .muizen-info li { margin-bottom: 4px; }
-  .muizen-info img {
-    display: block;
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-    border: 1px solid #bcd3c4;
-  }
 
   .kopen-vink {
     display: flex;
@@ -786,23 +757,6 @@
       <div class="kaart-icoon icoon-muizen" aria-hidden="true">🐭</div>
       <h2>Muizen</h2>
       <p>Muizen gezien in uw woning of in het gebouw? Meld dit hieronder.</p>
-
-      <div class="knop-rij">
-        <button type="button" class="knop" id="knop-muizen-info-tonen" aria-expanded="false" aria-controls="muizen-info-inhoud">Hoe weet ik of ik muizen heb?</button>
-      </div>
-
-      <div class="muizen-info" id="muizen-info-inhoud" hidden>
-        <p>Niet altijd ziet u de muis zelf. Let ook op deze signalen:</p>
-        <ul>
-          <li><strong>Muizenkeutels (uitwerpselen):</strong> kleine, donkere korreltjes ter grootte van een rijstkorrel, vaak bij voedsel, in kastjes of achter apparatuur.</li>
-          <li><strong>Knaagsporen</strong> aan verpakkingen, houtwerk of kabels.</li>
-          <li><strong>Krabbel- of ritselgeluiden</strong> in de muur, onder de vloer of boven het plafond, vooral 's avonds en 's nachts.</li>
-          <li><strong>Een vettige, donkere veeg</strong> langs plinten of muren, waar muizen vaak dezelfde route lopen.</li>
-        </ul>
-        <p><!-- [AANPASSEN] vul hier eventueel nog iets aan over wat bewoners verder kunnen doen --></p>
-        <img src="muizenkeutels.jpg" alt="Voorbeeld van muizenkeutels (uitwerpselen)" loading="lazy" onerror="this.remove()">
-      </div>
-
       <div class="knop-rij">
         <a class="knop" id="link-muizen" href="reparatieverzoek.html">Muizenmelding starten</a>
       </div>
@@ -937,6 +891,16 @@
     </div>
 
     <div class="kaart">
+      <div class="kaart-icoon icoon-korting" aria-hidden="true">🍕</div>
+      <h2>Pizzakorting</h2>
+      <p>Bewoners van de flat krijgen eenmalig 30% korting bij New York Pizza. Vraag hieronder uw code aan — u wordt direct doorgestuurd naar de bestelpagina.</p>
+      <div class="knop-rij">
+        <button type="button" class="knop" id="knop-korting-aanvragen">Code aanvragen</button>
+      </div>
+      <p class="form-status" id="korting-status" hidden></p>
+    </div>
+
+    <div class="kaart">
       <div class="kaart-icoon icoon-kopen" aria-hidden="true">🏠</div>
       <h2>Woning kopen</h2>
       <p>Overweegt u om uw huurwoning te kopen? Laat het ons weten — misschien kunnen we samen een betere prijs bedingen.</p>
@@ -1014,9 +978,29 @@
      browser. -->
 
 <script>
+  // Servicewerker: houdt een kopie van het portaal op de telefoon voor
+  // als er geen internet is. Zodra er een nieuwe versie online staat,
+  // neemt die het meteen over en laadt de pagina zichzelf één keer opnieuw,
+  // zodat iedereen automatisch de nieuwste inhoud ziet.
   if ('serviceWorker' in navigator) {
+    var alHerladen = false;
+    var hadAlServicewerker = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (!hadAlServicewerker || alHerladen) return; // eerste bezoek: niet herladen
+      alHerladen = true;
+      window.location.reload();
+    });
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then(function (reg) {
+          reg.update();
+          // Ook als het portaal lang openstaat (app op beginscherm):
+          // kijk bij terugkomen in de app of er een nieuwe versie is.
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') reg.update();
+          });
+        })
+        .catch(function () {});
     });
   }
 </script>
@@ -1506,6 +1490,7 @@
       werkFormulierLinksBij(b);
 
       werkCommissieknoppenBij(b.huisnummer);
+      werkKortingKnopBij(b);
       werkKopenKnopBij(b);
     }
 
@@ -1971,18 +1956,6 @@
         knopVoorwaardenTonen.setAttribute("aria-expanded", toonNu ? "true" : "false");
         knopVoorwaardenTonen.textContent = toonNu ? "Verbergen" : "Voorwaarden recreatiezaal bekijken";
         if (toonNu) voorwaardenInhoud.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      });
-    }
-
-    var knopMuizenInfoTonen = document.getElementById("knop-muizen-info-tonen");
-    var muizenInfoInhoud = document.getElementById("muizen-info-inhoud");
-    if (knopMuizenInfoTonen && muizenInfoInhoud) {
-      knopMuizenInfoTonen.addEventListener("click", function () {
-        var toonNu = muizenInfoInhoud.hidden;
-        muizenInfoInhoud.hidden = !toonNu;
-        knopMuizenInfoTonen.setAttribute("aria-expanded", toonNu ? "true" : "false");
-        knopMuizenInfoTonen.textContent = toonNu ? "Verbergen" : "Hoe weet ik of ik muizen heb?";
-        if (toonNu) muizenInfoInhoud.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
     }
   })();
