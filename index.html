@@ -127,7 +127,6 @@
   .icoon-privacy { background: #4a5a52; }
   .icoon-beheer { background: #6b4e9c; }
   .icoon-agenda { background: #b3540f; }
-  .icoon-korting { background: #c0392b; }
   .icoon-muizen { background: var(--bruin); }
   .icoon-kopen { background: var(--goud); }
 
@@ -891,16 +890,6 @@
     </div>
 
     <div class="kaart">
-      <div class="kaart-icoon icoon-korting" aria-hidden="true">🍕</div>
-      <h2>Pizzakorting</h2>
-      <p>Bewoners van de flat krijgen eenmalig 30% korting bij New York Pizza. Vraag hieronder uw code aan — u wordt direct doorgestuurd naar de bestelpagina.</p>
-      <div class="knop-rij">
-        <button type="button" class="knop" id="knop-korting-aanvragen">Code aanvragen</button>
-      </div>
-      <p class="form-status" id="korting-status" hidden></p>
-    </div>
-
-    <div class="kaart">
       <div class="kaart-icoon icoon-kopen" aria-hidden="true">🏠</div>
       <h2>Woning kopen</h2>
       <p>Overweegt u om uw huurwoning te kopen? Laat het ons weten — misschien kunnen we samen een betere prijs bedingen.</p>
@@ -1490,69 +1479,7 @@
       werkFormulierLinksBij(b);
 
       werkCommissieknoppenBij(b.huisnummer);
-      werkKortingKnopBij(b);
       werkKopenKnopBij(b);
-    }
-
-    /**
-     * Koppelt de knop "Code aanvragen" (Pizzakorting) aan het huisnummer
-     * en de pincode van de ingelogde bewoner. De kortingscode zelf komt
-     * nooit los in beeld: bij een geldige aanvraag stuurt het script een
-     * kant-en-klare bestel-URL terug en wordt de bewoner daar meteen
-     * naartoe gestuurd (zie kortingscodeAanvragen_ in het Apps Script).
-     */
-    function werkKortingKnopBij(b) {
-      var knop = document.getElementById("knop-korting-aanvragen");
-      var status = document.getElementById("korting-status");
-      if (!knop) return;
-
-      // Eerder gebonden handler eerst weghalen, anders luistert de knop
-      // na een tweede keer inloggen dubbel.
-      var nieuweKnop = knop.cloneNode(true);
-      knop.parentNode.replaceChild(nieuweKnop, knop);
-      knop = nieuweKnop;
-
-      knop.addEventListener("click", function () {
-        if (status) {
-          status.hidden = true;
-          status.className = "form-status";
-        }
-        knop.disabled = true;
-        var oorspronkelijkeTekst = knop.textContent;
-        knop.textContent = "Bezig...";
-
-        fetch(BEWONER_SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ verzoekType: "kortingscode-aanvragen", huisnummer: b.huisnummer, pincode: b.pincode })
-        })
-          .then(function (r) { return r.json(); })
-          .then(function (json) {
-            knop.disabled = false;
-            knop.textContent = oorspronkelijkeTekst;
-            if (json && json.ok && json.bestelUrl) {
-              if (status) {
-                status.textContent = "Gelukt! U wordt doorgestuurd naar New York Pizza...";
-                status.className = "form-status gelukt";
-                status.hidden = false;
-              }
-              window.location.href = json.bestelUrl;
-            } else if (status) {
-              status.textContent = (json && json.error) || "Er ging iets mis. Probeer het later opnieuw.";
-              status.className = "form-status fout";
-              status.hidden = false;
-            }
-          })
-          .catch(function () {
-            knop.disabled = false;
-            knop.textContent = oorspronkelijkeTekst;
-            if (status) {
-              status.textContent = "Kon geen verbinding maken. Controleer uw internetverbinding.";
-              status.className = "form-status fout";
-              status.hidden = false;
-            }
-          });
-      });
     }
 
     /**
