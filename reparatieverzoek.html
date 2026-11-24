@@ -412,6 +412,62 @@
     color: var(--oranje);
   }
 
+  /* Stap 2: de bewoner zet de melding zelf bij Hoen (hun formulier heeft
+     een captcha, dat kan het portaal niet voor de bewoner doen). */
+  .hoen-stap {
+    background: #fff8e6;
+    border: 2px solid #d8a419;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 18px 0 0 0;
+  }
+  .hoen-stap h3 { margin: 0 0 8px 0; font-size: 1.25rem; }
+  .hoen-stap p { margin: 0 0 12px 0; }
+  .hoen-stap ol { margin: 0 0 14px 0; padding-left: 1.3em; }
+  .hoen-stap li { margin: 0 0 10px 0; }
+  .hoen-stap details { margin: 6px 0 16px 0; border-top: 1px solid #eadfc2; padding-top: 12px; }
+  .hoen-stap summary { cursor: pointer; font-weight: 600; color: var(--groen-donker); min-height: 44px; }
+  .hoen-velden { margin: 8px 0 4px 0; }
+  .hoen-veld {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eadfc2;
+  }
+  .hoen-veld-tekst { flex: 1 1 auto; min-width: 0; }
+  .hoen-label { display: block; color: #555; font-size: 0.85rem; }
+  .hoen-waarde { display: block; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .hoen-kopieer {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 2px solid var(--groen-donker);
+    background: #fff;
+    color: var(--groen-donker);
+    cursor: pointer;
+  }
+  .hoen-kopieer.gekopieerd { background: #eef3ef; }
+  .hoen-kopieer:focus, .hoen-open:focus, .hoen-klaar:focus { outline: 3px solid #ffbf47; outline-offset: 2px; }
+  .hoen-kies { color: #6b5a12; font-weight: 400; }
+  .hoen-open, .hoen-klaar {
+    display: inline-block;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 14px 22px;
+    min-height: 44px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background: var(--groen-donker);
+  }
+  .hoen-klaar:disabled { background: #b9bdb6; cursor: default; }
+
   .in-voorbereiding {
     background: #fbf6ec;
     border: 1px solid #eadfc2;
@@ -613,13 +669,11 @@
           <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
           <div class="keuze-lijst" data-privacy="eigen">
             <label><input type="radio" name="privacy-eigen" value="Hoen Vastgoedbeheer en de bewonerscommissie mogen de gegevens verwerken"> <span><strong>Hoen Vastgoedbeheer én de bewonerscommissie</strong> mogen mijn gegevens verwerken.</span></label>
-            <label><input type="radio" name="privacy-eigen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
             <label><input type="radio" name="privacy-eigen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="eigen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
-          <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder informeren. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
-          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de derde optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan een van de andere twee opties. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
+          <p class="veld-hulp-blok">Bij de eerste optie zet de bewonerscommissie uw melding voor u bij Hoen, op uw naam en met uw e-mailadres. Daarvoor zien wij uw gegevens.</p>
+          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de tweede optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan de eerste optie. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
         <div class="veld-groep">
@@ -768,13 +822,11 @@
           <p class="akkoord-tekst">Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring</a> *</p>
           <div class="keuze-lijst" data-privacy="algemeen">
             <label><input type="radio" name="privacy-algemeen" value="Hoen Vastgoedbeheer en de bewonerscommissie mogen de gegevens verwerken"> <span><strong>Hoen Vastgoedbeheer én de bewonerscommissie</strong> mogen mijn gegevens verwerken.</span></label>
-            <label><input type="radio" name="privacy-algemeen" value="Alleen Hoen Vastgoedbeheer mag de gegevens verwerken"> <span><strong>Alleen Hoen Vastgoedbeheer</strong> mag mijn gegevens verwerken.</span></label>
             <label><input type="radio" name="privacy-algemeen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="algemeen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Uw keuze gaat over de bewonerscommissie. Kiest u de tweede optie, dan zien en bewaren wij <strong>alleen dat er een melding is gedaan en op welke datum</strong>. Verder niets: geen naam, geen huisnummer, geen verdieping, geen soort storing, geen omschrijving, geen telefoonnummer, geen foto&#39;s.</p>
-          <p class="veld-hulp-blok">Twee dingen die daarbij horen. Uw melding telt dan mee als aantal, maar <strong>niet mee in het dossier</strong> waarmee wij de verhuurder informeren. En omdat wij niet weten dat de melding van u is, <strong>ziet u hem niet terug bij &ldquo;Mijn reparatieverzoeken&rdquo;</strong> en kunt u er hier geen status bij zetten. U krijgt wel een bevestigingsmail; bewaar die.</p>
-          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de derde optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan een van de andere twee opties. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
+          <p class="veld-hulp-blok">Bij de eerste optie zet de bewonerscommissie uw melding voor u bij Hoen, op uw naam en met uw e-mailadres. Daarvoor zien wij uw gegevens.</p>
+          <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de tweede optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan de eerste optie. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
         <div class="veld-groep">
@@ -1543,6 +1595,250 @@
     return waarden;
   }
 
+  // ─────────────────────────────────────────────────────────────────
+  // STAP 2: ZELF INVULLEN BIJ HOEN
+  //
+  // Sinds november 2026 staat er een captcha op het formulier van Hoen.
+  // Het portaal kan de melding daarom niet meer zelf bij Hoen zetten, en
+  // een mail vanaf ons adres komt bij Hoen op het verkeerde account
+  // terecht. De bewoner vult hun formulier dus zelf in. Dit scherm maakt
+  // dat zo makkelijk mogelijk: alle gegevens staan klaar in de volgorde
+  // van hun formulier, met een kopieerknop per veld.
+  //
+  // Alles wordt met textContent gezet, nooit met innerHTML: de waarden
+  // komen van de bewoner zelf.
+  // ─────────────────────────────────────────────────────────────────
+  function kopieerTekst(tekst, knop) {
+    function gelukt() {
+      knop.textContent = "Gekopieerd \u2713";
+      knop.classList.add("gekopieerd");
+      setTimeout(function () { knop.textContent = "Kopieer"; knop.classList.remove("gekopieerd"); }, 2500);
+    }
+    function terugval() {
+      var vak = document.createElement("textarea");
+      vak.value = tekst;
+      vak.setAttribute("readonly", "");
+      vak.style.position = "fixed";
+      vak.style.opacity = "0";
+      document.body.appendChild(vak);
+      vak.select();
+      try { document.execCommand("copy"); gelukt(); } catch (e) { knop.textContent = "Lukt niet \u2014 overtypen"; }
+      document.body.removeChild(vak);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tekst).then(gelukt, terugval);
+    } else {
+      terugval();
+    }
+  }
+
+  var HOEN_MAILADRES = "storingen@hoen.nl";
+
+  // Een foto (data-URL) omzetten in een bestand dat de telefoon kan delen.
+  // Dit gebeurt meteen bij het opbouwen van het scherm en niet pas bij het
+  // tikken: Safari laat delen alleen toe als het direct op de tik volgt.
+  function dataUrlNaarBestand(dataUrl, naam) {
+    try {
+      var delen = String(dataUrl).split(",");
+      var soort = (delen[0].match(/data:([^;]+)/) || [])[1] || "image/jpeg";
+      var ruw = atob(delen[1]);
+      var bytes = new Uint8Array(ruw.length);
+      for (var i = 0; i < ruw.length; i++) bytes[i] = ruw.charCodeAt(i);
+      return new File([bytes], naam, { type: soort });
+    } catch (e) { return null; }
+  }
+
+  // De tekst van de mail aan Hoen. Bewust GEEN onderwerp: dat typt de
+  // bewoner zelf, in zijn eigen woorden. Er staat niets in over het
+  // portaal of de commissie; het is gewoon de melding van de huurder.
+  function maakHoenMailTekst(velden) {
+    var w = {};
+    velden.forEach(function (v) { w[v.label] = v.waarde || ""; });
+    var naam = ((w["Voornaam"] || "") + " " + (w["Achternaam"] || "")).trim();
+    return [
+      "Geachte heer/mevrouw,",
+      "",
+      "Hierbij meld ik een gebrek.",
+      "",
+      "Ruimte: " + w["In welke ruimte bevindt zich het probleem/de storing?"],
+      "Type: " + w["Type reparatieverzoek"],
+      "Omschrijving: " + w["Omschrijving van het reparatieverzoek"],
+      "",
+      "Naam: " + naam,
+      "Adres: " + w["Adres"] + ", " + w["Postcode"] + " " + w["Woonplaats"],
+      "Telefoon: " + w["Telefoonnummer"],
+      "E-mail: " + w["Uw e-mailadres"],
+      "",
+      "Ik ben op de hoogte van het Besluit kleine herstellingen en ga akkoord met de privacyverklaring van Hoen Vastgoedbeheer. Een foto van het probleem zit als bijlage bij deze mail.",
+      "",
+      "Met vriendelijke groet,",
+      naam
+    ].join("\n");
+  }
+
+  function toonHoenStap(form, json, huisnummer, pincode, fotoLijst) {
+    var prefix = form.id.replace("form-", "");
+    var paneel = document.createElement("div");
+    paneel.className = "hoen-stap";
+    paneel.setAttribute("data-hoen-stap", prefix);
+    paneel.setAttribute("tabindex", "-1");
+
+    function el(tag, tekst, klasse) {
+      var e = document.createElement(tag);
+      if (tekst) e.textContent = tekst;
+      if (klasse) e.className = klasse;
+      return e;
+    }
+
+    paneel.appendChild(el("h3", "Nog \u00e9\u00e9n stap: stuur uw melding naar Hoen"));
+    paneel.appendChild(el("p", "Uw melding staat nog niet bij Hoen Vastgoedbeheer. Stuur hem vanaf uw eigen e-mailadres, dan komt hij meteen in uw eigen dossier bij Hoen. Gebruik het e-mailadres dat Hoen van u kent."));
+
+    var mailTekst = maakHoenMailTekst(json.hoen.velden);
+    var bestanden = (fotoLijst || []).map(function (d, i) {
+      return dataUrlNaarBestand(d, "foto-" + (i + 1) + ".jpg");
+    }).filter(Boolean);
+    var kanDelen = !!(navigator.canShare && bestanden.length &&
+      navigator.canShare({ files: bestanden, text: mailTekst }));
+
+    var mailStappen = el("ol");
+    var m1 = el("li");
+    var mailKnop = el("button", "Verstuur naar Hoen per e-mail", "hoen-open");
+    mailKnop.type = "button";
+    m1.appendChild(mailKnop);
+    var mailMelding = el("p", "", "form-status");
+    mailMelding.hidden = true;
+    m1.appendChild(mailMelding);
+    mailStappen.appendChild(m1);
+
+    if (kanDelen) {
+      mailStappen.appendChild(el("li", "Kies uw mail-app, bijvoorbeeld Gmail of Mail. Uw foto en de tekst staan er al in."));
+      mailStappen.appendChild(el("li", "Bij \u201cAan\u201d: houd uw vinger in het vak en kies Plakken. Het adres " + HOEN_MAILADRES + " staat al klaar."));
+    } else {
+      mailStappen.appendChild(el("li", "Uw mail-app gaat open met het adres en de tekst erin. Voeg zelf uw foto toe met het paperclipje."));
+    }
+    mailStappen.appendChild(el("li", "Bij \u201cOnderwerp\u201d: typ in een paar woorden waar het om gaat, bijvoorbeeld \u201clekkende kraan keuken\u201d."));
+    mailStappen.appendChild(el("li", "Druk op Verzenden. Hoen stuurt u een bevestiging."));
+    paneel.appendChild(mailStappen);
+
+    mailKnop.addEventListener("click", function () {
+      if (kanDelen) {
+        // Eerst het adres klaarzetten om te plakken, dan meteen delen.
+        // Niet wachten op het kopi\u00ebren: delen moet direct op de tik volgen.
+        try { if (navigator.clipboard) navigator.clipboard.writeText(HOEN_MAILADRES).catch(function () {}); } catch (e) {}
+        navigator.share({ files: bestanden, text: mailTekst })
+          .catch(function (fout) {
+            if (fout && fout.name === "AbortError") return; // bewoner tikte zelf op annuleren
+            window.location.href = "mailto:" + HOEN_MAILADRES + "?body=" + encodeURIComponent(mailTekst);
+            mailMelding.hidden = false;
+            mailMelding.className = "form-status bezig";
+            mailMelding.textContent = "Delen lukte niet; uw mail-app is zonder foto geopend. Voeg de foto zelf toe met het paperclipje.";
+          });
+      } else {
+        window.location.href = "mailto:" + HOEN_MAILADRES + "?body=" + encodeURIComponent(mailTekst);
+      }
+    });
+
+    var mailKopie = el("button", "Kopieer de hele mailtekst", "hoen-kopieer");
+    mailKopie.type = "button";
+    mailKopie.addEventListener("click", function () { kopieerTekst(mailTekst, mailKopie); });
+    var kopieRegel = el("p", "Gaat er geen mail-app open? Kopieer de tekst en stuur hem zelf naar " + HOEN_MAILADRES + ", met uw foto als bijlage. ");
+    kopieRegel.appendChild(mailKopie);
+    paneel.appendChild(kopieRegel);
+
+    // De website van Hoen blijft mogelijk, maar ingeklapt: daar zit een
+    // controle (captcha) op die de bewoner zelf moet doen.
+    var webBlok = el("details");
+    webBlok.appendChild(el("summary", "Liever via de website van Hoen?"));
+    var webIntro = el("p", "Dat kan ook. Op hun formulier zit een controle dat u geen computer bent; die doet u zelf. Neem de gegevens hieronder over.");
+    webBlok.appendChild(webIntro);
+    var stappen = el("ol");
+
+    var s1 = el("li");
+    var open = el("a", "Open het formulier van Hoen", "hoen-open");
+    open.href = json.hoen.url;
+    open.target = "_blank";
+    open.rel = "noopener";
+    s1.appendChild(open);
+    stappen.appendChild(s1);
+
+    stappen.appendChild(el("li", "Vink bovenaan aan: \u201cJa, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten\u201d."));
+
+    var s3 = el("li", "Neem deze gegevens over. Tik op Kopieer en plak het daarna in het veld met dezelfde naam bij Hoen.");
+    var tabel = el("div", "", "hoen-velden");
+    json.hoen.velden.forEach(function (veld) {
+      var rij = el("div", "", "hoen-veld");
+      var tekstDeel = el("div", "", "hoen-veld-tekst");
+      tekstDeel.appendChild(el("span", veld.label, "hoen-label"));
+      var waarde = el("span", "", "hoen-waarde");
+      if (veld.kopieer) {
+        waarde.textContent = veld.waarde || "(leeg)";
+      } else {
+        waarde.appendChild(el("span", "Kies: ", "hoen-kies"));
+        waarde.appendChild(document.createTextNode(veld.waarde));
+      }
+      tekstDeel.appendChild(waarde);
+      rij.appendChild(tekstDeel);
+      if (veld.kopieer && veld.waarde) {
+        var knop = el("button", "Kopieer", "hoen-kopieer");
+        knop.type = "button";
+        knop.setAttribute("aria-label", "Kopieer " + veld.label);
+        knop.addEventListener("click", function () { kopieerTekst(veld.waarde, knop); });
+        rij.appendChild(knop);
+      }
+      tabel.appendChild(rij);
+    });
+    s3.appendChild(tabel);
+    stappen.appendChild(s3);
+
+    stappen.appendChild(el("li", "Foto: tik bij Hoen op \u201cBestand toevoegen\u201d, kies dezelfde foto als net, en tik daarna op \u201cUploaden\u201d. Zonder foto neemt Hoen de melding niet in behandeling."));
+    stappen.appendChild(el("li", "Vink onderaan de privacyverklaring aan, doe de controle en tik op Versturen. U krijgt van Hoen een bevestiging per e-mail."));
+
+    var klaar = el("button", "Ik heb mijn melding naar Hoen gestuurd", "hoen-klaar");
+    klaar.type = "button";
+    var klaarStatus = el("p", "", "form-status");
+    klaarStatus.hidden = true;
+    klaar.addEventListener("click", function () {
+      klaar.disabled = true;
+      fetch(REPARATIE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ verzoekType: "hoen-zelf-verstuurd", huisnummer: huisnummer, pincode: pincode, meldingId: json.meldingId })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (antwoord) {
+          klaarStatus.hidden = false;
+          if (antwoord && antwoord.ok) {
+            klaar.textContent = "Doorgegeven \u2713";
+            klaarStatus.className = "form-status gelukt";
+            klaarStatus.textContent = "Bedankt. Wij hebben genoteerd dat uw melding bij Hoen staat.";
+          } else {
+            klaar.disabled = false;
+            klaarStatus.className = "form-status fout";
+            klaarStatus.textContent = (antwoord && antwoord.error) || "Doorgeven lukte niet. Probeer het opnieuw.";
+          }
+        })
+        .catch(function () {
+          klaar.disabled = false;
+          klaarStatus.hidden = false;
+          klaarStatus.className = "form-status fout";
+          klaarStatus.textContent = "Geen verbinding. Probeer het zo opnieuw.";
+        });
+    });
+    webBlok.appendChild(stappen);
+    paneel.appendChild(webBlok);
+
+    var klaarBlok = el("p", "Verstuurd? Laat het ons weten, dan weten wij dat uw melding bij Hoen staat.");
+    klaarBlok.appendChild(el("br"));
+    klaarBlok.appendChild(klaar);
+    paneel.appendChild(klaarBlok);
+    paneel.appendChild(klaarStatus);
+    paneel.appendChild(el("p", "Lukt het niet? Mail naar polanenflat@gmail.com, dan helpen wij u."));
+
+    form.parentNode.insertBefore(paneel, form.nextSibling);
+    paneel.scrollIntoView({ behavior: "smooth", block: "start" });
+    paneel.focus({ preventScroll: true });
+  }
+
   function initMeldFormulier(prefix, soort) {
     var form = document.getElementById("form-" + prefix);
     var status = document.querySelector('[data-status="' + prefix + '"]');
@@ -1559,7 +1855,7 @@
     // Het vinkje voor Hoen's eigen privacyverklaring hoort dan niet meer
     // bij het formulier — er is immers niemand bij Hoen om akkoord tegen
     // te geven. Dit verbergt dat blok en haalt het "required" eraf zodra
-    // die derde optie gekozen wordt, en zet het weer terug bij de andere
+    // die tweede optie ("alleen de bewonerscommissie") gekozen wordt, en zet het weer terug bij de andere
     // twee opties.
     var privacyHoenBlok = document.querySelector('[data-privacy-hoen-blok="' + prefix + '"]');
     var privacyHoenVakEl = document.querySelector('[data-privacy-hoen="' + prefix + '"]');
@@ -1583,6 +1879,9 @@
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+
+      var oudPaneel = document.querySelector('[data-hoen-stap="' + prefix + '"]');
+      if (oudPaneel) oudPaneel.parentNode.removeChild(oudPaneel);
 
       var waarContainer = document.querySelector('[data-waar="' + prefix + '"]');
       var privacyContainer = document.querySelector('[data-privacy="' + prefix + '"]');
@@ -1668,7 +1967,16 @@
         .then(function (response) { return response.json(); })
         .then(function (json) {
           if (json && json.ok) {
-            toonStatus("Bedankt! Uw melding is verstuurd naar Hoen Vastgoedbeheer en naar de bewonerscommissie. U krijgt zelf een bevestiging per e-mail.", "gelukt");
+            if (json.hoenZelf && json.hoen) {
+              toonStatus("Uw melding is ontvangen door de bewonerscommissie. Hij staat nog NIET bij Hoen Vastgoedbeheer: doe hieronder de laatste stap.", "gelukt");
+              toonHoenStap(form, json, data.huisnummer, data.pincode, (fotoData[prefix] || []).slice());
+            } else if (json.commissieVult) {
+              toonStatus("Bedankt! Uw melding is ontvangen door de bewonerscommissie; u krijgt daarvan een bevestiging per e-mail. Wij zetten hem voor u bij Hoen Vastgoedbeheer, op uw naam. Zodra dat gebeurd is, krijgt u een tweede mail.", "gelukt");
+            } else if (alleenCommissieGekozen) {
+              toonStatus("Bedankt! Uw melding is verstuurd naar de bewonerscommissie, niet naar Hoen Vastgoedbeheer. U krijgt zelf een bevestiging per e-mail.", "gelukt");
+            } else {
+              toonStatus("Bedankt! Uw melding is verstuurd naar Hoen Vastgoedbeheer en naar de bewonerscommissie. U krijgt zelf een bevestiging per e-mail.", "gelukt");
+            }
             form.reset();
             fotoData[prefix] = [];
             tekenFotos(prefix);
