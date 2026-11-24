@@ -2,7 +2,7 @@
 // ------------------------------------------------
 // Verhoog VERSIE bij elke wijziging aan het portaal. Dan haalt elke
 // telefoon de nieuwe versie op en ruimt de oude kopie op.
-const VERSIE = 'v67';
+const VERSIE = 'v71';
 const CACHE = 'gouden-ezel-' + VERSIE;
 
 // Nieuwe versie: niet wachten tot alle tabbladen dicht zijn, meteen actief.
