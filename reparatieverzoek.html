@@ -724,7 +724,7 @@
             <label><input type="radio" name="privacy-eigen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="eigen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Bij de eerste optie zet de bewonerscommissie uw melding voor u bij Hoen, op uw naam en met uw e-mailadres. Daarvoor zien wij uw gegevens.</p>
+          <p class="veld-hulp-blok">Bij de eerste optie gaat na het versturen een e-mail open. Die stuurt u zelf naar Hoen, vanaf uw eigen e-mailadres. De bewonerscommissie krijgt uw melding ook.</p>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de tweede optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan de eerste optie. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
@@ -890,7 +890,7 @@
             <label><input type="radio" name="privacy-algemeen" value="Alleen de bewonerscommissie mag de gegevens verwerken" data-alleen-commissie="algemeen"> <span><strong>Alleen de bewonerscommissie</strong> mag mijn gegevens verwerken.</span></label>
           </div>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Hoen krijgt uw naam en telefoonnummer sowieso</strong> — anders kan de monteur niet langskomen of een afspraak met u maken. Dat is ook zo als u rechtstreeks bij Hoen zou melden.</p>
-          <p class="veld-hulp-blok">Bij de eerste optie zet de bewonerscommissie uw melding voor u bij Hoen, op uw naam en met uw e-mailadres. Daarvoor zien wij uw gegevens.</p>
+          <p class="veld-hulp-blok">Bij de eerste optie gaat na het versturen een e-mail open. Die stuurt u zelf naar Hoen, vanaf uw eigen e-mailadres. De bewonerscommissie krijgt uw melding ook.</p>
           <p class="veld-hulp-blok" style="margin-top:12px;"><strong>Kiest u de tweede optie</strong>, dan gaat uw melding <strong>helemaal niet naar Hoen</strong> &mdash; alleen naar de bewonerscommissie, volledig, voor ons eigen dossier over het gebouw. Gebruik dit dus <strong>niet</strong> als u wilt dat iets ook echt gerepareerd wordt; kies dan de eerste optie. U ziet deze melding wel terug bij &ldquo;Mijn reparatieverzoeken&rdquo;.</p>
         </div>
 
@@ -1888,35 +1888,124 @@
     };
   }
 
+  // HET FORMULIER ALS PLAATJE — gaat als eerste bijlage mee in de mail aan
+  // Hoen, in dezelfde stijl als de mails van het portaal (grijze kop,
+  // rijen met label en waarde). De mail zelf kan geen opmaak hebben; dit
+  // plaatje wel. Wordt direct (synchroon) getekend, want het delen moet
+  // meteen op de tik gebeuren.
+  function maakFormulierAfbeelding(velden, akkoorden) {
+    try {
+      var w = {};
+      velden.forEach(function (v) { w[v.label] = v.waarde || ""; });
+      var naam = ((w["Voornaam"] || "") + " " + (w["Achternaam"] || "")).trim();
+      var rijen = [
+        ["Naam", naam],
+        ["Adres", (w["Adres"] || "") + ", " + (w["Postcode"] || "") + " " + (w["Woonplaats"] || "")],
+        ["Telefoonnummer", w["Telefoonnummer"]],
+        ["E-mailadres", w["Uw e-mailadres"]],
+        ["Ruimte", w["In welke ruimte bevindt zich het probleem/de storing?"]],
+        ["Type", w["Type reparatieverzoek"]],
+        ["Omschrijving", w["Omschrijving van het reparatieverzoek"]]
+      ];
+      (akkoorden || []).forEach(function (a, i) {
+        rijen.push([i === 0 ? "Akkoord" : "", "☑ “" + a.tekst + "” — aangevinkt op " + a.op]);
+      });
+      rijen.push(["Bijlage", "Foto of video van het probleem"]);
+
+      var S = 2, B = 760, pad = 28, labelB = 190, waardeB = B - pad * 2 - labelB;
+      var c = document.createElement("canvas");
+      var ctx = c.getContext("2d");
+      var font = "16px Arial, Helvetica, sans-serif";
+      function breek(tekst, max) {
+        ctx.font = font;
+        var uit = [];
+        String(tekst || "—").split("\n").forEach(function (alinea) {
+          var regel = "";
+          alinea.split(/\s+/).forEach(function (woord) {
+            var probeer = regel ? regel + " " + woord : woord;
+            if (ctx.measureText(probeer).width > max && regel) { uit.push(regel); regel = woord; }
+            else regel = probeer;
+          });
+          uit.push(regel);
+        });
+        return uit;
+      }
+      var regelH = 24, kopH = 84;
+      var blokken = rijen.map(function (r) { return { label: r[0], regels: breek(r[1], waardeB) }; });
+      var H = kopH + 12 + blokken.reduce(function (t, b) { return t + b.regels.length * regelH + 22; }, 0) + 16;
+      c.width = (B + 20) * S; c.height = (H + 20) * S;
+      ctx.scale(S, S);
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, B + 20, H + 20);
+      // kaart
+      function rond(x, y, b, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + b, y, x + b, y + h, r); ctx.arcTo(x + b, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + b, y, r); ctx.closePath(); }
+      ctx.save(); rond(10, 10, B, H, 12); ctx.clip();
+      ctx.fillStyle = "#f5f5f5"; ctx.fillRect(10, 10, B, kopH);
+      ctx.restore();
+      rond(10, 10, B, H, 12); ctx.strokeStyle = "#dddddd"; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(10, 10 + kopH); ctx.lineTo(10 + B, 10 + kopH); ctx.strokeStyle = "#e3e3e3"; ctx.stroke();
+      ctx.fillStyle = "#1a1a1a"; ctx.font = "bold 20px Arial, Helvetica, sans-serif";
+      ctx.fillText("Reparatieverzoek", 10 + pad, 10 + 38);
+      ctx.fillStyle = "#666666"; ctx.font = "14px Arial, Helvetica, sans-serif";
+      ctx.fillText("Ingediend via het bewonersportaal van de Jan van Polanenflat", 10 + pad, 10 + 64);
+      var y = 10 + kopH + 12;
+      blokken.forEach(function (b, i) {
+        var hoog = b.regels.length * regelH + 22;
+        ctx.font = font; ctx.textBaseline = "top";
+        ctx.fillStyle = "#666666"; ctx.fillText(b.label, 10 + pad, y + 11);
+        ctx.fillStyle = "#1a1a1a";
+        b.regels.forEach(function (r, j) { ctx.fillText(r, 10 + pad + labelB, y + 11 + j * regelH); });
+        if (i < blokken.length - 1) {
+          ctx.beginPath(); ctx.moveTo(10 + pad, y + hoog); ctx.lineTo(10 + B - pad, y + hoog);
+          ctx.strokeStyle = "#ececec"; ctx.lineWidth = 1; ctx.stroke();
+        }
+        y += hoog;
+      });
+      return dataUrlNaarBestand(c.toDataURL("image/png"), "Reparatieverzoek.png");
+    } catch (e) { return null; }
+  }
+
+  // De mail aan Hoen. Een mail-app neemt van een website alleen platte
+  // tekst over (geen opmaak), dus het "formulier" is gemaakt met kopjes en
+  // lijnen. Zo is het net zo overzichtelijk als de bevestigingsmail, en
+  // leest het systeem van Hoen alles gewoon als tekst.
   function maakHoenMailTekst(velden, akkoorden) {
     var w = {};
     velden.forEach(function (v) { w[v.label] = v.waarde || ""; });
     var naam = ((w["Voornaam"] || "") + " " + (w["Achternaam"] || "")).trim();
-    return [
+    var lijn = "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500";
+    function kop(t) { return ["", t.toUpperCase(), lijn]; }
+    var regels = [
       "Geachte heer/mevrouw,",
       "",
-      "Hierbij meld ik een gebrek.",
+      "Hierbij meld ik een gebrek in mijn woning of in het gebouw.",
       "",
-      "Ruimte: " + w["In welke ruimte bevindt zich het probleem/de storing?"],
-      "Type: " + w["Type reparatieverzoek"],
-      "Omschrijving: " + w["Omschrijving van het reparatieverzoek"],
-      "",
-      "Naam: " + naam,
-      "Adres: " + w["Adres"] + ", " + w["Postcode"] + " " + w["Woonplaats"],
-      "Telefoon: " + w["Telefoonnummer"],
-      "E-mail: " + w["Uw e-mailadres"],
-      "",
-      "Ik heb het volgende aangevinkt:",
-      ""
-    ].concat((akkoorden || []).map(function (a) {
-      return "- \u201c" + a.tekst + "\u201d (" + a.link + "), aangevinkt op " + a.op + ".";
-    })).concat([
-      "",
-      "De foto of video van het probleem zit als bijlage bij deze mail.",
-      "",
-      "Met vriendelijke groet,",
-      naam
-    ]).join("\n");
+      "\u25A0 REPARATIEVERZOEK",
+      lijn
+    ]
+      .concat(["Ruimte:  " + w["In welke ruimte bevindt zich het probleem/de storing?"],
+               "Type:  " + w["Type reparatieverzoek"],
+               "",
+               "Omschrijving:",
+               w["Omschrijving van het reparatieverzoek"]])
+      .concat(kop("\u25A0 Gegevens huurder"))
+      .concat(["Naam:  " + naam,
+               "Adres:  " + w["Adres"],
+               "Postcode en plaats:  " + w["Postcode"] + " " + w["Woonplaats"],
+               "Telefoon:  " + w["Telefoonnummer"],
+               "E-mail:  " + w["Uw e-mailadres"]])
+      .concat(kop("\u25A0 Akkoord"));
+    (akkoorden || []).forEach(function (a) {
+      regels.push("\u2611 \u201c" + a.tekst + "\u201d");
+      regels.push("   " + a.link);
+      regels.push("   Aangevinkt op " + a.op);
+      regels.push("");
+    });
+    regels = regels.concat(kop("\u25A0 Bijlage").slice(1))
+      .concat(["In de bijlage: dit formulier als afbeelding (Reparatieverzoek.png) en de foto of video van het probleem.",
+               "",
+               "Met vriendelijke groet,",
+               naam]);
+    return regels.join("\n");
   }
 
   // Na het versturen: één knop, en een klein voorbeeld van wat de bewoner
@@ -1940,9 +2029,9 @@
     // Bij een proef nooit het adres van Hoen invullen, en "PROEF" bovenaan.
     var mailAan = json.proef ? "" : HOEN_MAILADRES;
     if (json.proef) mailTekst = "PROEF \u2014 huisnummer " + huisnummer + " bestaat niet. Deze e-mail is niet voor Hoen.\n\n" + mailTekst;
-    var bestanden = (fotoLijst || []).map(function (d, i) {
+    var bestanden = [maakFormulierAfbeelding(json.hoen.velden, json.hoen.akkoorden)].concat((fotoLijst || []).map(function (d, i) {
       return dataUrlNaarBestand(d, bestandsnaamVan(d, i));
-    }).filter(Boolean);
+    })).filter(Boolean);
     var kanDelen = !!(navigator.canShare && bestanden.length &&
       navigator.canShare({ files: bestanden, text: mailTekst }));
 
@@ -2252,7 +2341,8 @@
         if (isProefHuisnummer(data.huisnummer)) {
           tekstNu = "PROEF \u2014 huisnummer " + data.huisnummer + " bestaat niet. Deze e-mail is niet voor Hoen.\n\n" + tekstNu;
         }
-        var bestandenNu = fotoKopie.map(function (d, i) { return dataUrlNaarBestand(d, bestandsnaamVan(d, i)); }).filter(Boolean);
+        var bestandenNu = [maakFormulierAfbeelding(lokaal.velden, lokaal.akkoorden)].concat(
+          fotoKopie.map(function (d, i) { return dataUrlNaarBestand(d, bestandsnaamVan(d, i)); })).filter(Boolean);
         if (navigator.canShare && bestandenNu.length && navigator.canShare({ files: bestandenNu, text: tekstNu })) {
           data.mailGeopend = "ja";
           deelUitkomst = navigator.share({ files: bestandenNu, text: tekstNu })
