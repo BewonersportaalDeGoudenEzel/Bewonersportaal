@@ -354,7 +354,7 @@
     position: relative;
     width: 140px;
   }
-  .foto-kaartje img {
+  .foto-kaartje img, .foto-kaartje video {
     display: block;
     width: 100%;
     height: 140px;
@@ -425,6 +425,43 @@
   .hoen-stap p { margin: 0 0 12px 0; }
   .hoen-stap ol { margin: 0 0 14px 0; padding-left: 1.3em; }
   .hoen-stap li { margin: 0 0 10px 0; }
+  .hoen-voorbeeld {
+    margin: 16px 0 8px 0;
+    border: 1px solid #eadfc2;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .hoen-vb-regel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eadfc2;
+    font-size: 0.95rem;
+  }
+  .hoen-vb-regel:last-child { border-bottom: none; }
+  .hoen-vb-zelf { background: #fff1c2; }
+  .hoen-vb-label { color: #555; min-width: 5.5em; }
+  .hoen-vb-waarde { font-weight: 600; }
+  .hoen-vb-zelf .hoen-vb-waarde { font-weight: 400; font-style: italic; }
+  .hoen-vb-uitleg { margin-left: auto; font-size: 0.85rem; color: #6b5a12; }
+  .hoen-vb-knop { margin-left: auto; }
+  .hoen-vb-blok { display: block; }
+  .hoen-vb-blok .hoen-vb-label { display: block; margin-bottom: 6px; }
+  .hoen-vb-tekst { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; line-height: 1.5; color: #1a1a1a; }
+  .hoen-vb-fotos { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hoen-vb-fotos img, .hoen-vb-fotos video { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; border: 1px solid #eadfc2; }
+  .hoen-klaar-blok { margin-top: 18px; padding-top: 14px; border-top: 1px solid #eadfc2; }
+  .hoen-klaar-blok[hidden] { display: none; }
+  .hoen-klaar-boven { margin-top: 0; padding-top: 0; border-top: none; }
+  .hoen-nog-niet { margin-top: 18px; border-top: 1px solid #eadfc2; padding-top: 12px; }
+  .hoen-nog-niet summary { cursor: pointer; font-weight: 600; color: var(--groen-donker); min-height: 44px; }
+  .hoen-stap .hoen-klaar { width: 100%; }
+  .hoen-vb-slot { margin: 8px 0 0 0; font-weight: 600; }
+  .hoen-stap .hoen-open { width: 100%; }
+
   .hoen-stap details { margin: 6px 0 16px 0; border-top: 1px solid #eadfc2; padding-top: 12px; }
   .hoen-stap summary { cursor: pointer; font-weight: 600; color: var(--groen-donker); min-height: 44px; }
   .hoen-velden { margin: 8px 0 4px 0; }
@@ -467,6 +504,19 @@
     background: var(--groen-donker);
   }
   .hoen-klaar:disabled { background: #b9bdb6; cursor: default; }
+
+  .mail-uitleg {
+    background: #fff8e6;
+    border: 2px solid #d8a419;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 4px 0 14px 0;
+  }
+  .mail-uitleg[hidden] { display: none; }
+  .mail-uitleg p { margin: 0 0 6px 0; }
+  .mail-uitleg p:last-child { margin-bottom: 0; }
+  .mail-uitleg-kop { font-weight: 700; font-size: 1.1rem; }
+  .mail-uitleg-veld { background: #fff1c2; border-radius: 8px; padding: 6px 10px; }
 
   .in-voorbereiding {
     background: #fbf6ec;
@@ -653,14 +703,16 @@
         </div>
 
         <div class="veld-groep foto-veld" data-foto-veld="eigen">
-          <label>Foto's van de storing * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
-          <p class="veld-hulp-blok">Maak ter plekke een foto, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit.</p>
+          <label>Foto's of video van de storing * <span class="veld-hulp">(minstens één, maximaal vijf; één korte video)</span></label>
+          <p class="veld-hulp-blok">Maak ter plekke een foto of een korte video, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit. Een video helpt bij iets dat beweegt of geluid maakt, zoals een lekkende kraan of een rammelende lift. Houd hem kort: ongeveer 15 seconden.</p>
           <div class="knop-rij">
             <button type="button" class="knop secundair" data-foto-knop="eigen">📷 Foto maken</button>
-            <button type="button" class="knop secundair" data-foto-knop-galerij="eigen">🖼️ Foto kiezen</button>
+            <button type="button" class="knop secundair" data-video-knop="eigen">🎥 Video maken</button>
+            <button type="button" class="knop secundair" data-foto-knop-galerij="eigen">🖼️ Foto of video kiezen</button>
           </div>
           <input type="file" accept="image/*" capture="environment" data-foto-input="eigen" hidden>
-          <input type="file" accept="image/*" multiple data-foto-input-galerij="eigen" hidden>
+          <input type="file" accept="video/*" capture="environment" data-video-input="eigen" hidden>
+          <input type="file" accept="image/*,video/*" multiple data-foto-input-galerij="eigen" hidden>
           <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="eigen" hidden></div>
           <p class="foto-status" data-foto-status="eigen">Nog geen foto toegevoegd.</p>
         </div>
@@ -693,6 +745,17 @@
             <input type="checkbox" data-privacy-hoen="eigen" required>
             <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
           </label>
+        </div>
+
+        <!-- Alleen zichtbaar als de bewoner zijn melding zelf naar Hoen mailt:
+             na "Melding versturen" gaat de e-mail meteen open, dus het adres
+             moet hier al te lezen zijn. Zie toonMailUitleg in het script. -->
+        <div class="mail-uitleg" data-mail-uitleg="eigen" hidden>
+          <p class="mail-uitleg-kop">Na het versturen gaat uw e-mail open</p>
+          <p>De tekst en de foto staan er al in. U typt zelf:</p>
+          <p class="mail-uitleg-veld">Aan: <strong data-mail-aan>storingen@hoen.nl</strong></p>
+          <p class="mail-uitleg-veld">Onderwerp: <em>een paar woorden, bijv. lekkende kraan keuken</em></p>
+          <p>Druk daarna op Verzenden.</p>
         </div>
 
         <div class="knop-rij">
@@ -806,14 +869,16 @@
         </div>
 
         <div class="veld-groep foto-veld" data-foto-veld="algemeen">
-          <label>Foto's van de storing * <span class="veld-hulp">(minstens één, maximaal vijf)</span></label>
-          <p class="veld-hulp-blok">Maak ter plekke een foto, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit.</p>
+          <label>Foto's of video van de storing * <span class="veld-hulp">(minstens één, maximaal vijf; één korte video)</span></label>
+          <p class="veld-hulp-blok">Maak ter plekke een foto of een korte video, of kies er een die u eerder heeft gemaakt — bijvoorbeeld van een lekkage die inmiddels is opgedweild. Meerdere foto's mogen: één van dichtbij en één waarop te zien is waar het zit. Een video helpt bij iets dat beweegt of geluid maakt, zoals een lekkende kraan of een rammelende lift. Houd hem kort: ongeveer 15 seconden.</p>
           <div class="knop-rij">
             <button type="button" class="knop secundair" data-foto-knop="algemeen">📷 Foto maken</button>
-            <button type="button" class="knop secundair" data-foto-knop-galerij="algemeen">🖼️ Foto kiezen</button>
+            <button type="button" class="knop secundair" data-video-knop="algemeen">🎥 Video maken</button>
+            <button type="button" class="knop secundair" data-foto-knop-galerij="algemeen">🖼️ Foto of video kiezen</button>
           </div>
           <input type="file" accept="image/*" capture="environment" data-foto-input="algemeen" hidden>
-          <input type="file" accept="image/*" multiple data-foto-input-galerij="algemeen" hidden>
+          <input type="file" accept="video/*" capture="environment" data-video-input="algemeen" hidden>
+          <input type="file" accept="image/*,video/*" multiple data-foto-input-galerij="algemeen" hidden>
           <div class="foto-voorbeeld-wrap" data-foto-voorbeeld-wrap="algemeen" hidden></div>
           <p class="foto-status" data-foto-status="algemeen">Nog geen foto toegevoegd.</p>
         </div>
@@ -846,6 +911,17 @@
             <input type="checkbox" data-privacy-hoen="algemeen" required>
             <span>Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de <a href="https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" target="_blank" rel="noopener">privacyverklaring van Hoen Vastgoedbeheer</a> *</span>
           </label>
+        </div>
+
+        <!-- Alleen zichtbaar als de bewoner zijn melding zelf naar Hoen mailt:
+             na "Melding versturen" gaat de e-mail meteen open, dus het adres
+             moet hier al te lezen zijn. Zie toonMailUitleg in het script. -->
+        <div class="mail-uitleg" data-mail-uitleg="algemeen" hidden>
+          <p class="mail-uitleg-kop">Na het versturen gaat uw e-mail open</p>
+          <p>De tekst en de foto staan er al in. U typt zelf:</p>
+          <p class="mail-uitleg-veld">Aan: <strong data-mail-aan>storingen@hoen.nl</strong></p>
+          <p class="mail-uitleg-veld">Onderwerp: <em>een paar woorden, bijv. lekkende kraan keuken</em></p>
+          <p>Druk daarna op Verzenden.</p>
         </div>
 
         <div class="knop-rij">
@@ -1034,6 +1110,43 @@
   // het Apps Script zelf (ONTVANGERS), niet hier.
   // ─────────────────────────────────────────────────────────────────
   var REPARATIE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUZGbI-8xsC9Lb6EE4RqCc3Clxw7O4A0K5rpK4HXH2RIBFCQpumGMPkNDcRlrmKN0hAA/exec";
+
+  // Stuurt de bewoner zijn melding zelf per e-mail naar Hoen? Dat staat
+  // in het script (BEWONER_VULT_HOEN_ZELF_IN / COMMISSIE_VULT_HOEN_IN) en
+  // wordt hier bij het openen opgevraagd. Is het antwoord er (nog) niet,
+  // dan gaat de mail niet meteen open en volgt na het versturen het scherm
+  // met de knop.
+  var BEWONER_MAILT_ZELF = false;
+  // Oefen-huisnummers (zie HUISNUMMERS_DEMO in het script): daar gaat de
+  // e-mail nooit open. Staat hier ook vast, voor als het antwoord van het
+  // script nog niet binnen is.
+  var DEMO_HUISNUMMERS = ["324", "326", "328"];
+  function isOefenHuisnummer(nummer) {
+    return DEMO_HUISNUMMERS.indexOf(String(nummer || "").trim()) !== -1;
+  }
+  // PROEF met de nieuwe werkwijze (zie PROEF_HUISNUMMERS in het script):
+  // bij deze huisnummers gaat de e-mail w\u00e9l open, maar naar het eigen
+  // adres van de tester, met "PROEF" bovenaan. Er komt niets bij Hoen.
+  var PROEF_HUISNUMMERS = ["324"];
+  function isProefHuisnummer(nummer) {
+    return PROEF_HUISNUMMERS.indexOf(String(nummer || "").trim()) !== -1;
+  }
+  // Gaat bij dit huisnummer de e-mail open na "Melding versturen"?
+  function mailGaatOpen(nummer) {
+    if (isProefHuisnummer(nummer)) return true;
+    return BEWONER_MAILT_ZELF && !isOefenHuisnummer(nummer);
+  }
+  try {
+    fetch(REPARATIE_SCRIPT_URL + "?actie=instellingen")
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        BEWONER_MAILT_ZELF = !!(j && j.ok && j.bewonerMailtZelf);
+        if (j && j.demoHuisnummers && j.demoHuisnummers.length) DEMO_HUISNUMMERS = j.demoHuisnummers.map(String);
+        if (j && j.proefHuisnummers) PROEF_HUISNUMMERS = j.proefHuisnummers.map(String);
+        document.dispatchEvent(new Event("instellingen-geladen"));
+      })
+      .catch(function () {});
+  } catch (e) {}
 </script>
 
 <script>
@@ -1282,6 +1395,44 @@
   // trage mobiele verbinding goed werkt.
   // ─────────────────────────────────────────────────────────────────
   var MAX_FOTOS = 5;
+
+  // VIDEO — \u00e9\u00e9n korte video per melding. Een video wordt niet verkleind
+  // (dat kan een browser niet betrouwbaar), dus geldt er een grens: de
+  // melding gaat als e-mail met bijlage de deur uit, en een e-mail mag
+  // niet veel groter zijn dan zo'n 25 MB. 15 MB is ongeveer 15 seconden.
+  var MAX_VIDEOS = 1;
+  var MAX_VIDEO_MB = 15;
+  function isVideo(dataUrl) { return String(dataUrl || "").indexOf("data:video/") === 0; }
+  function soortVan(dataUrl) {
+    var m = String(dataUrl || "").match(/^data:([^;,]+)/);
+    return m ? m[1] : "image/jpeg";
+  }
+  function extensieVan(dataUrl) {
+    var soort = soortVan(dataUrl);
+    if (soort.indexOf("video/") === 0) {
+      if (soort.indexOf("quicktime") !== -1) return ".mov";
+      if (soort.indexOf("webm") !== -1) return ".webm";
+      if (soort.indexOf("3gpp") !== -1) return ".3gp";
+      return ".mp4";
+    }
+    return ".jpg";
+  }
+  function bestandsnaamVan(dataUrl, i) {
+    return (isVideo(dataUrl) ? "video-" : "foto-") + (i + 1) + extensieVan(dataUrl);
+  }
+  function leesVideo(bestand, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var url = String(e.target.result || "");
+      // Sommige telefoons geven geen type mee; dan maken we er mp4 van.
+      if (url.indexOf("data:;") === 0 || url.indexOf("data:application/octet-stream") === 0) {
+        url = "data:video/mp4" + url.substring(url.indexOf(";"));
+      }
+      callback(url);
+    };
+    reader.onerror = function () { callback(null); };
+    reader.readAsDataURL(bestand);
+  }
   var fotoData = { eigen: [], algemeen: [], oud: [] };
 
   // Schermafbeeldingen van een mail moeten LEESBAAR blijven: daar moet
@@ -1337,9 +1488,20 @@
       var kaartje = document.createElement("div");
       kaartje.className = "foto-kaartje";
 
-      var afbeelding = document.createElement("img");
-      afbeelding.src = dataUrl;
-      afbeelding.alt = "Foto " + (index + 1) + " van de storing";
+      var afbeelding;
+      if (isVideo(dataUrl)) {
+        afbeelding = document.createElement("video");
+        afbeelding.src = dataUrl;
+        afbeelding.muted = true;
+        afbeelding.playsInline = true;
+        afbeelding.controls = true;
+        afbeelding.preload = "metadata";
+        afbeelding.setAttribute("aria-label", "Video van de storing");
+      } else {
+        afbeelding = document.createElement("img");
+        afbeelding.src = dataUrl;
+        afbeelding.alt = "Foto " + (index + 1) + " van de storing";
+      }
       kaartje.appendChild(afbeelding);
 
       var knopWeg = document.createElement("button");
@@ -1355,16 +1517,21 @@
 
       var bijschrift = document.createElement("p");
       bijschrift.className = "bijschrift";
-      bijschrift.textContent = "Foto " + (index + 1);
+      bijschrift.textContent = isVideo(dataUrl) ? "Video" : "Foto " + (index + 1);
       kaartje.appendChild(bijschrift);
 
       wrap.appendChild(kaartje);
     });
 
     if (status) {
-      if (lijst.length === 0) status.textContent = "Nog geen foto toegevoegd.";
-      else if (lijst.length === 1) status.textContent = "1 foto toegevoegd \u2713";
-      else status.textContent = lijst.length + " foto's toegevoegd \u2713";
+      var aantalVideo = lijst.filter(isVideo).length;
+      var aantalFoto = lijst.length - aantalVideo;
+      var delen = [];
+      if (aantalFoto === 1) delen.push("1 foto");
+      else if (aantalFoto > 1) delen.push(aantalFoto + " foto's");
+      if (aantalVideo === 1) delen.push("1 video");
+      if (lijst.length === 0) status.textContent = (prefix === "oud") ? "Nog geen foto toegevoegd." : "Nog geen foto of video toegevoegd.";
+      else status.textContent = delen.join(" en ") + " toegevoegd \u2713";
     }
     if (veld) {
       if (lijst.length > 0) veld.classList.add("heeft-foto");
@@ -1379,11 +1546,15 @@
       knop.disabled = vol;
     }
     if (knopGalerij) {
+      var metVideo = !!document.querySelector('[data-video-knop="' + prefix + '"]');
+      var woord = metVideo ? "foto of video" : "foto";
       knopGalerij.textContent = lijst.length === 0
-        ? "\uD83D\uDDBC\uFE0F Foto kiezen"
-        : "\uD83D\uDDBC\uFE0F Nog een foto kiezen";
+        ? "\uD83D\uDDBC\uFE0F " + woord.charAt(0).toUpperCase() + woord.slice(1) + " kiezen"
+        : "\uD83D\uDDBC\uFE0F Nog een " + woord + " kiezen";
       knopGalerij.disabled = vol;
     }
+    var knopVideo = document.querySelector('[data-video-knop="' + prefix + '"]');
+    if (knopVideo) knopVideo.disabled = vol || lijst.filter(isVideo).length >= MAX_VIDEOS;
   }
 
   // Twee knoppen, één verwerking: "Foto maken" opent meteen de camera
@@ -1409,17 +1580,31 @@
           return;
         }
 
-        if (status) status.textContent = bestanden.length === 1
-          ? "Foto wordt verwerkt..."
-          : "Foto's worden verwerkt...";
+        if (status) status.textContent = "Even geduld, wordt verwerkt...";
 
         var nogTeGaan = bestanden.length;
         var misluktAantal = 0;
 
+        var videoMelding = "";
         bestanden.forEach(function (bestand) {
-          verkleinFoto(bestand, function (dataUrl) {
+          var isVid = /^video\//.test(bestand.type || "") || /\.(mp4|mov|m4v|3gp|webm)$/i.test(bestand.name || "");
+          var verwerk = function (cb) { verkleinFoto(bestand, cb, FOTO_INSTELLINGEN[prefix]); };
+          if (isVid) {
+            if (prefix === "oud") {
+              verwerk = function (cb) { cb(null); };
+            } else if (fotoData[prefix].filter(isVideo).length >= MAX_VIDEOS) {
+              videoMelding = "U kunt \u00e9\u00e9n video meesturen. Haal de andere eerst weg met het kruisje.";
+              verwerk = function (cb) { cb(false); };
+            } else if (bestand.size > MAX_VIDEO_MB * 1024 * 1024) {
+              videoMelding = "Deze video is te groot (" + Math.round(bestand.size / 1048576) + " MB). Maak een kortere video van ongeveer 15 seconden, of stuur een foto.";
+              verwerk = function (cb) { cb(false); };
+            } else {
+              verwerk = function (cb) { leesVideo(bestand, cb); };
+            }
+          }
+          verwerk(function (dataUrl) {
             if (dataUrl) fotoData[prefix].push(dataUrl);
-            else misluktAantal++;
+            else if (dataUrl !== false) misluktAantal++;
             nogTeGaan--;
             if (nogTeGaan === 0) {
               tekenFotos(prefix);
@@ -1430,15 +1615,17 @@
               } else if (teveel && status) {
                 status.textContent = "Maximaal " + MAX_FOTOS + " foto's \u2014 de rest is niet toegevoegd.";
               }
+              if (videoMelding && status) status.textContent = videoMelding;
               input.value = "";
             }
-          }, FOTO_INSTELLINGEN[prefix]);
+          });
         });
       }
 
       [
         ['[data-foto-knop="' + prefix + '"]', '[data-foto-input="' + prefix + '"]'],
-        ['[data-foto-knop-galerij="' + prefix + '"]', '[data-foto-input-galerij="' + prefix + '"]']
+        ['[data-foto-knop-galerij="' + prefix + '"]', '[data-foto-input-galerij="' + prefix + '"]'],
+        ['[data-video-knop="' + prefix + '"]', '[data-video-input="' + prefix + '"]']
       ].forEach(function (paar) {
         var knop = document.querySelector(paar[0]);
         var input = document.querySelector(paar[1]);
@@ -1609,10 +1796,12 @@
   // komen van de bewoner zelf.
   // ─────────────────────────────────────────────────────────────────
   function kopieerTekst(tekst, knop) {
+    var label = knop.getAttribute("data-label") || knop.textContent;
+    knop.setAttribute("data-label", label);
     function gelukt() {
       knop.textContent = "Gekopieerd \u2713";
       knop.classList.add("gekopieerd");
-      setTimeout(function () { knop.textContent = "Kopieer"; knop.classList.remove("gekopieerd"); }, 2500);
+      setTimeout(function () { knop.textContent = label; knop.classList.remove("gekopieerd"); }, 2500);
     }
     function terugval() {
       var vak = document.createElement("textarea");
@@ -1651,7 +1840,55 @@
   // De tekst van de mail aan Hoen. Bewust GEEN onderwerp: dat typt de
   // bewoner zelf, in zijn eigen woorden. Er staat niets in over het
   // portaal of de commissie; het is gewoon de melding van de huurder.
-  function maakHoenMailTekst(velden) {
+  // Dezelfde velden en verklaringen als het script maakt (hoenInvulGegevens_
+  // en AKKOORD_* in het Apps Script), maar hier in de pagina, zodat de mail
+  // al open kan gaan v\u00f3\u00f3rdat het script heeft geantwoord. Een telefoon
+  // laat de mail alleen openen direct na een tik; wachten mag niet.
+  var AKKOORD_HERSTELLINGEN = { tekst: "Ja, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten. Ik heb het Besluit kleine herstellingen gelezen.", link: "https://wetten.overheid.nl/BWBR0014931" };
+  var AKKOORD_PRIVACY_HOEN = { tekst: "Ik ga akkoord met het verwerken van mijn persoonsgegevens zoals omschreven in de privacyverklaring van Hoen Vastgoedbeheer.", link: "https://www.hoen.nl/privacyverklaring-hoen-vastgoedbeheer-bv" };
+
+  function tijdstipNl(d) {
+    var datum = d.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+    var tijd = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+    return datum + " om " + tijd;
+  }
+
+  function hoenGegevensLokaal(data) {
+    var algemeen = String(data.soort || "").toLowerCase().indexOf("algemene") !== -1;
+    var type = String(data.typeStoring || "").trim();
+    var isSchimmel = type === "Schimmel";
+    var hoenType = (!type || isSchimmel) ? "Overig" : type;
+    var omschrijving = String(data.watIsHetProbleem || "").trim();
+    if (isSchimmel && omschrijving.toLowerCase().indexOf("schimmel") === -1) omschrijving = "Schimmel: " + omschrijving;
+    if (algemeen) {
+      var plek = String(data.waarProbleem || "").replace(/Algemene ruimte\s*/gi, "").trim();
+      var extra = [];
+      if (plek) extra.push("Waar: " + plek);
+      if (data.verdieping) extra.push("verdieping " + data.verdieping);
+      if (extra.length) omschrijving += "\n\n" + extra.join(", ");
+    }
+    var op = tijdstipNl(new Date());
+    var akkoorden = [];
+    if (data.akkoordKleineHerstellingen) akkoorden.push({ tekst: AKKOORD_HERSTELLINGEN.tekst, link: AKKOORD_HERSTELLINGEN.link, op: op });
+    if (data.akkoordPrivacyHoen) akkoorden.push({ tekst: AKKOORD_PRIVACY_HOEN.tekst, link: AKKOORD_PRIVACY_HOEN.link, op: op });
+    return {
+      akkoorden: akkoorden,
+      velden: [
+        { label: "Voornaam", waarde: data.voornaam || "" },
+        { label: "Achternaam", waarde: data.achternaam || "" },
+        { label: "Uw e-mailadres", waarde: data.email || "" },
+        { label: "Adres", waarde: ((data.straatnaam || "") + " " + (data.huisnummer || "")).trim() },
+        { label: "Postcode", waarde: String(data.postcode || "").trim() },
+        { label: "Woonplaats", waarde: data.plaats || "" },
+        { label: "Telefoonnummer", waarde: String(data.telefoon || "").trim() },
+        { label: "In welke ruimte bevindt zich het probleem/de storing?", waarde: algemeen ? "In de algemene ruimte" : "In de gehuurde ruimte" },
+        { label: "Type reparatieverzoek", waarde: hoenType },
+        { label: "Omschrijving van het reparatieverzoek", waarde: omschrijving }
+      ]
+    };
+  }
+
+  function maakHoenMailTekst(velden, akkoorden) {
     var w = {};
     velden.forEach(function (v) { w[v.label] = v.waarde || ""; });
     var naam = ((w["Voornaam"] || "") + " " + (w["Achternaam"] || "")).trim();
@@ -1669,14 +1906,23 @@
       "Telefoon: " + w["Telefoonnummer"],
       "E-mail: " + w["Uw e-mailadres"],
       "",
-      "Ik ben op de hoogte van het Besluit kleine herstellingen en ga akkoord met de privacyverklaring van Hoen Vastgoedbeheer. Een foto van het probleem zit als bijlage bij deze mail.",
+      "Ik heb het volgende aangevinkt:",
+      ""
+    ].concat((akkoorden || []).map(function (a) {
+      return "- \u201c" + a.tekst + "\u201d (" + a.link + "), aangevinkt op " + a.op + ".";
+    })).concat([
+      "",
+      "De foto of video van het probleem zit als bijlage bij deze mail.",
       "",
       "Met vriendelijke groet,",
       naam
-    ].join("\n");
+    ]).join("\n");
   }
 
-  function toonHoenStap(form, json, huisnummer, pincode, fotoLijst) {
+  // Na het versturen: één knop, en een klein voorbeeld van wat de bewoner
+  // in de mail nog zelf invult. Bewust kort gehouden.
+  function toonHoenStap(form, json, huisnummer, pincode, fotoLijst, opties) {
+    opties = opties || {};
     var prefix = form.id.replace("form-", "");
     var paneel = document.createElement("div");
     paneel.className = "hoen-stap";
@@ -1690,113 +1936,96 @@
       return e;
     }
 
-    paneel.appendChild(el("h3", "Nog \u00e9\u00e9n stap: stuur uw melding naar Hoen"));
-    paneel.appendChild(el("p", "Uw melding staat nog niet bij Hoen Vastgoedbeheer. Stuur hem vanaf uw eigen e-mailadres, dan komt hij meteen in uw eigen dossier bij Hoen. Gebruik het e-mailadres dat Hoen van u kent."));
-
-    var mailTekst = maakHoenMailTekst(json.hoen.velden);
+    var mailTekst = maakHoenMailTekst(json.hoen.velden, json.hoen.akkoorden);
+    // Bij een proef nooit het adres van Hoen invullen, en "PROEF" bovenaan.
+    var mailAan = json.proef ? "" : HOEN_MAILADRES;
+    if (json.proef) mailTekst = "PROEF \u2014 huisnummer " + huisnummer + " bestaat niet. Deze e-mail is niet voor Hoen.\n\n" + mailTekst;
     var bestanden = (fotoLijst || []).map(function (d, i) {
-      return dataUrlNaarBestand(d, "foto-" + (i + 1) + ".jpg");
+      return dataUrlNaarBestand(d, bestandsnaamVan(d, i));
     }).filter(Boolean);
     var kanDelen = !!(navigator.canShare && bestanden.length &&
       navigator.canShare({ files: bestanden, text: mailTekst }));
 
-    var mailStappen = el("ol");
-    var m1 = el("li");
     var mailKnop = el("button", "Verstuur naar Hoen per e-mail", "hoen-open");
     mailKnop.type = "button";
-    m1.appendChild(mailKnop);
+    paneel.appendChild(mailKnop);
     var mailMelding = el("p", "", "form-status");
     mailMelding.hidden = true;
-    m1.appendChild(mailMelding);
-    mailStappen.appendChild(m1);
+    paneel.appendChild(mailMelding);
 
-    if (kanDelen) {
-      mailStappen.appendChild(el("li", "Kies uw mail-app, bijvoorbeeld Gmail of Mail. Uw foto en de tekst staan er al in."));
-      mailStappen.appendChild(el("li", "Bij \u201cAan\u201d: houd uw vinger in het vak en kies Plakken. Het adres " + HOEN_MAILADRES + " staat al klaar."));
-    } else {
-      mailStappen.appendChild(el("li", "Uw mail-app gaat open met het adres en de tekst erin. Voeg zelf uw foto toe met het paperclipje."));
+    // Het voorbeeld: zo ziet de mail eruit, met de twee dingen die de
+    // bewoner zelf doet in het geel.
+    var voorbeeld = el("div", "", "hoen-voorbeeld");
+    function regel(label, waarde, zelf, uitleg) {
+      var r = el("div", "", "hoen-vb-regel" + (zelf ? " hoen-vb-zelf" : ""));
+      r.appendChild(el("span", label, "hoen-vb-label"));
+      var w = el("span", waarde, "hoen-vb-waarde");
+      r.appendChild(w);
+      if (uitleg) r.appendChild(el("span", uitleg, "hoen-vb-uitleg"));
+      voorbeeld.appendChild(r);
+      return r;
     }
-    mailStappen.appendChild(el("li", "Bij \u201cOnderwerp\u201d: typ in een paar woorden waar het om gaat, bijvoorbeeld \u201clekkende kraan keuken\u201d."));
-    mailStappen.appendChild(el("li", "Druk op Verzenden. Hoen stuurt u een bevestiging."));
-    paneel.appendChild(mailStappen);
+    var proef = !!json.proef;
+    regel("Aan", proef ? "uw eigen e-mailadres (proef)" : HOEN_MAILADRES, kanDelen || proef, (kanDelen || proef) ? "zelf typen" : "staat er al in");
+    regel("Onderwerp", "bijv. lekkende kraan keuken", true, "zelf typen");
+    // De echte tekst en de echte foto('s), zodat de bewoner ziet wat er
+    // naar Hoen gaat.
+    var tekstRegel = el("div", "", "hoen-vb-regel hoen-vb-blok");
+    tekstRegel.appendChild(el("span", "Tekst", "hoen-vb-label"));
+    tekstRegel.appendChild(el("div", mailTekst, "hoen-vb-tekst"));
+    voorbeeld.appendChild(tekstRegel);
 
-    mailKnop.addEventListener("click", function () {
-      if (kanDelen) {
-        // Eerst het adres klaarzetten om te plakken, dan meteen delen.
-        // Niet wachten op het kopi\u00ebren: delen moet direct op de tik volgen.
-        try { if (navigator.clipboard) navigator.clipboard.writeText(HOEN_MAILADRES).catch(function () {}); } catch (e) {}
-        navigator.share({ files: bestanden, text: mailTekst })
-          .catch(function (fout) {
-            if (fout && fout.name === "AbortError") return; // bewoner tikte zelf op annuleren
-            window.location.href = "mailto:" + HOEN_MAILADRES + "?body=" + encodeURIComponent(mailTekst);
-            mailMelding.hidden = false;
-            mailMelding.className = "form-status bezig";
-            mailMelding.textContent = "Delen lukte niet; uw mail-app is zonder foto geopend. Voeg de foto zelf toe met het paperclipje.";
-          });
-      } else {
-        window.location.href = "mailto:" + HOEN_MAILADRES + "?body=" + encodeURIComponent(mailTekst);
-      }
+    var fotoRegel = el("div", "", "hoen-vb-regel hoen-vb-blok" + (kanDelen ? "" : " hoen-vb-zelf"));
+    fotoRegel.appendChild(el("span", kanDelen ? "Bijlage" : "Bijlage \u2014 zelf toevoegen", "hoen-vb-label"));
+    var fotoRij = el("div", "", "hoen-vb-fotos");
+    (fotoLijst || []).forEach(function (d, i) {
+      var img = document.createElement(isVideo(d) ? "video" : "img");
+      img.src = d;
+      if (isVideo(d)) { img.muted = true; img.playsInline = true; img.preload = "metadata"; img.setAttribute("aria-label", "Video die meegaat in de mail"); }
+      else img.alt = "Foto " + (i + 1) + " die meegaat in de mail";
+      fotoRij.appendChild(img);
     });
+    fotoRegel.appendChild(fotoRij);
+    voorbeeld.appendChild(fotoRegel);
+    paneel.appendChild(voorbeeld);
 
-    var mailKopie = el("button", "Kopieer de hele mailtekst", "hoen-kopieer");
-    mailKopie.type = "button";
-    mailKopie.addEventListener("click", function () { kopieerTekst(mailTekst, mailKopie); });
-    var kopieRegel = el("p", "Gaat er geen mail-app open? Kopieer de tekst en stuur hem zelf naar " + HOEN_MAILADRES + ", met uw foto als bijlage. ");
-    kopieRegel.appendChild(mailKopie);
-    paneel.appendChild(kopieRegel);
+    paneel.appendChild(el("p", "Druk daarna op Verzenden.", "hoen-vb-slot"));
 
-    // De website van Hoen blijft mogelijk, maar ingeklapt: daar zit een
-    // controle (captcha) op die de bewoner zelf moet doen.
-    var webBlok = el("details");
-    webBlok.appendChild(el("summary", "Liever via de website van Hoen?"));
-    var webIntro = el("p", "Dat kan ook. Op hun formulier zit een controle dat u geen computer bent; die doet u zelf. Neem de gegevens hieronder over.");
-    webBlok.appendChild(webIntro);
-    var stappen = el("ol");
-
-    var s1 = el("li");
-    var open = el("a", "Open het formulier van Hoen", "hoen-open");
-    open.href = json.hoen.url;
-    open.target = "_blank";
-    open.rel = "noopener";
-    s1.appendChild(open);
-    stappen.appendChild(s1);
-
-    stappen.appendChild(el("li", "Vink bovenaan aan: \u201cJa, ik ben op de hoogte van de verantwoordelijkheden van huurder en verhuurder betreffende onderhoudskosten\u201d."));
-
-    var s3 = el("li", "Neem deze gegevens over. Tik op Kopieer en plak het daarna in het veld met dezelfde naam bij Hoen.");
-    var tabel = el("div", "", "hoen-velden");
-    json.hoen.velden.forEach(function (veld) {
-      var rij = el("div", "", "hoen-veld");
-      var tekstDeel = el("div", "", "hoen-veld-tekst");
-      tekstDeel.appendChild(el("span", veld.label, "hoen-label"));
-      var waarde = el("span", "", "hoen-waarde");
-      if (veld.kopieer) {
-        waarde.textContent = veld.waarde || "(leeg)";
-      } else {
-        waarde.appendChild(el("span", "Kies: ", "hoen-kies"));
-        waarde.appendChild(document.createTextNode(veld.waarde));
-      }
-      tekstDeel.appendChild(waarde);
-      rij.appendChild(tekstDeel);
-      if (veld.kopieer && veld.waarde) {
-        var knop = el("button", "Kopieer", "hoen-kopieer");
-        knop.type = "button";
-        knop.setAttribute("aria-label", "Kopieer " + veld.label);
-        knop.addEventListener("click", function () { kopieerTekst(veld.waarde, knop); });
-        rij.appendChild(knop);
-      }
-      tabel.appendChild(rij);
-    });
-    s3.appendChild(tabel);
-    stappen.appendChild(s3);
-
-    stappen.appendChild(el("li", "Foto: tik bij Hoen op \u201cBestand toevoegen\u201d, kies dezelfde foto als net, en tik daarna op \u201cUploaden\u201d. Zonder foto neemt Hoen de melding niet in behandeling."));
-    stappen.appendChild(el("li", "Vink onderaan de privacyverklaring aan, doe de controle en tik op Versturen. U krijgt van Hoen een bevestiging per e-mail."));
-
+    // DE BEVESTIGING — verschijnt pas nadat de bewoner op de mailknop heeft
+    // getikt. Komt hij daarna terug op het portaal (na Verzenden gaat de
+    // telefoon daar meestal vanzelf heen), dan schuift het scherm er
+    // naartoe. Of er echt is verstuurd, vertelt de telefoon niet aan een
+    // website; daarom tikt de bewoner dit zelf aan.
+    var klaarBlok = el("div", "", "hoen-klaar-blok");
+    klaarBlok.hidden = true;
+    klaarBlok.appendChild(el("p", "Mail verstuurd? Tik dan hier:", "hoen-vb-slot"));
     var klaar = el("button", "Ik heb mijn melding naar Hoen gestuurd", "hoen-klaar");
     klaar.type = "button";
+    klaarBlok.appendChild(klaar);
     var klaarStatus = el("p", "", "form-status");
     klaarStatus.hidden = true;
+    klaarBlok.appendChild(klaarStatus);
+    paneel.appendChild(klaarBlok);
+
+    // De knop komt pas als het delen NIET is afgebroken (de telefoon meldt
+    // een afgebroken delen als "AbortError") en de bewoner weer op deze
+    // pagina is. Bij de maillink zonder foto meldt de telefoon niets; daar
+    // telt alleen het terugkomen.
+    var gedeeld = false;
+    var weggeweest = false;
+    function toonKlaar() {
+      if (!gedeeld || !klaarBlok.hidden) return;
+      if (document.visibilityState !== "visible") return;
+      klaarBlok.hidden = false;
+      setTimeout(function () { klaarBlok.scrollIntoView({ behavior: "smooth", block: "center" }); klaar.focus({ preventScroll: true }); }, 300);
+    }
+    function bijTerugkomst() {
+      if (document.visibilityState === "hidden") { weggeweest = true; return; }
+      if (weggeweest) toonKlaar();
+    }
+    document.addEventListener("visibilitychange", bijTerugkomst);
+    window.addEventListener("focus", bijTerugkomst);
+
     klaar.addEventListener("click", function () {
       klaar.disabled = true;
       fetch(REPARATIE_SCRIPT_URL, {
@@ -1810,11 +2039,13 @@
           if (antwoord && antwoord.ok) {
             klaar.textContent = "Doorgegeven \u2713";
             klaarStatus.className = "form-status gelukt";
-            klaarStatus.textContent = "Bedankt. Wij hebben genoteerd dat uw melding bij Hoen staat.";
+            klaarStatus.textContent = json.proef
+              ? "Proef gelukt. Kijk in uw eigen mailbox: daar staat de proefmail. In het echt stuurt Hoen u nu een bevestiging."
+              : "Bedankt. Hoen stuurt u een bevestiging per e-mail.";
           } else {
             klaar.disabled = false;
             klaarStatus.className = "form-status fout";
-            klaarStatus.textContent = (antwoord && antwoord.error) || "Doorgeven lukte niet. Probeer het opnieuw.";
+            klaarStatus.textContent = (antwoord && antwoord.error) || "Dat lukte niet. Probeer het opnieuw.";
           }
         })
         .catch(function () {
@@ -1824,19 +2055,60 @@
           klaarStatus.textContent = "Geen verbinding. Probeer het zo opnieuw.";
         });
     });
-    webBlok.appendChild(stappen);
-    paneel.appendChild(webBlok);
 
-    var klaarBlok = el("p", "Verstuurd? Laat het ons weten, dan weten wij dat uw melding bij Hoen staat.");
-    klaarBlok.appendChild(el("br"));
-    klaarBlok.appendChild(klaar);
-    paneel.appendChild(klaarBlok);
-    paneel.appendChild(klaarStatus);
-    paneel.appendChild(el("p", "Lukt het niet? Mail naar polanenflat@gmail.com, dan helpen wij u."));
+    mailKnop.addEventListener("click", function () {
+      // Doorgeven DAT er op de knop is getikt (komt in de spreadsheet).
+      // Niet wachten op het antwoord: delen moet direct op de tik volgen.
+      try {
+        fetch(REPARATIE_SCRIPT_URL, {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ verzoekType: "hoen-mailknop", huisnummer: huisnummer, pincode: pincode, meldingId: json.meldingId })
+        }).catch(function () {});
+      } catch (e) {}
+      if (kanDelen) {
+        navigator.share({ files: bestanden, text: mailTekst })
+          .then(function () {
+            // Delen is gelukt (niet afgebroken). Op een iPhone is de bewoner
+            // hier al terug op de pagina; op Android pas na het verzenden.
+            gedeeld = true;
+            toonKlaar();
+          })
+          .catch(function (fout) {
+            if (fout && fout.name === "AbortError") return; // bewoner tikte zelf op annuleren: geen knop
+            gedeeld = true;
+            window.location.href = "mailto:" + mailAan + "?body=" + encodeURIComponent(mailTekst);
+            mailMelding.hidden = false;
+            mailMelding.className = "form-status bezig";
+            mailMelding.textContent = "Voeg uw foto zelf toe met het paperclipje.";
+          });
+      } else {
+        gedeeld = true;
+        window.location.href = "mailto:" + mailAan + "?body=" + encodeURIComponent(mailTekst);
+      }
+    });
+
+    if (opties.alGedeeld) {
+      // De mail is al geopend bij het versturen van het formulier. Dan
+      // staat de bevestiging bovenaan; de mailknop en het voorbeeld staan
+      // eronder, ingeklapt, voor wie de mail toch nog moet versturen.
+      klaarBlok.className = "hoen-klaar-blok hoen-klaar-boven";
+      klaarBlok.firstChild.textContent = "Heeft u de e-mail naar Hoen verstuurd? Tik dan hier:";
+      var nogNiet = el("details", "", "hoen-nog-niet");
+      nogNiet.appendChild(el("summary", "Nog niet verstuurd? Open de e-mail opnieuw"));
+      while (paneel.firstChild && paneel.firstChild !== klaarBlok) nogNiet.appendChild(paneel.firstChild);
+      mailKnop.textContent = "E-mail opnieuw openen";
+      paneel.insertBefore(nogNiet, klaarBlok.nextSibling);
+      gedeeld = true;
+      klaarBlok.hidden = false;
+    }
 
     form.parentNode.insertBefore(paneel, form.nextSibling);
-    paneel.scrollIntoView({ behavior: "smooth", block: "start" });
-    paneel.focus({ preventScroll: true });
+    if (!opties.alGedeeld || document.visibilityState === "visible") {
+      paneel.scrollIntoView({ behavior: "smooth", block: "start" });
+      paneel.focus({ preventScroll: true });
+    }
   }
 
   function initMeldFormulier(prefix, soort) {
@@ -1859,10 +2131,19 @@
     // twee opties.
     var privacyHoenBlok = document.querySelector('[data-privacy-hoen-blok="' + prefix + '"]');
     var privacyHoenVakEl = document.querySelector('[data-privacy-hoen="' + prefix + '"]');
+    var mailUitleg = document.querySelector('[data-mail-uitleg="' + prefix + '"]');
     function bijwerkAlleenCommissie() {
       var gekozenVak = document.querySelector('input[name="privacy-' + prefix + '"]:checked');
       var isAlleenCommissie = !!(gekozenVak && gekozenVak.hasAttribute("data-alleen-commissie"));
       if (privacyHoenBlok) privacyHoenBlok.hidden = isAlleenCommissie;
+      // Het blok met storingen@hoen.nl: alleen als de mail echt opengaat.
+      var huisnummerVeld = document.getElementById(prefix + "-huisnummer");
+      var nummer = huisnummerVeld && huisnummerVeld.value;
+      if (mailUitleg) {
+        mailUitleg.hidden = !mailGaatOpen(nummer) || isAlleenCommissie;
+        var aanVak = mailUitleg.querySelector("[data-mail-aan]");
+        if (aanVak) aanVak.textContent = isProefHuisnummer(nummer) ? "uw eigen e-mailadres (dit is een proef)" : "storingen@hoen.nl";
+      }
       if (privacyHoenVakEl) {
         if (isAlleenCommissie) {
           privacyHoenVakEl.removeAttribute("required");
@@ -1876,6 +2157,8 @@
       vak.addEventListener("change", bijwerkAlleenCommissie);
     });
     bijwerkAlleenCommissie();
+    // Het antwoord op "?actie=instellingen" komt pas na het laden binnen.
+    document.addEventListener("instellingen-geladen", bijwerkAlleenCommissie);
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -1915,7 +2198,7 @@
         return;
       }
       if (!fotoData[prefix] || fotoData[prefix].length === 0) {
-        toonStatus("Voeg minstens één foto van de storing toe voordat u verstuurt.", "fout");
+        toonStatus("Voeg minstens één foto of video van de storing toe voordat u verstuurt.", "fout");
         return;
       }
       if (!REPARATIE_SCRIPT_URL) {
@@ -1944,18 +2227,39 @@
         // nergens dat de bewoner die verklaring had afgegeven.
         akkoordKleineHerstellingen: (gelezenVak && gelezenVak.checked) ? "Ja" : "",
         akkoordPrivacyHoen: (privacyHoenVak && privacyHoenVak.checked) ? "Ja" : "",
-        fotos: fotoData[prefix].map(function (dataUrl) {
-          return { base64: dataUrl, type: "image/jpeg" };
+        fotos: fotoData[prefix].map(function (dataUrl, i) {
+          return { base64: dataUrl, type: soortVan(dataUrl), naam: bestandsnaamVan(dataUrl, i) };
         }),
         // Blijft meegestuurd voor het geval er nog een oudere versie van
         // het script draait: die kent alleen één foto.
-        fotoBase64: fotoData[prefix][0],
+        fotoBase64: (fotoData[prefix].filter(function (d) { return !isVideo(d); })[0]) || "",
         fotoType: "image/jpeg"
       };
 
       var knopVersturen = form.querySelector('button[type="submit"]');
       if (knopVersturen) knopVersturen.disabled = true;
       toonStatus("Bezig met versturen...", "bezig");
+
+      // DE E-MAIL METEEN OPENEN — als de bewoner zijn melding zelf naar
+      // Hoen stuurt. Dat moet NU, direct op de tik op "Melding versturen":
+      // een telefoon laat alleen direct na een tik iets delen. Het
+      // versturen naar het script loopt ondertussen gewoon door.
+      var fotoKopie = (fotoData[prefix] || []).slice();
+      var deelUitkomst = null;
+      if (mailGaatOpen(data.huisnummer) && !alleenCommissieGekozen) {
+        var lokaal = hoenGegevensLokaal(data);
+        var tekstNu = maakHoenMailTekst(lokaal.velden, lokaal.akkoorden);
+        if (isProefHuisnummer(data.huisnummer)) {
+          tekstNu = "PROEF \u2014 huisnummer " + data.huisnummer + " bestaat niet. Deze e-mail is niet voor Hoen.\n\n" + tekstNu;
+        }
+        var bestandenNu = fotoKopie.map(function (d, i) { return dataUrlNaarBestand(d, bestandsnaamVan(d, i)); }).filter(Boolean);
+        if (navigator.canShare && bestandenNu.length && navigator.canShare({ files: bestandenNu, text: tekstNu })) {
+          data.mailGeopend = "ja";
+          deelUitkomst = navigator.share({ files: bestandenNu, text: tekstNu })
+            .then(function () { return "gedeeld"; })
+            .catch(function (fout) { return (fout && fout.name === "AbortError") ? "afgebroken" : "mislukt"; });
+        }
+      }
 
       // Let op: hier gebruiken we BEWUST geen "mode: no-cors", omdat we de
       // echte serverreactie nodig hebben om te weten of de pincode goed was.
@@ -1968,8 +2272,19 @@
         .then(function (json) {
           if (json && json.ok) {
             if (json.hoenZelf && json.hoen) {
-              toonStatus("Uw melding is ontvangen door de bewonerscommissie. Hij staat nog NIET bij Hoen Vastgoedbeheer: doe hieronder de laatste stap.", "gelukt");
-              toonHoenStap(form, json, data.huisnummer, data.pincode, (fotoData[prefix] || []).slice());
+              // Geen "ontvangen"-melding hier: dan denkt de bewoner dat het
+              // al klaar is. Alleen de stap naar Hoen.
+              if (status) status.hidden = true;
+              if (deelUitkomst) {
+                // De mail is al geopend. Gedeeld: meteen de bevestigknop.
+                // Afgebroken of mislukt: het scherm met de mailknop.
+                deelUitkomst.then(function (uitkomst) {
+                  toonHoenStap(form, json, data.huisnummer, data.pincode, fotoKopie,
+                    { alGedeeld: uitkomst === "gedeeld" });
+                });
+              } else {
+                toonHoenStap(form, json, data.huisnummer, data.pincode, fotoKopie);
+              }
             } else if (json.commissieVult) {
               toonStatus("Bedankt! Uw melding is ontvangen door de bewonerscommissie; u krijgt daarvan een bevestiging per e-mail. Wij zetten hem voor u bij Hoen Vastgoedbeheer, op uw naam. Zodra dat gebeurd is, krijgt u een tweede mail.", "gelukt");
             } else if (alleenCommissieGekozen) {
